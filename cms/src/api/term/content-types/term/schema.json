@@ -1,0 +1,51 @@
+{
+  "kind": "collectionType",
+  "collectionName": "terms",
+  "info": {
+    "singularName": "term",
+    "pluralName": "terms",
+    "displayName": "Term"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "minLength": 5,
+      "maxLength": 30,
+      "required": true,
+      "unique": true
+    },
+    "sort": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "required": true,
+      "unique": true,
+      "min": 0
+    },
+    "desc": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "required": true
+    }
+  }
+}

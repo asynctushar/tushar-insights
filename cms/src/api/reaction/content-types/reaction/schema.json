@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "reactions",
+  "info": {
+    "singularName": "reaction",
+    "pluralName": "reactions",
+    "displayName": "Reaction"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "type": {
+      "type": "enumeration",
+      "required": true,
+      "enum": [
+        "like",
+        "love",
+        "haha",
+        "sad",
+        "angry"
+      ]
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}
