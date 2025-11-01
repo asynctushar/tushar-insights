@@ -534,7 +534,7 @@ export interface ApiBlogBlog extends Struct.CollectionTypeSchema {
   };
   attributes: {
     category: Schema.Attribute.Relation<'oneToOne', 'api::category.category'>;
-    cover: Schema.Attribute.Media<'images' | 'files', true> &
+    cover: Schema.Attribute.Media<'images' | 'files'> &
       Schema.Attribute.Required &
       Schema.Attribute.SetPluginOptions<{
         i18n: {

@@ -6,14 +6,22 @@ import { factories } from '@strapi/strapi';
 
 export default factories.createCoreController('api::blog.blog', ({ strapi }) => ({
     async find(ctx) {
+        // Ensure user and category are populated as before
+        ctx.query.populate = {
+            cover: {
+                fields: ['url', 'name', 'width', 'height', 'alternativeText', 'ext'], // general fields
+            },
+            user: true,
+            category: true,
+        };
+
         const { data, meta } = await super.find(ctx);
 
-        // For each blog, fetch its comments and reactions manually
         const withExtras = await Promise.all(
             data.map(async (blog) => {
                 const blogId = blog.documentId;
 
-                const comments = await strapi.db.query('api::comment.comment').findMany({
+                const commentsCount = await strapi.db.query('api::comment.comment').count({
                     where: { blog: blogId },
                 });
 
@@ -21,17 +29,36 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
                     where: { blog: blogId },
                 });
 
-                console.log(comments);
-                console.log(reactions);
-
                 return {
                     ...blog,
-                    comments,
+                    commentsCount,
                     reactions,
                 };
             })
         );
 
         return { data: withExtras, meta };
-    }
+    },
+
+    async search(ctx) {
+        const query = ctx.request.query.query || '';
+        const locale = ctx.request.query.locale || 'en';
+
+        if (!query) {
+            return { data: [] };
+        }
+
+        const blogs = await strapi.db.query('api::blog.blog').findMany({
+            where: {
+                title: { $containsi: query },
+                locale,
+                publishedAt: { $notNull: true }
+            },
+            select: ['id', 'documentId', 'title', 'desc', 'slug', 'locale'],
+            orderBy: { title: 'asc' },
+            limit: 5,
+        });
+
+        return { data: blogs };
+    },
 }));
