@@ -815,6 +815,7 @@ export interface ApiReactionReaction extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    blog: Schema.Attribute.Relation<'oneToOne', 'api::blog.blog'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
