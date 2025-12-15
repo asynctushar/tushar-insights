@@ -61,4 +61,144 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
 
         return { data: blogs };
     },
+
+    async findBySlug(ctx) {
+        const { slug } = ctx.params;
+
+        if (!slug) {
+            return ctx.badRequest('Slug is required');
+        }
+
+        // 1️⃣ Fetch blog by slug
+        const blog = await strapi.db.query('api::blog.blog').findOne({
+            where: {
+                slug,
+                publishedAt: { $notNull: true }, // only published
+            },
+            populate: {
+                cover: {
+                    select: ['url', 'name', 'width', 'height', 'alternativeText', 'ext'],
+                },
+                user: true,
+                category: true,
+            },
+        });
+
+        if (!blog) {
+            return ctx.notFound('Blog not found');
+        }
+
+        const blogDocumentId = blog.documentId;
+
+        // 2️⃣ Fetch comments
+        const comments = await strapi.db.query('api::comment.comment').findMany({
+            where: {
+                blog: blogDocumentId,
+                publishedAt: { $notNull: true },
+            },
+            orderBy: { createdAt: 'asc' },
+        });
+
+        // 3️⃣ Arrange comments → replies
+        const commentMap = new Map();
+
+        comments.forEach((comment) => {
+            commentMap.set(comment.documentId, {
+                ...comment,
+                replies: [],
+            });
+        });
+
+        comments.forEach((comment) => {
+            if (comment.type === 'reply' && comment.comment) {
+                const parent = commentMap.get(comment.comment);
+                if (parent) {
+                    parent.replies.push(commentMap.get(comment.documentId));
+                }
+            }
+        });
+
+        const arrangedComments = Array.from(commentMap.values()).filter(
+            (comment) => comment.type === 'normal'
+        );
+
+        // 4️⃣ Fetch reactions
+        const reactions = await strapi.db.query('api::reaction.reaction').findMany({
+            where: {
+                blog: blogDocumentId,
+                publishedAt: { $notNull: true },
+            },
+        });
+
+        // 5️⃣ Return final response
+        return {
+            data: {
+                ...blog,
+                comments: arrangedComments,
+                reactions,
+            },
+        };
+    },
+
+    async reactBlog(ctx) {
+        const { slug } = ctx.params;
+        const user = ctx.state.user;
+
+        if (!user) {
+            return ctx.unauthorized('You must be logged in');
+        }
+
+        if (!slug) {
+            return ctx.badRequest('Slug is required');
+        }
+
+        if (!ctx.request.body?.type || !["like", "love", "angry", "sad", "haha"].includes(ctx.request.body.type)) {
+            return ctx.badRequest("Please add correct reactions type.");
+        };
+
+        // 1️⃣ Fetch blog by slug
+        const blog = await strapi.db.query('api::blog.blog').findOne({
+            where: {
+                slug,
+                publishedAt: { $notNull: true }, // only published
+            },
+        });
+
+        if (!blog) {
+            return ctx.notFound('Blog not found');
+        }
+
+
+        // 3️⃣ Prevent duplicate reactions (important)
+        const existingReaction = await strapi.db
+            .query('api::reaction.reaction')
+            .findOne({
+                where: {
+                    blog: blog.id,
+                    user: user.id,
+                },
+            });
+
+        if (existingReaction) {
+            return ctx.badRequest('You have already reacted');
+        }
+
+        // 4️⃣ Create reaction
+        const reaction = await strapi.db
+            .query('api::reaction.reaction')
+            .create({
+                data: {
+                    blog: blog.id,
+                    user: user.id,
+                    type: ctx.request.body.type,
+                },
+            });
+
+        // 5️⃣ Return final response
+        return {
+            data: {
+                reaction,
+            },
+        };
+    }
 }));
