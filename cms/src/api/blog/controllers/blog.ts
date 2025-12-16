@@ -200,5 +200,134 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
                 reaction,
             },
         };
+    },
+
+
+    async updateBlogReaction(ctx) {
+        const { slug, documentId } = ctx.params;
+        const user = ctx.state.user;
+
+        if (!user) {
+            return ctx.unauthorized('You must be logged in');
+        }
+
+        if (!slug) {
+            return ctx.badRequest('Slug is required');
+        }
+
+        if (!documentId) {
+            return ctx.badRequest('Reaction documentId is required');
+        }
+
+        if (!ctx.request.body?.type || !["like", "love", "angry", "sad", "haha"].includes(ctx.request.body.type)) {
+            return ctx.badRequest("Please add correct reactions type.");
+        };
+
+        // 1️⃣ Fetch blog by slug
+        const blog = await strapi.db.query('api::blog.blog').findOne({
+            where: {
+                slug,
+                publishedAt: { $notNull: true }, // only published
+            },
+        });
+
+        if (!blog) {
+            return ctx.notFound('Blog not found');
+        }
+
+
+        // find reaction
+        const existingReaction = await strapi.db
+            .query('api::reaction.reaction')
+            .findOne({
+                where: {
+                    user: user.id,
+                    blog: blog.id,
+                    documentId: documentId,
+                }
+            });
+
+        if (!existingReaction) {
+            return ctx.badRequest('Reaction not found');
+        }
+
+        // update reaction
+        const reaction = await strapi.db
+            .query('api::reaction.reaction')
+            .update({
+                where: { documentId: documentId },
+                data: {
+                    blog: blog.id,
+                    user: user.id,
+                    type: ctx.request.body.type,
+                },
+            });
+
+        // 5️⃣ Return final response
+        return {
+            data: {
+                reaction,
+            },
+        };
+    },
+
+
+    async deleteBlogReaction(ctx) {
+        const { slug, documentId } = ctx.params;
+        const user = ctx.state.user;
+
+        if (!user) {
+            return ctx.unauthorized('You must be logged in');
+        }
+
+        if (!slug) {
+            return ctx.badRequest('Slug is required');
+        }
+
+        if (!documentId) {
+            return ctx.badRequest('Reaction documentId is required');
+        }
+
+        // 1️⃣ Fetch blog by slug
+        const blog = await strapi.db.query('api::blog.blog').findOne({
+            where: {
+                slug,
+                publishedAt: { $notNull: true }, // only published
+            },
+        });
+
+        if (!blog) {
+            return ctx.notFound('Blog not found');
+        }
+
+
+        // find reaction
+        const existingReaction = await strapi.db
+            .query('api::reaction.reaction')
+            .findOne({
+                where: {
+                    user: user.id,
+                    blog: blog.id,
+                    documentId: documentId,
+                }
+            });
+
+        if (!existingReaction) {
+            return ctx.badRequest('Reaction not found');
+        }
+
+        // delete reaction
+        await strapi.db
+            .query('api::reaction.reaction')
+            .delete({
+                where: { documentId: documentId },
+            });
+
+        // 5️⃣ Return final response
+        return {
+            data: {
+                messate: "Reaction removed successfully"
+            },
+        };
     }
 }));
