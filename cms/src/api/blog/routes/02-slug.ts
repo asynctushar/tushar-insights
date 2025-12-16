@@ -1,6 +1,26 @@
 export default {
     routes: [
         {
+            method: 'DELETE',
+            path: '/blogs/:slug/comments/:documentId',
+            handler: 'blog.deleteComment',
+            config: {
+                auth: {
+                    strategies: ['users-permissions'] // authenticated users only
+                },
+            },
+        },
+        {
+            method: 'POST',
+            path: '/blogs/:slug/comments',
+            handler: 'blog.createComment',
+            config: {
+                auth: {
+                    strategies: ['users-permissions'] // authenticated users only
+                },
+            },
+        },
+        {
             method: 'PATCH',
             path: '/blogs/:slug/reactions/:documentId',
             handler: 'blog.updateBlogReaction',

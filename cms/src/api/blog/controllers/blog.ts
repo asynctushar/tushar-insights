@@ -19,7 +19,7 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
 
         const withExtras = await Promise.all(
             data.map(async (blog) => {
-                const blogId = blog.documentId;
+                const blogId = blog.id;
 
                 const commentsCount = await strapi.db.query('api::comment.comment').count({
                     where: { blog: blogId },
@@ -88,12 +88,12 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
             return ctx.notFound('Blog not found');
         }
 
-        const blogDocumentId = blog.documentId;
+        const blogId = blog.id;
 
         // 2️⃣ Fetch comments
         const comments = await strapi.db.query('api::comment.comment').findMany({
             where: {
-                blog: blogDocumentId,
+                blog: blogId,
                 publishedAt: { $notNull: true },
             },
             orderBy: { createdAt: 'asc' },
@@ -125,7 +125,7 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
         // 4️⃣ Fetch reactions
         const reactions = await strapi.db.query('api::reaction.reaction').findMany({
             where: {
-                blog: blogDocumentId,
+                blog: blogId,
                 publishedAt: { $notNull: true },
             },
         });
@@ -326,8 +326,141 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
         // 5️⃣ Return final response
         return {
             data: {
-                messate: "Reaction removed successfully"
+                message: "Reaction removed successfully"
             },
         };
-    }
+    },
+
+
+
+    // Normal comment creation
+    async createComment(ctx) {
+
+        const { slug } = ctx.params;
+        const user = ctx.state.user;
+
+        if (!user) {
+            return ctx.unauthorized('You must be logged in');
+        }
+
+        if (!slug) {
+            return ctx.badRequest('Slug is required');
+        }
+
+        if (!ctx.request.body?.desc || ctx.request.body?.desc?.length < 1) {
+            return ctx.badRequest("Please add description");
+        };
+
+        if (!ctx.request.body?.type || ctx.request.body.type !== "normal") {
+            return ctx.badRequest("Please add correct comment type.");
+        };
+
+        if (ctx.request.body.accountStatus === "banned") {
+            return ctx.badRequest("Banned user can't comment");
+        }
+
+        // 1️⃣ Fetch blog by slug
+        const blog = await strapi.db.query('api::blog.blog').findOne({
+            where: {
+                slug,
+                publishedAt: { $notNull: true }, // only published
+            },
+        });
+
+        if (!blog) {
+            return ctx.notFound('Blog not found');
+        }
+
+
+        // Create comment
+        const comment = await strapi.db
+            .query('api::comment.comment')
+            .create({
+                data: {
+                    blog: blog.id,
+                    user: user.id,
+                    type: ctx.request.body.type,
+                    desc: ctx.request.body.desc
+                },
+            });
+
+        // 5️⃣ Return final response
+        return {
+            data: {
+                comment,
+            },
+        };
+
+    },
+
+    // Normal comment Deletation
+    async deleteComment(ctx) {
+
+        const { slug, documentId } = ctx.params;
+        const user = ctx.state.user;
+
+        if (!user) {
+            return ctx.unauthorized('You must be logged in');
+        }
+
+        if (!slug) {
+            return ctx.badRequest('Slug is required');
+        }
+
+        if (ctx.request.body.accountStatus === "banned") {
+            return ctx.badRequest("Banned user can't comment");
+        }
+
+        // 1️⃣ Fetch blog by slug
+        const blog = await strapi.db.query('api::blog.blog').findOne({
+            where: {
+                slug,
+                publishedAt: { $notNull: true }, // only published
+            },
+        });
+
+        if (!blog) {
+            return ctx.notFound('Blog not found');
+        }
+
+
+        // Find comment
+        const comment = await strapi.db
+            .query('api::comment.comment')
+            .findOne({
+                where: {
+                    documentId: documentId,
+                    blog: blog.id,
+                    user: user.id,
+                    type: "normal"
+                }
+            });
+
+
+
+        if (!comment) {
+            return ctx.notFound('Commment not found');
+        }
+
+        // delete comment
+        await strapi.db
+            .query('api::comment.comment')
+            .delete({
+                where: {
+                    documentId: documentId,
+                    blog: blog.id,
+                    user: user.id,
+                    type: "normal"
+                }
+            });
+
+
+        // 5️⃣ Return final response
+        return {
+            data: {
+                message: "Comment removed successfully."
+            },
+        };
+
+    },
 }));
