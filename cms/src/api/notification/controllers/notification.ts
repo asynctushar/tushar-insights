@@ -11,14 +11,13 @@ export default factories.createCoreController('api::notification.notification', 
 
         if (!ctx.state.user) {
             return ctx.unauthorized('You must be logged in');
+
         }
 
         // Add user filter to the query
         ctx.query = {
             filters: {
-                user: {
-                    id: ctx.state.user.id,
-                },
+                user: ctx.state.user.id
             },
             populate: {
                 user: true,

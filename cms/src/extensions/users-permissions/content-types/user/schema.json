@@ -43,6 +43,7 @@
     },
     "password": {
       "type": "password",
+      "private": true,
       "minLength": 6
     },
     "confirmed": {

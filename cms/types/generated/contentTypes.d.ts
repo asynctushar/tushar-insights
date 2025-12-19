@@ -1383,6 +1383,7 @@ export interface PluginUsersPermissionsUser
     > &
       Schema.Attribute.Private;
     password: Schema.Attribute.Password &
+      Schema.Attribute.Private &
       Schema.Attribute.SetMinMaxLength<{
         minLength: 6;
       }>;
