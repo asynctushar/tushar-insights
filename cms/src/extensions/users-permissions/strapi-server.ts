@@ -41,6 +41,22 @@ export default (plugin) => {
             },
         });
 
+        //Create notification here (react) 
+        const notification = await strapi.db
+            .query('api::notification.notification')
+            .create({
+                data: {
+                    interactedBy: authUser.id,
+                    type: newStatus === "banned" ? "ban" : "unban",
+                    user: targetUser.id,
+                    desc: newStatus === "banned" ? `Your account was banned by ${authUser.fullName}.` : `Your account restriction was lifted by ${authUser.fullName}.`
+                },
+            });
+
+
+        // Websocket implementation here(to notification.user) 
+        console.log(notification);
+
         const schema = strapi.getModel('plugin::users-permissions.user');
         const sanitizedUser = await strapi.contentAPI.sanitize.output(updatedUser, schema);
 

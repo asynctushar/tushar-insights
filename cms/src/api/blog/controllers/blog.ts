@@ -162,6 +162,9 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
                 slug,
                 publishedAt: { $notNull: true }, // only published
             },
+            populate: {
+                user: true
+            }
         });
 
         if (!blog) {
@@ -193,6 +196,25 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
                     type: ctx.request.body.type,
                 },
             });
+
+
+
+        //Create notification here (react) 
+        const notification = await strapi.db
+            .query('api::notification.notification')
+            .create({
+                data: {
+                    blog: blog.id,
+                    interactedBy: user.id,
+                    type: "react",
+                    user: blog.user.id,
+                    desc: `${user.fullName} reacted to your blog`
+                },
+            });
+
+
+        // Websocket implementation here(to notification.user) 
+        console.log(notification);
 
         // 5️⃣ Return final response
         return {
@@ -294,6 +316,9 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
                 slug,
                 publishedAt: { $notNull: true }, // only published
             },
+            populate: {
+                user: true
+            }
         });
 
         if (!blog) {
@@ -322,6 +347,23 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
             .delete({
                 where: { documentId: documentId },
             });
+
+        //Create notification here (unreact) 
+        const notification = await strapi.db
+            .query('api::notification.notification')
+            .create({
+                data: {
+                    blog: blog.id,
+                    interactedBy: user.id,
+                    type: "unreact",
+                    user: blog.user.id,
+                    desc: `${user.fullName} removed their reaction from your blog`
+                },
+            });
+
+
+        // Websocket implementation here(to notification.user) 
+        console.log(notification);
 
         // 5️⃣ Return final response
         return {
@@ -365,6 +407,9 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
                 slug,
                 publishedAt: { $notNull: true }, // only published
             },
+            populate: {
+                user: true
+            }
         });
 
         if (!blog) {
@@ -383,6 +428,23 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
                     desc: ctx.request.body.desc
                 },
             });
+
+        //Create notification here (comment) 
+        const notification = await strapi.db
+            .query('api::notification.notification')
+            .create({
+                data: {
+                    blog: blog.id,
+                    interactedBy: user.id,
+                    type: "comment",
+                    user: blog.user.id,
+                    desc: `${user.fullName} commented on your blog`
+                },
+            });
+
+
+        // Websocket implementation here(to notification.user) 
+        console.log(notification);
 
 
 
@@ -455,6 +517,23 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
                     type: "normal"
                 }
             });
+
+        //Create notification here (react) 
+        const notification = await strapi.db
+            .query('api::notification.notification')
+            .create({
+                data: {
+                    blog: blog.id,
+                    interactedBy: user.id,
+                    type: "deleteComment",
+                    user: blog.user.id,
+                    desc: `Your comment was removed by ${user.fullName}.`
+                },
+            });
+
+
+        // Websocket implementation here(to notification.user) 
+        console.log(notification);
 
 
         // 5️⃣ Return final response
