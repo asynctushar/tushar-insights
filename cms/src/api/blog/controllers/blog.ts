@@ -64,20 +64,32 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
 
     async findBySlug(ctx) {
         const { slug } = ctx.params;
+        const { locale } = ctx.query; // 👈 important
 
         if (!slug) {
             return ctx.badRequest('Slug is required');
         }
 
-        // 1️⃣ Fetch blog by slug
+        // Default locale if not provided
+        const requestedLocale = locale || 'en';
+
+        // Fetch blog by slug + locale (NO FALLBACK)
         const blog = await strapi.db.query('api::blog.blog').findOne({
             where: {
                 slug,
-                publishedAt: { $notNull: true }, // only published
+                locale: requestedLocale,        // 👈 THIS IS THE FIX
+                publishedAt: { $notNull: true },
             },
             populate: {
                 cover: {
-                    select: ['url', 'name', 'width', 'height', 'alternativeText', 'ext'],
+                    select: [
+                        'url',
+                        'name',
+                        'width',
+                        'height',
+                        'alternativeText',
+                        'ext',
+                    ],
                 },
                 user: true,
                 category: true,
@@ -95,6 +107,9 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
             where: {
                 blog: blogId,
                 publishedAt: { $notNull: true },
+            },
+            populate: {
+                user: true
             },
             orderBy: { createdAt: 'asc' },
         });
@@ -457,7 +472,7 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
 
     },
 
-    // Normal comment Deletation
+    // Normal comment Deletation (user)
     async deleteComment(ctx) {
 
         const { slug, documentId } = ctx.params;
@@ -471,8 +486,8 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
             return ctx.badRequest('Slug is required');
         }
 
-        if (ctx.request.body.accountStatus === "banned") {
-            return ctx.badRequest("Banned user can't comment");
+        if (user.accountStatus === "banned") {
+            return ctx.badRequest("Banned user can't delete comment");
         }
 
         // 1️⃣ Fetch blog by slug
@@ -497,6 +512,9 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
                     blog: blog.id,
                     user: user.id,
                     type: "normal"
+                },
+                populate: {
+                    user: true
                 }
             });
 
@@ -504,6 +522,11 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
 
         if (!comment) {
             return ctx.notFound('Commment not found');
+        }
+
+        // 4️⃣ Check ownership - user can only delete their own comments
+        if (comment.user.id !== user.id) {
+            return ctx.forbidden('You can only delete your own comments');
         }
 
         // delete comment

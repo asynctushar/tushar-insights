@@ -82,7 +82,6 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
         const commentId = ctx.params.id;
 
         try {
-        
 
             // 2️⃣ Find the comment with user relation
             const comment = await strapi.db.query('api::comment.comment').findOne({
@@ -94,11 +93,6 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
                 return ctx.notFound('Comment not found');
             }
 
-
-            // 4️⃣ Check ownership - user can only delete their own comments
-            if (comment.user.id !== user.id) {
-                return ctx.forbidden('You can only delete your own comments');
-            }
 
             // 5️⃣ If it's a "normal" comment, delete all its replies first
             if (comment.type === 'normal') {
