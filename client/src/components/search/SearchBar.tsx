@@ -7,6 +7,9 @@ import { Button } from '@/components/ui/button';
 import SearchButton from './SearchButton';
 import SearchInput from './SearchInput';
 import SearchSuggestions from './SearchSuggestions';
+import { searchBlogSuggestions } from '@/services/blog.service';
+import { BlogSuggestion } from '@/types/blog.type';
+
 
 interface SearchBarProps {
     isMobile?: boolean;
@@ -19,7 +22,7 @@ const SearchBar = ({ isMobile = false }: SearchBarProps) => {
 
     const [value, setValue] = useState('');
     const [isExpanded, setIsExpanded] = useState(false);
-    const [suggestions, setSuggestions] = useState<string[]>([]);
+    const [suggestions, setSuggestions] = useState<BlogSuggestion[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(false);
 
@@ -57,16 +60,9 @@ const SearchBar = ({ isMobile = false }: SearchBarProps) => {
         const timer = setTimeout(async () => {
             try {
                 // TODO: Replace with actual API call
-                // import { blogService } from '@/lib/services/blog.service';
-                // const results = await blogService.searchSuggestions(value, lang);
-                // setSuggestions(results);
+                const results = await searchBlogSuggestions(value, lang);
 
-                // Mock suggestions for now
-                setSuggestions([
-                    `${value} tutorial`,
-                    `${value} guide`,
-                    `${value} best practices`,
-                ]);
+                setSuggestions(results);
                 setShowSuggestions(true);
             } catch (error) {
                 console.error('Failed to fetch suggestions:', error);
@@ -79,6 +75,7 @@ const SearchBar = ({ isMobile = false }: SearchBarProps) => {
         return () => {
             clearTimeout(timer);
             setIsLoading(false);
+            setSuggestions([]);
         };
     }, [value, lang]);
 
@@ -94,16 +91,15 @@ const SearchBar = ({ isMobile = false }: SearchBarProps) => {
         setShowSuggestions(false);
     };
 
-    const handleSuggestionClick = (suggestion: string) => {
-        setValue(suggestion);
+    const handleSuggestionClick = (suggestion: BlogSuggestion) => {
+        setValue(suggestion.title);
         setShowSuggestions(false);
 
         const params = new URLSearchParams();
-        params.set('q', suggestion);
+        params.set('q', suggestion.title);
         if (lang !== 'en') params.set('lang', lang);
 
         router.push(`/search?${params.toString()}`);
-        setIsExpanded(false);
     };
 
     const handleClear = () => {

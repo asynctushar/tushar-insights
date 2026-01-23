@@ -33,3 +33,11 @@ export interface Blog {
     locale: 'en' | 'bn';
 }
 
+export interface BlogSuggestion {
+    id: string;
+    documentId: string;
+    title: string;
+    slug: string;
+    desc: string;
+    locale: 'en' | 'bn';
+}

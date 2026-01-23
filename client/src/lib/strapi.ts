@@ -19,15 +19,13 @@ export const strapiClient = async <T = any>(
 
     const fullUrl = new URL(
         url,
-        process.env.STRAPI_URL // ensures proper joining
+        process.env.NEXT_PUBLIC_STRAPI_API_URL // ensures proper joining
     );
 
     // Locale handling (i18n)
     if (options?.lang) {
         fullUrl.searchParams.set('locale', options.lang);
     }
-
-
 
     const res = await fetch(fullUrl.toString(), {
         headers: {

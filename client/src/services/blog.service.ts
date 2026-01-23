@@ -10,6 +10,15 @@ export const getFeaturedBlogs = async (lang?: string) => {
 };
 
 
+export const searchBlogSuggestions = async (query: string, lang?: string) => {
+    const res = await strapiClient(
+        `/api/blogs/search?query=${encodeURIComponent(query)}`,
+        { lang: lang ?? "en", cache: "no-store" }
+    );
+
+    return res.data;
+};
+
 export const searchBlogs = async (query: string, lang?: string) => {
     const res = await strapiClient(
         `/api/blogs?filters[title][$containsi]=${encodeURIComponent(query)}`,

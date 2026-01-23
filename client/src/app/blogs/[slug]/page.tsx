@@ -39,7 +39,7 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
     return (
         <div>
             <div>
-                <Image src={`${process.env.STRAPI_URL}${blog.cover.url}`} alt={blog.cover.name} width={blog.cover.width} height={blog.cover.width} />
+                <Image src={`${process.env.NEXT_PUBLIC_STRAPI_API_URL}${blog.cover.url}`} alt={blog.cover.name} width={blog.cover.width} height={blog.cover.width} />
                 <h2>{blog.title}</h2>
                 <div>
                     <Badge asChild>

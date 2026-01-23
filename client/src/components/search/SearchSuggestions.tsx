@@ -1,11 +1,12 @@
 "use client";
 
+import { BlogSuggestion } from '@/types/blog.type';
 import { Search } from 'lucide-react';
 
 interface SearchSuggestionsProps {
-    suggestions: string[];
+    suggestions: BlogSuggestion[];
     show: boolean;
-    onSelect: (suggestion: string) => void;
+    onSelect: (suggestion: BlogSuggestion) => void;
     isMobile?: boolean;
 }
 
@@ -19,10 +20,10 @@ const SearchSuggestions = ({ suggestions, show, onSelect, isMobile = false }: Se
                     key={index}
                     type="button"
                     onClick={() => onSelect(suggestion)}
-                    className="w-full px-4 py-3 text-left hover:bg-accent transition-colors flex items-center gap-2"
+                    className="w-full px-4 py-3 text-left hover:bg-accent transition-colors flex items-center gap-2 cursor-pointer"
                 >
                     <Search className="h-4 w-4 text-muted-foreground shrink-0" />
-                    <span className="text-sm">{suggestion}</span>
+                    <span className="text-sm">{suggestion.title}</span>
                 </button>
             ))}
         </div>
