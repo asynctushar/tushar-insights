@@ -1,4 +1,5 @@
 import { User } from '@/types/user.type';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface UserCardProps {
     user: User;
@@ -6,15 +7,38 @@ interface UserCardProps {
 }
 
 const UserCard = ({ user, time }: UserCardProps) => {
-    return (
-        <div className="flex gap-1">
-            {/* shadcn avatar either with blog.user.name 2 keyword or blog.user.profilePic */}
-            <div>
+    const getInitials = (name: string) => {
+        return name
+            .split(' ')
+            .map(n => n[0])
+            .join('')
+            .toUpperCase()
+            .slice(0, 2);
+    };
 
-                <h5>
-                    {user.fullName ?? user.username}
-                </h5>
-                {time && <span>{time.toString()}</span>}
+    const displayName = user.fullName ?? user.username;
+    const avatarUrl = user.profilePic
+        ? `${process.env.NEXT_PUBLIC_STRAPI_API_URL}${user.profilePic}`
+        : undefined;
+
+    return (
+        <div className="flex items-center gap-2">
+            <Avatar className="h-12 w-12">
+                {avatarUrl && <AvatarImage src={avatarUrl} alt={displayName} />}
+                <AvatarFallback className="text-xs">
+                    {getInitials(displayName)}
+                </AvatarFallback>
+            </Avatar>
+
+            <div className="flex flex-col">
+                <span className="text-sm font-medium leading-none">
+                    {displayName}
+                </span>
+                {time && (
+                    <span className="text-xs text-muted-foreground">
+                        {new Date(time).toLocaleDateString()}
+                    </span>
+                )}
             </div>
         </div>
     );

@@ -23,9 +23,7 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
     const { lang } = await searchParams;
     const { slug } = await params;
     const user = await getMe();
-
     const blog: IBlog = await getBlog(slug, lang);
-    console.log(user);
 
     if (!blog) {
         return <div>

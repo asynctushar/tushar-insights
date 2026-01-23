@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 
-const STRAPI_URL = process.env.STRAPI_URL!;
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL!;
 
 type GoogleCallbackParams = Record<string, string>;
 

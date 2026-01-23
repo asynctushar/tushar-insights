@@ -1,4 +1,4 @@
-import BlogItem from "@/components/blog/BlogItem";
+import BlogItem from "@/components/blog/BlogCard";
 import { Button } from "@/components/ui/button";
 import { getBlogCategories, getBlogs } from "@/services/blog.service";
 import { Blog, Category } from "@/types/blog.type";
