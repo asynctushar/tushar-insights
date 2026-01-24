@@ -9,6 +9,11 @@ import Link from "next/link";
 import CommentItem from "./CommentItem";
 import UserCard from "@/components/user/UserCard";
 import { getMe } from "@/services/auth.service";
+import { formatDistanceToNow } from "date-fns";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+import remarkBreaks from "remark-breaks";
 
 type BlogProps = {
     searchParams: {
@@ -24,6 +29,7 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
     const { slug } = await params;
     const user = await getMe();
     const blog: IBlog = await getBlog(slug, lang);
+    const categoryUrl = `/blogs?category=${blog.category.documentId}&lang=${blog.locale}`;
 
     if (!blog) {
         return <div>
@@ -38,22 +44,44 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
         <div>
             <div>
                 <Image src={`${process.env.NEXT_PUBLIC_STRAPI_API_URL}${blog.cover.url}`} alt={blog.cover.name} width={blog.cover.width} height={blog.cover.width} />
-                <h2>{blog.title}</h2>
-                <div>
-                    <Badge asChild>
-                        <Link href={`/blogs?category=${blog.category.documentId}&lang=${lang}`}>
-                            {blog.category.title}
-                        </Link>
+                <h2 className="text-3xl font-semibold line-clamp-2">
+                    {blog.title}
+                </h2>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
+                    <Badge className="bg-primary/90 rounded-sm" asChild>
+                        <Link href={categoryUrl}>{blog.category.title}</Link>
                     </Badge>
-                    <span>{blog.createdAt.toString()}</span>
+                    <span>{formatDistanceToNow(new Date(blog.createdAt), { addSuffix: true })}</span>
                 </div>
-                <div>
-                    {blog.desc}
+                {/* Markdown preview */}
+                <div className="rich-text">
+                    <ReactMarkdown
+                        remarkPlugins={[remarkGfm, remarkBreaks]}
+                        rehypePlugins={[rehypeRaw]}
+                        components={{
+                            a: ({ href, children }) => (
+                                <Link href={href ?? "#"} className="text-primary underline underline-offset-2">
+                                    {children}
+                                </Link>
+                            ),
+
+                            img: ({ src, alt }) => {
+                                if (!src || typeof src !== "string") return null;
+                                if (!alt) return null;
+
+                                return <Image src={src} alt={alt} />;
+                            }
+                        }}
+                    >
+                        {blog.desc}
+                    </ReactMarkdown>
                 </div>
             </div>
             <Card className="flex justify-between items-center">
                 <UserCard user={blog.user} />
                 <div className="flex gap-1 items-center">
+
+                    {/* later as these are complex */}
                     {/* React button(if use authenticated, oncliking it opens react menu), {reactions button(show top three react type emoji, clicking opens a menu)}, share button */}
                 </div>
             </Card>

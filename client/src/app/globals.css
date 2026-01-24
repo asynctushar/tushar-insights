@@ -131,19 +131,32 @@
 
   /* Headings */
   .rich-text h1 {
-    @apply text-base font-semibold text-foreground mb-1;
+    @apply text-xl font-bold text-foreground mb-3 mt-4 first:mt-0;
   }
 
   .rich-text h2 {
-    @apply text-sm font-semibold text-foreground mb-1;
+    @apply text-lg font-bold text-foreground mb-2 mt-3;
   }
 
   .rich-text h3 {
-    @apply text-sm font-medium text-foreground;
+    @apply text-base font-semibold text-foreground mb-2 mt-3;
   }
 
   .rich-text h4 {
-    @apply text-sm font-medium text-foreground/80;
+    @apply text-sm font-semibold text-foreground mb-1 mt-2;
+  }
+
+  .rich-text h5 {
+    @apply text-sm font-medium text-foreground mb-1 mt-2;
+  }
+
+  .rich-text h6 {
+    @apply text-sm font-medium text-foreground/90 mb-1 mt-2;
+  }
+
+  /* Paragraphs */
+  .rich-text p {
+    @apply mb-3 last:mb-0;
   }
 
   /* Text styles */
@@ -156,54 +169,121 @@
   }
 
   .rich-text u {
-    text-decoration: underline;
+    @apply underline underline-offset-2;
   }
 
   .rich-text del {
-    @apply line-through;
+    @apply line-through opacity-70;
+  }
+
+  .rich-text mark {
+    @apply bg-yellow-200 dark:bg-yellow-800 px-1 rounded;
   }
 
   /* Lists */
   .rich-text ul {
-    @apply list-disc pl-5 my-2;
+    @apply list-disc pl-6 mb-3 space-y-1;
   }
 
   .rich-text ol {
-    @apply list-decimal pl-5 my-2;
+    @apply list-decimal pl-6 mb-3 space-y-1;
+  }
+
+  .rich-text li {
+    @apply text-foreground;
+  }
+
+  .rich-text li > p {
+    @apply mb-1;
+  }
+
+  /* Nested lists */
+  .rich-text ul ul,
+  .rich-text ol ol,
+  .rich-text ul ol,
+  .rich-text ol ul {
+    @apply mt-1 mb-0;
   }
 
   /* Links */
   .rich-text a {
-    @apply text-primary underline underline-offset-2;
+    @apply text-primary hover:text-primary/80 underline underline-offset-2 transition-colors;
   }
 
-  /* Code blocks */
-  .rich-text pre {
-    @apply bg-muted text-foreground text-xs rounded-md p-2 my-2 overflow-hidden;
-  }
-
+  /* Code */
   .rich-text code {
-    @apply font-mono;
+    @apply font-mono text-xs bg-muted px-1.5 py-0.5 rounded;
+  }
+
+  .rich-text pre {
+    @apply bg-muted text-foreground text-xs rounded-md p-3 mb-3 overflow-x-auto;
+  }
+
+  .rich-text pre code {
+    @apply bg-transparent p-0;
   }
 
   /* Blockquotes */
   .rich-text blockquote {
-    @apply border-l-2 border-primary pl-3 italic text-muted-foreground my-2;
+    @apply border-l-4 border-primary/50 pl-4 py-1 italic text-muted-foreground mb-3 bg-muted/30 rounded-r-md;
   }
 
-  /* Blog card clamp */
+  .rich-text blockquote p {
+    @apply mb-2 last:mb-0;
+  }
+
+  /* Tables */
+  .rich-text table {
+    @apply w-full border-collapse mb-3 text-sm;
+  }
+
+  .rich-text th {
+    @apply bg-muted font-semibold text-left p-2 border border-border;
+  }
+
+  .rich-text td {
+    @apply p-2 border border-border;
+  }
+
+  /* Horizontal rule */
+  .rich-text hr {
+    @apply my-4 border-border;
+  }
+
+  /* Images in full content */
+  .rich-text img {
+    @apply rounded-md my-3 max-w-full h-auto;
+  }
+
+  /* Blog card specific - clamp and hide media */
   .blog-card-desc {
     display: -webkit-box;
-    line-clamp: 6;
-    -webkit-line-clamp: 6;
+    line-clamp: 4;
+    -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
 
-  /* Prevent media breaking cards */
   .blog-card-desc img,
-  .blog-card-desc pre {
-    display: none;
+  .blog-card-desc pre,
+  .blog-card-desc blockquote,
+  .blog-card-desc table,
+  .blog-card-desc hr {
+    @apply hidden;
+  }
+
+  .blog-card-desc h1,
+  .blog-card-desc h2,
+  .blog-card-desc h3,
+  .blog-card-desc h4,
+  .blog-card-desc h5,
+  .blog-card-desc h6 {
+    @apply text-sm font-medium mt-0 mb-1;
+  }
+
+  .blog-card-desc ul,
+  .blog-card-desc ol {
+    @apply mb-1;
   }
 }
 

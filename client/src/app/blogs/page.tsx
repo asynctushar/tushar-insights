@@ -26,10 +26,10 @@ const Blogs = async ({ searchParams }: BlogsProps) => {
     }, lang);
 
     return (
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-4 sm:space-y-6">
             {/* Hero Section */}
             <Card className="bg-linear-to-r from-primary to-primary/90 border-none">
-                <CardContent className="p-8 sm:p-12 space-y-2 text-left text-primary-foreground">
+                <CardContent className="p-6 sm:p-12 space-y-2 text-left text-primary-foreground">
                     <h1 className="text-3xl sm:text-4xl font-bold">Blogs</h1>
                     <p className="max-w-2xl">
                         Explore insights across technology, poems, novels, and more.
@@ -38,8 +38,8 @@ const Blogs = async ({ searchParams }: BlogsProps) => {
             </Card>
 
             {/* Filters */}
-            <Card>
-                <CardContent className="p-4 sm:p-6 space-y-4">
+            <Card className="py-6 sm:py-8">
+                <CardContent className="space-y-4 px-6 sm:px-12">
                     <CategoryFilter categories={categories} lang={lang} currentCategory={category} />
                     <hr />
                     <SortBy />

@@ -22,6 +22,7 @@ const CategoryFilter = ({ categories, lang, currentCategory }: CategoryFilterPro
             <Button
                 asChild
                 variant={!currentCategory ? "default" : "outline"}
+                className="border"
             >
                 <Link href={createUrl()}>
                     All
@@ -32,6 +33,7 @@ const CategoryFilter = ({ categories, lang, currentCategory }: CategoryFilterPro
                     key={category.documentId}
                     asChild
                     variant={currentCategory === category.documentId ? "default" : "outline"}
+                    className="border"
                 >
                     <Link href={createUrl(category.documentId)}>
                         {category.title}

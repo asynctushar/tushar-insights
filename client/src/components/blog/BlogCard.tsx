@@ -5,7 +5,10 @@ import Image from "next/image";
 import Link from "next/link";
 import UserCard from "@/components/user/UserCard";
 import { formatDistanceToNow } from "date-fns";
-import { marked } from "marked";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+import remarkBreaks from "remark-breaks";
 
 interface BlogCardProps {
     blog: Blog;
@@ -15,11 +18,10 @@ const BlogCard = ({ blog }: BlogCardProps) => {
     const blogUrl = `/blogs/${blog.slug}${blog.locale === "bn" ? `?lang=${blog.locale}` : ""}`;
     const categoryUrl = `/blogs?category=${blog.category.documentId}&lang=${blog.locale}`;
 
-    const descHtml = marked.parse(blog.desc ?? "", { breaks: true });
 
     return (
         <Card className="shadow-md">
-            <CardContent className="">
+            <CardContent >
                 <div className="flex flex-col sm:flex-row gap-4">
                     {/* Image */}
                     <div className="relative w-full sm:w-1/3 aspect-video shrink-0 rounded-md overflow-hidden">
@@ -47,10 +49,21 @@ const BlogCard = ({ blog }: BlogCardProps) => {
                         </div>
 
                         {/* Markdown preview */}
-                        <div
-                            className="rich-text blog-card-desc"
-                            dangerouslySetInnerHTML={{ __html: descHtml }}
-                        />
+                        <div className="rich-text blog-card-desc">
+                            <ReactMarkdown
+                                remarkPlugins={[remarkGfm, remarkBreaks]}
+                                rehypePlugins={[rehypeRaw]}
+                                components={{
+                                    a: ({ href, children }) => (
+                                        <Link href={href ?? "#"} className="text-primary underline underline-offset-2">
+                                            {children}
+                                        </Link>
+                                    )
+                                }}
+                            >
+                                {blog.desc}
+                            </ReactMarkdown>
+                        </div>
                     </div>
                 </div>
 
