@@ -33,8 +33,6 @@ const LanguageToggle = () => {
         router.push(`${pathname}?${params.toString()}`);
     };
 
-    const currentLanguage = languages.find(l => l.code === currentLang) || languages[0];
-
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>

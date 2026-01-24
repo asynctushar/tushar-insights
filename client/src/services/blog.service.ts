@@ -3,7 +3,7 @@ import { strapiClient } from '@/lib/strapi';
 export const getFeaturedBlogs = async (lang?: string) => {
     const res = await strapiClient(
         '/api/blogs?filters[featured]=true',
-        { lang: lang ?? 'en', cache: "no-store" }
+        { lang: lang ?? 'en' }
     );
 
     return res.data;
@@ -13,7 +13,7 @@ export const getFeaturedBlogs = async (lang?: string) => {
 export const searchBlogSuggestions = async (query: string, lang?: string) => {
     const res = await strapiClient(
         `/api/blogs/search?query=${encodeURIComponent(query)}`,
-        { lang: lang ?? "en", cache: "no-store" }
+        { lang: lang ?? "en", }
     );
 
     return res.data;
@@ -22,7 +22,7 @@ export const searchBlogSuggestions = async (query: string, lang?: string) => {
 export const searchBlogs = async (query: string, lang?: string) => {
     const res = await strapiClient(
         `/api/blogs?filters[title][$containsi]=${encodeURIComponent(query)}`,
-        { lang: lang ?? "en", cache: "no-store" }
+        { lang: lang ?? "en" }
     );
 
     return res.data;
@@ -31,23 +31,43 @@ export const searchBlogs = async (query: string, lang?: string) => {
 export const getBlogCategories = async (lang?: string) => {
     const res = await strapiClient(
         `/api/categories`,
-        { lang: lang ?? "en", cache: "no-store" }
+        { lang: lang ?? "en" }
     );
 
     return res.data;
 };
 
 export const getBlogs = async (
-    category: {
+    options: {
         documentId?: string;
-    },
-    lang?: string) => {
+        sort?: string;
+        page?: number;
+        pageSize?: number;
+    } = {},
+    lang?: string
+) => {
+    const { documentId, sort = "title:asc", page = 1, pageSize = 10 } = options;
+
+    const params = new URLSearchParams();
+
+    if (documentId) {
+        params.append("filters[category][documentId]", documentId);
+    }
+
+    params.append("pagination[page]", page.toString());
+    params.append("pagination[pageSize]", pageSize.toString());
+    params.append("sort", sort);
+
     const res = await strapiClient(
-        `/api/blogs${category.documentId ? `?filters[category][documentId]=${encodeURIComponent(category.documentId)}` : ''}`,
-        { lang: lang ?? "en", cache: "no-store" }
+        `/api/blogs?${params.toString()}`,
+        { lang: lang ?? "en" }
     );
 
-    return res.data;
+
+    return {
+        blogs: res.data,
+        pagination: res.meta?.pagination || null,
+    };
 };
 
 export const getBlog = async (slug: string, lang?: string) => {

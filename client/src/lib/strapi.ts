@@ -10,6 +10,7 @@ type StrapiClientResponse<T> = {
     ok: boolean;
     status: number;
     data: T | null;
+    meta: T | null;
 };
 
 export const strapiClient = async <T = any>(
@@ -44,6 +45,7 @@ export const strapiClient = async <T = any>(
             ok: false,
             status: res.status,
             data: null,
+            meta: null
         };
     }
 
@@ -53,5 +55,6 @@ export const strapiClient = async <T = any>(
         ok: true,
         status: res.status,
         data: json?.data ?? null, // normalize Strapi response
+        meta: json?.meta
     };
 };

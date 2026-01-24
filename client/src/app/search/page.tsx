@@ -1,6 +1,6 @@
-import BlogItem from "@/components/blog/BlogCard";
+import BlogCard from "@/components/blog/BlogCard";
 import { Button } from "@/components/ui/button";
-import { getFeaturedBlogs, searchBlogs } from "@/services/blog.service";
+import { searchBlogs } from "@/services/blog.service";
 import { Blog } from "@/types/blog.type";
 import Link from "next/link";
 
@@ -26,19 +26,21 @@ const Search = async ({ searchParams }: SearchProps) => {
     const blogs: Blog[] = await searchBlogs(query, lang);
 
     return (
-        <div className="container mx-auto py-6">
-            <h3 className="text-xl font-semibold mb-4">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <h1 className="text-2xl font-bold mb-6">
                 {`Search results for ${query}`}
-            </h3>
+            </h1>
 
             {blogs.length > 0 ? (
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div className="flex flex-col gap-6">
                     {blogs.map((blog) => (
-                        <BlogItem key={blog.id} blog={blog} />
+                        <BlogCard key={blog.id} blog={blog} />
                     ))}
                 </div>
             ) : (
-                <h4>No blogs found.</h4>
+                <div className="text-center py-12">
+                    <p className="text-muted-foreground">No blogs found.</p>
+                </div>
             )}
         </div>
     );

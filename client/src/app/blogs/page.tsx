@@ -1,80 +1,68 @@
-import BlogItem from "@/components/blog/BlogCard";
-import { Button } from "@/components/ui/button";
+import BlogCard from "@/components/blog/BlogCard";
+import CategoryFilter from "@/components/blog/CategoryFilter";
+import Pagination from "@/components/blog/Pagination";
+import SortBy from "@/components/blog/SortBy";
+import { Card, CardContent } from "@/components/ui/card";
 import { getBlogCategories, getBlogs } from "@/services/blog.service";
 import { Blog, Category } from "@/types/blog.type";
-import Link from "next/link";
 
 type BlogsProps = {
     searchParams: {
         lang?: string;
         category?: string;
+        sort?: string;
+        page?: string;
     };
 };
 
 const Blogs = async ({ searchParams }: BlogsProps) => {
-    const { lang, category } = await searchParams;
-
+    const { lang, category, sort, page } = await searchParams;
 
     const categories: Category[] = await getBlogCategories(lang);
-    const blogs: Blog[] = await getBlogs({ documentId: category }, lang);
-
+    const { blogs, pagination } = await getBlogs({
+        documentId: category,
+        sort,
+        page: page ? parseInt(page) : 1
+    }, lang);
 
     return (
-        <div className="py-4 max-w-7xl mx-auto flex flex-col gap-4">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+            {/* Hero Section */}
+            <Card className="bg-linear-to-r from-primary to-primary/90 border-none">
+                <CardContent className="p-8 sm:p-12 space-y-2 text-left text-primary-foreground">
+                    <h1 className="text-3xl sm:text-4xl font-bold">Blogs</h1>
+                    <p className="max-w-2xl">
+                        Explore insights across technology, poems, novels, and more.
+                    </p>
+                </CardContent>
+            </Card>
 
-            {/* it would be a card of shadcn */}
-            <div className="flex flex-col justify-center bg-linear-0 bg-primary">
-                <h2>Blogs</h2>
-                <p>Explore insights across technology, poems, novels, and more.</p>
-            </div>
+            {/* Filters */}
+            <Card>
+                <CardContent className="p-4 sm:p-6 space-y-4">
+                    <CategoryFilter categories={categories} lang={lang} currentCategory={category} />
+                    <hr />
+                    <SortBy />
+                </CardContent>
+            </Card>
 
-            {/* it would be a card of shadcn */}
-            <div className="flex flex-col gap-4">
-                <div className="flex flex-wrap gap-2">
-                    {/* List All categories and All. Clicking each item will filter the blogs, all will fetch all blogs */}
-                    <Button asChild>
-                        <Link href={`/blogs${lang === "bn" ? `?lang=${lang}` : ""}`}>
-                            All
-                        </Link>
-                    </Button>
-                    {categories.map((category) =>
-                        <Button key={category.documentId} asChild>
-                            <Link href={`/blogs?category=${category.documentId}${lang === "bn" ? `&lang=${lang}` : ""}`}>
-                                {category.title}
-                            </Link>
-                        </Button>
-                    )}
-                </div>
-                <hr />
-                <div className="flex justify-end">
-                    sort by
-                    {/* Here select options, default Title (A to Z) */}
-                </div>
-            </div>
-
-            {/* blog lists */}
+            {/* Blog Lists */}
             <div>
                 {blogs.length > 0 ? (
-                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                        {blogs.map((blog) => (
-                            <BlogItem key={blog.documentId} blog={blog} />
+                    <div className="flex flex-col gap-6">
+                        {blogs.map((blog: Blog) => (
+                            <BlogCard key={blog.id} blog={blog} />
                         ))}
                     </div>
                 ) : (
-                    <h4>No blogs found.</h4>
+                    <div className="text-center py-12">
+                        <p className="text-muted-foreground">No blogs found.</p>
+                    </div>
                 )}
             </div>
 
-            {/* Paginations here */}
-            <div>
-                <Button>Prev</Button>
-                <Button>1</Button>
-                <Button>2</Button>
-                <Button>3</Button>
-                <Button>4</Button>
-                <span>...</span>
-                <Button>Next</Button>
-            </div>
+            {/* Pagination */}
+            <Pagination pagination={pagination} />
         </div>
     );
 };
