@@ -11,7 +11,7 @@ interface CommentItemProps {
 
 const CommentItem = ({ comment, user }: CommentItemProps) => {
     return (
-        <div>
+        <div className='space-y-4'>
             <div className='flex justify-between items-center'>
                 <UserCard user={comment.user} time={comment.createdAt} />
 
@@ -31,10 +31,14 @@ const CommentItem = ({ comment, user }: CommentItemProps) => {
                     </Button>
                 </div>
             )}
-            <hr />
-            <div className='w-3/4 ms-auto'>
-                {comment.replies.length > 0 && comment.replies.map((reply) => <CommentItem comment={reply} key={reply.documentId} />)}
-            </div>
+            {comment.replies.length > 0 && (
+                <>
+                    <hr />
+                    <div className='w-3/4 ms-auto'>
+                        {comment.replies.map((reply) => <CommentItem comment={reply} key={reply.documentId} />)}
+                    </div>
+                </>
+            )}
         </div>
     );
 };

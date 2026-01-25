@@ -4,9 +4,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 interface UserCardProps {
     user: User;
     time?: Date;
+    name?: boolean;
 }
 
-const UserCard = ({ user, time }: UserCardProps) => {
+const UserCard = ({ user, time, name = true }: UserCardProps) => {
     const getInitials = (name: string) => {
         return name
             .split(' ')
@@ -31,9 +32,11 @@ const UserCard = ({ user, time }: UserCardProps) => {
             </Avatar>
 
             <div className="flex flex-col">
-                <span className="text-sm font-medium leading-none">
-                    {displayName}
-                </span>
+                {name && (
+                    <span className="text-sm font-medium leading-none">
+                        {displayName}
+                    </span>
+                )}
                 {time && (
                     <span className="text-xs text-muted-foreground">
                         {new Date(time).toLocaleDateString()}

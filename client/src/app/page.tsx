@@ -27,7 +27,7 @@ const Home = async ({ searchParams }: HomeProps) => {
                 </div>
             ) : (
                 <div className="text-center py-12">
-                    <p className="text-muted-foreground">No blogs found.</p>
+                    <p className="text-muted-foreground">No Featured blogs found.</p>
                 </div>
             )}
         </div>
