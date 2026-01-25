@@ -82,3 +82,26 @@ export const getBlog = async (slug: string, lang?: string) => {
 
     return res.data;
 };
+
+export const createComment = async (
+    jwt: string,
+    slug: string,
+    data: {
+        type: string;
+        desc: string;
+    }
+) => {
+
+    const res = await strapiClient(`/api/blogs/${slug}/comments`, {
+        method: 'POST',
+        body: data,
+        token: jwt,
+        cache: 'no-store',
+    });
+
+    if (!res.ok) {
+        throw new Error(res.error?.message || 'Failed to create comment');
+    }
+
+    return res.data;
+};

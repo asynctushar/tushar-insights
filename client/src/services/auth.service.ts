@@ -34,6 +34,12 @@ export async function setAuthCookie(jwt: string) {
     });
 }
 
+export async function removeAuthCookie() {
+    const cookieStore = await cookies();
+
+    cookieStore.delete("jwt");
+}
+
 export async function setRedirectCookie(url: string) {
     const cookieStore = await cookies();
 
