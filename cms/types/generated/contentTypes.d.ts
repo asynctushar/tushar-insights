@@ -643,7 +643,7 @@ export interface ApiCommentComment extends Struct.CollectionTypeSchema {
     singularName: 'comment';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     blog: Schema.Attribute.Relation<'oneToOne', 'api::blog.blog'>;
@@ -654,7 +654,7 @@ export interface ApiCommentComment extends Struct.CollectionTypeSchema {
     desc: Schema.Attribute.Text &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
-        maxLength: 30;
+        maxLength: 100;
         minLength: 5;
       }>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -686,7 +686,7 @@ export interface ApiNotificationNotification
     singularName: 'notification';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   pluginOptions: {
     i18n: {
@@ -699,13 +699,6 @@ export interface ApiNotificationNotification
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    desc: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
     interacted_by: Schema.Attribute.Relation<
       'oneToOne',
       'plugin::users-permissions.user'
@@ -812,7 +805,7 @@ export interface ApiReactionReaction extends Struct.CollectionTypeSchema {
     singularName: 'reaction';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     blog: Schema.Attribute.Relation<'oneToOne', 'api::blog.blog'>;

@@ -1,5 +1,6 @@
 import { User } from '@/types/user.type';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { formatDistanceToNow } from 'date-fns';
 
 interface UserCardProps {
     user: User;
@@ -24,7 +25,7 @@ const UserCard = ({ user, time, name = true }: UserCardProps) => {
 
     return (
         <div className="flex items-center gap-2">
-            <Avatar className="h-12 w-12">
+            <Avatar className="h-12 w-12 border-2">
                 {avatarUrl && <AvatarImage src={avatarUrl} alt={displayName} />}
                 <AvatarFallback className="text-xs">
                     {getInitials(displayName)}
@@ -39,7 +40,7 @@ const UserCard = ({ user, time, name = true }: UserCardProps) => {
                 )}
                 {time && (
                     <span className="text-xs text-muted-foreground">
-                        {new Date(time).toLocaleDateString()}
+                        {formatDistanceToNow(new Date(time), { addSuffix: true })}
                     </span>
                 )}
             </div>

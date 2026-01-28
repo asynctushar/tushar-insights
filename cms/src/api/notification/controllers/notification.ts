@@ -7,8 +7,6 @@ import { factories } from '@strapi/strapi';
 export default factories.createCoreController('api::notification.notification', ({ strapi }) => ({
 
     async find(ctx) {
-
-
         if (!ctx.state.user) {
             return ctx.unauthorized('You must be logged in');
 
@@ -65,7 +63,10 @@ export default factories.createCoreController('api::notification.notification', 
         const notification = await strapi.db
             .query('api::notification.notification')
             .findOne({
-                where: { id: notificationId },
+                where: {
+                    documentId: notificationId,
+                    user: user.id
+                },
                 populate: ['user'],
             });
 
@@ -81,22 +82,25 @@ export default factories.createCoreController('api::notification.notification', 
             return ctx.badRequest('Notification already marked as seen');
         }
 
-        // Update and return with full population
-        const updatedNotification = await strapi.entityService.update(
-            'api::notification.notification',
-            notificationId,
-            {
-                data: { seen: true },
+        const updated = await strapi.documents('api::notification.notification').update({
+            documentId: notificationId,
+            data: { seen: true },
+        });
+
+        const populatedNotification =
+            await strapi.db.query('api::notification.notification').findOne({
+                where: { documentId: updated.documentId },
                 populate: {
                     user: true,
                     blog: true,
                     interactedBy: true,
                     comment: true,
                 },
-            }
-        );
+            });
 
-        return { data: updatedNotification };
+
+
+        return { data: populatedNotification };
     }
 
 }));

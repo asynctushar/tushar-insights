@@ -8,7 +8,7 @@ import { Blog } from '@/types/blog.type';
 import { ChangeEvent, useState } from 'react';
 import { LogOut, Send, Loader2 } from 'lucide-react';
 import UserCard from '../user/UserCard';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from "sonner";
 
 type CommentBarProps = {
@@ -21,6 +21,8 @@ const CommentBar = ({ user, blog }: CommentBarProps) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const lang = searchParams.get('lang') || 'en';
 
     const handleSubmit = async () => {
         if (!comment.trim()) return;
@@ -80,8 +82,8 @@ const CommentBar = ({ user, blog }: CommentBarProps) => {
     const displayName = user.fullName ?? user.username;
 
     return (
-        <Card className="shadow-md">
-            <CardContent className="p-4 sm:p-6 space-y-4">
+        <Card className="shadow-md py-4 sm:py-6">
+            <CardContent className="px-4 sm:px-6 space-y-4">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">

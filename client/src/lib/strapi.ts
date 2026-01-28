@@ -3,7 +3,7 @@
 type StrapiClientOptions = {
     lang?: string;
     cache?: RequestCache;
-    token?: string;
+    jwt?: string;
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
     body?: any;
     headers?: Record<string, string>;
@@ -37,8 +37,8 @@ export const strapiClient = async <T = any>(
 
     const headers: Record<string, string> = {
         'Content-Type': 'application/json',
-        ...(options?.token && {
-            Authorization: `Bearer ${options.token}`,
+        ...(options?.jwt && {
+            Authorization: `Bearer ${options.jwt}`,
         }),
         ...(options?.headers || {}),
     };

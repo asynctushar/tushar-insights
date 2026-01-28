@@ -7,7 +7,7 @@
     "displayName": "Notification"
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {
     "i18n": {
@@ -15,15 +15,6 @@
     }
   },
   "attributes": {
-    "desc": {
-      "type": "string",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      },
-      "required": true
-    },
     "type": {
       "type": "enumeration",
       "pluginOptions": {

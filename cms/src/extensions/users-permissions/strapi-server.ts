@@ -118,11 +118,6 @@ export default (plugin) => {
             },
         });
 
-        // Delete blogs
-        await strapi.db.query('api::blog.blog').deleteMany({
-            where: { user: userId },
-        });
-
         // 5️⃣ Finally, delete the user
         await strapi.query('plugin::users-permissions.user').delete({
             where: { id: userId },

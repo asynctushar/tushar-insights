@@ -3,8 +3,12 @@ import DesktopNav from './DesktopNav';
 import MobileNav from './MobileNav';
 import HeaderActions from './HeaderActions';
 import Logo from './Logo';
+import { getMe } from '@/services/auth.service';
+import { User } from '@/types/user.type';
 
-const Header = () => {
+const Header = async () => {
+    const user: User = await getMe();
+
     return (
         <header className="sticky top-0 z-50 w-full shadow-md bg-primary text-primary-foreground">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,7 +26,7 @@ const Header = () => {
                     {/* Actions */}
                     <div className="flex items-center gap-2">
                         <Suspense fallback={<div className="h-9 w-32 animate-pulse bg-muted rounded" />}>
-                            <HeaderActions />
+                            <HeaderActions user={user} />
                         </Suspense>
                     </div>
 

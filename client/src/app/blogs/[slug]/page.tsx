@@ -35,7 +35,7 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
 
     if (!blog) {
         return (
-            <div className="container mx-auto px-4 py-12 text-center space-y-4">
+            <div className="container mx-auto px-4 py-48 text-center space-y-4">
                 <h2 className="text-2xl font-semibold">Blog not found</h2>
                 <Button asChild>
                     <Link href={linkGenerator("/blogs", lang)}>Browse all Blogs</Link>
@@ -56,9 +56,9 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 relative">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Main Content */}
-                <Card className="lg:col-span-2 py-0 pb-6">
+                <Card className="lg:col-span-2 py-4 sm:py-6">
                     {/* Blog Article */}
-                    <CardContent className="space-y-8">
+                    <CardContent className="space-y-8 px-4 sm:px-6">
                         <article className="space-y-6">
                             {/* Cover Image */}
                             <div className="relative w-full aspect-video rounded-lg overflow-hidden">
@@ -106,10 +106,12 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
 
                                             return (
                                                 <div className="relative w-full my-6">
-                                                    <img
+                                                    <Image
+                                                        width={400}
+                                                        height={300}
                                                         src={imageSrc}
                                                         alt={alt}
-                                                        className="rounded-lg w-full h-auto shadow-md"
+                                                        className="rounded-lg w-2/3 h-auto shadow-md"
                                                     />
                                                 </div>
                                             );
@@ -122,8 +124,8 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
                         </article>
 
                         {/* Author Card */}
-                        <Card className="shadow-md">
-                            <CardContent className="flex items-center justify-between">
+                        <Card className="shadow-sm py-4 sm:py-6">
+                            <CardContent className="flex items-center justify-between px-4 sm:px-6">
                                 <UserCard user={blog.user} />
                                 <div className="flex items-center gap-2">
                                     {/* React, Reactions, Share buttons - later */}
@@ -133,8 +135,8 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
 
                         {/* Comment Section */}
                         {!user ? (
-                            <Card className="shadow-md border-primary/20">
-                                <CardContent className="text-center space-y-4">
+                            <Card className="shadow-sm py-4 sm:py-6">
+                                <CardContent className="text-center space-y-4 px-4 sm:px-6">
                                     <p className="text-muted-foreground text-lg">
                                         👋 Join the conversation! Sign in to react and comment on this post.
                                     </p>
@@ -154,15 +156,20 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
                         )}
 
                         {/* Comments List */}
-                        <Card className="shadow-md">
-                            <CardContent className="">
+                        <Card className="shadow-sm py-4 sm:py-6">
+                            <CardContent className="px-4 sm:px-6">
                                 <h3 className="text-xl font-semibold mb-4">
                                     Comments ({blog.comments.length})
                                 </h3>
                                 {blog.comments.length > 0 ? (
                                     <div className="space-y-4">
                                         {blog.comments.map((comment) => (
-                                            <CommentItem comment={comment} key={comment.documentId} />
+                                            <CommentItem
+                                                comment={comment}
+                                                key={comment.documentId}
+                                                user={user}
+                                                blogSlug={blog.slug}
+                                            />
                                         ))}
                                     </div>
                                 ) : (

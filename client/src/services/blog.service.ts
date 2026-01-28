@@ -83,19 +83,19 @@ export const getBlog = async (slug: string, lang?: string) => {
     return res.data;
 };
 
+// Create comment
 export const createComment = async (
     jwt: string,
     slug: string,
     data: {
         type: string;
         desc: string;
-    }
+    },
 ) => {
-
     const res = await strapiClient(`/api/blogs/${slug}/comments`, {
         method: 'POST',
         body: data,
-        token: jwt,
+        jwt,
         cache: 'no-store',
     });
 
@@ -105,3 +105,59 @@ export const createComment = async (
 
     return res.data;
 };
+
+// Delete comment (normal user)
+export const deleteComment = async (
+    jwt: string,
+    slug: string,
+    documentId: string,
+) => {
+    const res = await strapiClient(`/api/blogs/${slug}/comments/${documentId}`, {
+        method: 'DELETE',
+        jwt,
+        cache: 'no-store',
+    });
+
+    if (!res.ok) {
+        throw new Error(res.error?.message || 'Failed to delete comment');
+    }
+
+    return res.data;
+};
+
+// Reply to comment (author only)
+export const replyComment = async (
+    jwt: string,
+    slug: string,
+    commentId: string,
+    data: { desc: string; }
+) => {
+    const res = await strapiClient(`/api/blogs/${slug}/comments/${commentId}/reply`, {
+        method: 'POST',
+        body: data,
+        jwt,
+        cache: 'no-store',
+    });
+
+    if (!res.ok) {
+        throw new Error(res.error?.message || 'Failed to post reply');
+    }
+
+    return res.data;
+};
+
+// Delete reply (author only)
+export const deleteCommentByAuthor = async (jwt: string, commentId: string) => {
+    const res = await strapiClient(`/api/comments/${commentId}`, {
+        method: 'DELETE',
+        jwt,
+        cache: 'no-store',
+    });
+
+    if (!res.ok) {
+        throw new Error(res.error?.message || 'Failed to delete comment');
+    }
+
+    return res.data;
+};
+

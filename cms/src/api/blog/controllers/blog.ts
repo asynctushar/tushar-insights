@@ -5,6 +5,7 @@
 import { factories } from '@strapi/strapi';
 
 export default factories.createCoreController('api::blog.blog', ({ strapi }) => ({
+
     async find(ctx) {
         // Ensure user and category are populated as before
         ctx.query.populate = {
@@ -19,7 +20,7 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
 
         const withExtras = await Promise.all(
             data.map(async (blog) => {
-                const blogId = blog.id;
+                const blogId = blog.documentId;
 
                 const commentsCount = await strapi.db.query('api::comment.comment').count({
                     where: { blog: blogId },
@@ -100,18 +101,25 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
             return ctx.notFound('Blog not found');
         }
 
-        const blogId = blog.id;
+        const blogId = blog.documentId;
 
         // 2️⃣ Fetch comments
-        const comments = await strapi.db.query('api::comment.comment').findMany({
+        const comments = await strapi.documents('api::comment.comment').findMany({
             where: {
-                blog: blogId,
+                blog: {
+                    documentId: blogId,
+                },
                 publishedAt: { $notNull: true },
             },
             populate: {
-                user: true
+                user: {
+                    populate: {
+                        role: true, // 👈 populate user's role
+                    },
+                },
+                comment: true,
             },
-            orderBy: { createdAt: 'asc' },
+            orderBy: { createdAt: 'desc' },
         });
 
         // 3️⃣ Arrange comments → replies
@@ -126,7 +134,8 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
 
         comments.forEach((comment) => {
             if (comment.type === 'reply' && comment.comment) {
-                const parent = commentMap.get(comment.comment);
+                const parent = commentMap.get(comment.comment.documentId);
+
                 if (parent) {
                     parent.replies.push(commentMap.get(comment.documentId));
                 }
@@ -140,10 +149,13 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
         // 4️⃣ Fetch reactions
         const reactions = await strapi.db.query('api::reaction.reaction').findMany({
             where: {
-                blog: blogId,
+                blog: {
+                    documentId: blogId
+                },
                 publishedAt: { $notNull: true },
             },
         });
+
 
         // 5️⃣ Return final response
         return {
@@ -161,6 +173,10 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
 
         if (!user) {
             return ctx.unauthorized('You must be logged in');
+        }
+
+        if (user.accountStatus === "banned") {
+            return ctx.forbidden('You are banned, contact to the support');
         }
 
         if (!slug) {
@@ -192,7 +208,9 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
             .query('api::reaction.reaction')
             .findOne({
                 where: {
-                    blog: blog.id,
+                    blog: {
+                        documentId: blog.documentId,
+                    },
                     user: user.id,
                 },
             });
@@ -202,30 +220,26 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
         }
 
         // 4️⃣ Create reaction
-        const reaction = await strapi.db
-            .query('api::reaction.reaction')
-            .create({
-                data: {
-                    blog: blog.id,
-                    user: user.id,
-                    type: ctx.request.body.type,
-                },
-            });
-
-
+        const reaction = await strapi.documents('api::reaction.reaction').create({
+            data: {
+                blog: blog.documentId,
+                user: user.id,
+                type: ctx.request.body.type,
+            },
+            publish: true,
+        });
 
         //Create notification here (react) 
-        const notification = await strapi.db
-            .query('api::notification.notification')
-            .create({
-                data: {
-                    blog: blog.id,
-                    interactedBy: user.id,
-                    type: "react",
-                    user: blog.user.id,
-                    desc: `${user.fullName} reacted to your blog`
-                },
-            });
+        const notification = await strapi.documents('api::notification.notification').create({
+            data: {
+                blog: blog.documentId,
+                type: 'react',
+                user: blog.user.id,
+                interacted_by: user.id,
+                seen: false
+            },
+            publish: true,
+        });
 
 
         // Websocket implementation here(to notification.user) 
@@ -239,13 +253,16 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
         };
     },
 
-
     async updateBlogReaction(ctx) {
         const { slug, documentId } = ctx.params;
         const user = ctx.state.user;
 
         if (!user) {
             return ctx.unauthorized('You must be logged in');
+        }
+
+        if (user.accountStatus === "banned") {
+            return ctx.forbidden('You are banned, contact to the support.');
         }
 
         if (!slug) {
@@ -279,7 +296,9 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
             .findOne({
                 where: {
                     user: user.id,
-                    blog: blog.id,
+                    blog: {
+                        documentId: blog.documentId,
+                    },
                     documentId: documentId,
                 }
             });
@@ -289,16 +308,13 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
         }
 
         // update reaction
-        const reaction = await strapi.db
-            .query('api::reaction.reaction')
-            .update({
-                where: { documentId: documentId },
-                data: {
-                    blog: blog.id,
-                    user: user.id,
-                    type: ctx.request.body.type,
-                },
-            });
+        const reaction = await strapi.documents('api::reaction.reaction').update({
+            documentId,
+            data: {
+                type: ctx.request.body.type,
+            },
+        });
+
 
         // 5️⃣ Return final response
         return {
@@ -308,13 +324,16 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
         };
     },
 
-
     async deleteBlogReaction(ctx) {
         const { slug, documentId } = ctx.params;
         const user = ctx.state.user;
 
         if (!user) {
             return ctx.unauthorized('You must be logged in');
+        }
+
+        if (user.accountStatus === "banned") {
+            return ctx.forbidden('You are banned, contact to the support.');
         }
 
         if (!slug) {
@@ -347,7 +366,9 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
             .findOne({
                 where: {
                     user: user.id,
-                    blog: blog.id,
+                    blog: {
+                        documentId: blog.documentId,
+                    },
                     documentId: documentId,
                 }
             });
@@ -357,24 +378,22 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
         }
 
         // delete reaction
-        await strapi.db
-            .query('api::reaction.reaction')
-            .delete({
-                where: { documentId: documentId },
-            });
+        await strapi.documents('api::reaction.reaction').delete({
+            documentId,
+        });
+
 
         //Create notification here (unreact) 
-        const notification = await strapi.db
-            .query('api::notification.notification')
-            .create({
-                data: {
-                    blog: blog.id,
-                    interactedBy: user.id,
-                    type: "unreact",
-                    user: blog.user.id,
-                    desc: `${user.fullName} removed their reaction from your blog`
-                },
-            });
+        const notification = await strapi.documents('api::notification.notification').create({
+            data: {
+                blog: blog.documentId,
+                interacted_by: user.id,
+                type: 'unreact',
+                user: blog.user.id,
+                seen: false
+            },
+            publish: true,
+        });
 
 
         // Websocket implementation here(to notification.user) 
@@ -392,12 +411,15 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
 
     // Normal comment creation
     async createComment(ctx) {
-
         const { slug } = ctx.params;
         const user = ctx.state.user;
 
         if (!user) {
             return ctx.unauthorized('You must be logged in');
+        }
+
+        if (user.accountStatus === "banned") {
+            return ctx.forbidden('You are banned, contact to the support.');
         }
 
         if (!slug) {
@@ -416,6 +438,7 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
             return ctx.badRequest("Banned user can't comment");
         }
 
+
         // 1️⃣ Fetch blog by slug
         const blog = await strapi.db.query('api::blog.blog').findOne({
             where: {
@@ -431,31 +454,28 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
             return ctx.notFound('Blog not found');
         }
 
-
         // Create comment
-        const comment = await strapi.db
-            .query('api::comment.comment')
-            .create({
-                data: {
-                    blog: blog.id,
-                    user: user.id,
-                    type: ctx.request.body.type,
-                    desc: ctx.request.body.desc
-                },
-            });
+        const comment = await strapi.documents('api::comment.comment').create({
+            data: {
+                blog: blog.documentId,
+                user: user.id,
+                type: ctx.request.body.type,
+                desc: ctx.request.body.desc,
+            }
+        });
+
 
         //Create notification here (comment) 
-        const notification = await strapi.db
-            .query('api::notification.notification')
-            .create({
-                data: {
-                    blog: blog.id,
-                    interactedBy: user.id,
-                    type: "comment",
-                    user: blog.user.id,
-                    desc: `${user.fullName} commented on your blog`
-                },
-            });
+        const notification = await strapi.documents('api::notification.notification').create({
+            data: {
+                blog: blog.documentId,
+                interacted_by: user.id,
+                type: 'comment',
+                seen: false,
+                user: blog.user.id,
+            },
+            publish: true,
+        });
 
 
         // Websocket implementation here(to notification.user) 
@@ -474,20 +494,20 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
 
     // Normal comment Deletation (user)
     async deleteComment(ctx) {
-
         const { slug, documentId } = ctx.params;
         const user = ctx.state.user;
+
 
         if (!user) {
             return ctx.unauthorized('You must be logged in');
         }
 
-        if (!slug) {
-            return ctx.badRequest('Slug is required');
+        if (user.accountStatus === "banned") {
+            return ctx.forbidden('You are banned, contact to the support.');
         }
 
-        if (user.accountStatus === "banned") {
-            return ctx.badRequest("Banned user can't delete comment");
+        if (!slug) {
+            return ctx.badRequest('Slug is required');
         }
 
         // 1️⃣ Fetch blog by slug
@@ -496,62 +516,59 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
                 slug,
                 publishedAt: { $notNull: true }, // only published
             },
+            populate: {
+                user: true
+            }
         });
 
         if (!blog) {
             return ctx.notFound('Blog not found');
         }
 
-
-        // Find comment
-        const comment = await strapi.db
-            .query('api::comment.comment')
-            .findOne({
-                where: {
-                    documentId: documentId,
-                    blog: blog.id,
-                    user: user.id,
-                    type: "normal"
+        // 1️⃣ Find parent comment
+        const comment = await strapi.db.query('api::comment.comment').findOne({
+            where: {
+                documentId,
+                blog: {
+                    documentId: blog.documentId,
                 },
-                populate: {
-                    user: true
-                }
-            });
-
-
+                user: user.id,
+                type: 'normal',
+            },
+        });
 
         if (!comment) {
-            return ctx.notFound('Commment not found');
+            return ctx.notFound('Comment not found');
         }
 
-        // 4️⃣ Check ownership - user can only delete their own comments
-        if (comment.user.id !== user.id) {
-            return ctx.forbidden('You can only delete your own comments');
-        }
-
-        // delete comment
-        await strapi.db
-            .query('api::comment.comment')
-            .delete({
-                where: {
-                    documentId: documentId,
-                    blog: blog.id,
-                    user: user.id,
-                    type: "normal"
+        // 2️⃣ Delete replies (NO type filter)
+        await strapi.db.query('api::comment.comment').deleteMany({
+            where: {
+                comment: {
+                    documentId: comment.documentId,
+                },
+                blog: {
+                    documentId: blog.documentId,
                 }
-            });
+            },
+        });
+
+        // 3️⃣ Delete parent
+        await strapi.documents('api::comment.comment').delete({
+            documentId,
+        });
 
         //Create notification here (react) 
-        const notification = await strapi.db
-            .query('api::notification.notification')
+        const notification = await strapi.documents('api::notification.notification')
             .create({
                 data: {
-                    blog: blog.id,
-                    interactedBy: user.id,
+                    blog: blog.documentId,
+                    interacted_by: user.id,
+                    seen: false,
                     type: "deleteComment",
                     user: blog.user.id,
-                    desc: `Your comment was removed by ${user.fullName}.`
                 },
+                publish: true
             });
 
 

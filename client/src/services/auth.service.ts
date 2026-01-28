@@ -1,3 +1,4 @@
+import { strapiClient } from "@/lib/strapi";
 import { cookies } from "next/headers";
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL!;
@@ -67,7 +68,7 @@ export async function getMe() {
     const jwt = await getJwtFromCookies();
     if (!jwt) return null;
 
-    const res = await fetch(`${STRAPI_URL}/api/users/me`, {
+    const res = await fetch(`${STRAPI_URL}/api/users/me?populate=role`, {
         headers: {
             Authorization: `Bearer ${jwt}`,
         },
@@ -78,3 +79,34 @@ export async function getMe() {
 
     return res.json();
 }
+
+
+// Ban/Unban user (author only) - toggles automatically in backend
+export const banUser = async (jwt: string, userId: string) => {
+    const res = await strapiClient(`/api/users/${userId}`, {
+        method: 'PUT',
+        jwt,
+        cache: 'no-store',
+    });
+
+    if (!res.ok) {
+        throw new Error(res.error?.message || 'Failed to update user status');
+    }
+
+    return res.data;
+};
+
+// Delete user (author only)
+export const deleteUser = async (jwt: string, userId: string) => {
+    const res = await strapiClient(`/api/users/${userId}`, {
+        method: 'DELETE',
+        jwt,
+        cache: 'no-store',
+    });
+
+    if (!res.ok) {
+        throw new Error(res.error?.message || 'Failed to delete user');
+    }
+
+    return res.data;
+};
