@@ -25,20 +25,26 @@ interface CommentItemProps {
     blogSlug: string;
 }
 
+interface openConfirmDialogProps {
+    title: string;
+    description: string;
+    confirmText: string;
+    variant?: "default" | "destructive" | "ghost" | "outline" | "secondary";
+    onConfirm: () => Promise<void>;
+    open?: boolean,
+    isLoading?: boolean;
+}
+
 const CommentItem = ({ comment, user, blogSlug }: CommentItemProps) => {
     const [showReplyInput, setShowReplyInput] = useState(false);
     const [replyText, setReplyText] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [confirmDialog, setConfirmDialog] = useState<{
-        open: boolean;
-        title: string;
-        description: string;
-        isLoading: boolean;
-        onConfirm: () => Promise<void>;
-    }>({
+    const [confirmDialog, setConfirmDialog] = useState<openConfirmDialogProps>({
         open: false,
         title: '',
         description: '',
+        confirmText: '',
+        variant: 'default',
         isLoading: false,
         onConfirm: async () => { },
     });
@@ -52,8 +58,8 @@ const CommentItem = ({ comment, user, blogSlug }: CommentItemProps) => {
     const canReply = isAuthor;
     const showMenu = user && canDelete;
 
-    const openConfirmDialog = (title: string, description: string, onConfirm: () => Promise<void>) => {
-        setConfirmDialog({ open: true, title, description, isLoading: false, onConfirm });
+    const openConfirmDialog = ({ title, description, confirmText, variant, onConfirm }: openConfirmDialogProps) => {
+        setConfirmDialog({ open: true, title, description, confirmText, variant, isLoading: false, onConfirm });
     };
 
     const handleDeleteComment = async () => {
@@ -182,13 +188,15 @@ const CommentItem = ({ comment, user, blogSlug }: CommentItemProps) => {
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuItem
                                         className='cursor-pointer'
-                                        onClick={() => openConfirmDialog(
-                                            comment.type === "normal" ? "Delete Comment" : "Delete Reply",
-                                            comment.type === "normal"
+                                        onClick={() => openConfirmDialog({
+                                            title: comment.type === "normal" ? "Delete Comment" : "Delete Reply",
+                                            description: comment.type === "normal"
                                                 ? "Are you sure you want to delete this comment? It will delete its associated replies as well."
                                                 : "Are you sure you want to delete this reply?",
-                                            isAuthor ? handleDeleteByAuthor : handleDeleteComment
-                                        )}
+                                            confirmText: "Delete",
+                                            variant: "destructive",
+                                            onConfirm: isAuthor ? handleDeleteByAuthor : handleDeleteComment
+                                        })}
                                     >
                                         <Trash2 className="h-4 w-4 mr-2" />
                                         {comment.type === "normal" ? 'Delete Comment' : "Delete Reply"}
@@ -199,21 +207,25 @@ const CommentItem = ({ comment, user, blogSlug }: CommentItemProps) => {
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem
                                                 className='cursor-pointer'
-                                                onClick={() => openConfirmDialog(
-                                                    comment.user.accountStatus === 'banned' ? 'Unban User' : 'Ban User',
-                                                    `Are you sure you want to ${comment.user.accountStatus === 'banned' ? 'unban' : 'ban'} this user?`,
-                                                    handleBanUser
-                                                )}
+                                                onClick={() => openConfirmDialog({
+                                                    title: comment.user.accountStatus === 'banned' ? 'Unban User' : 'Ban User',
+                                                    description: `Are you sure you want to ${comment.user.accountStatus === 'banned' ? 'unban' : 'ban'} this user?`,
+                                                    confirmText: comment.user.accountStatus === 'banned' ? "Unban" : "Ban",
+                                                    variant: comment.user.accountStatus === 'banned' ? "default" : "destructive",
+                                                    onConfirm: handleBanUser
+                                                })}
                                             >
                                                 <Ban className="h-4 w-4 mr-2" />
                                                 {comment.user.accountStatus === 'banned' ? 'Unban User' : 'Ban User'}
                                             </DropdownMenuItem>
                                             <DropdownMenuItem
-                                                onClick={() => openConfirmDialog(
-                                                    'Delete User',
-                                                    'Are you sure you want to delete this user? This action cannot be undone.',
-                                                    handleDeleteUser
-                                                )}
+                                                onClick={() => openConfirmDialog({
+                                                    title: 'Delete User',
+                                                    description: 'Are you sure you want to delete this user? This action cannot be undone.',
+                                                    confirmText: "Delete",
+                                                    variant: "destructive",
+                                                    onConfirm: handleDeleteUser
+                                                })}
                                                 className="text-destructive focus:text-destructive cursor-pointer"
                                             >
                                                 <UserX className="h-4 w-4 mr-2" />
@@ -231,7 +243,7 @@ const CommentItem = ({ comment, user, blogSlug }: CommentItemProps) => {
                     {user && canReply && comment.type === 'normal' && !showReplyInput && (
                         <div className="flex justify-end">
                             <Button
-                                variant="ghost"
+                                variant="default"
                                 size="sm"
                                 onClick={() => setShowReplyInput(true)}
                                 className="gap-2"
@@ -269,7 +281,7 @@ const CommentItem = ({ comment, user, blogSlug }: CommentItemProps) => {
                                     size="sm"
                                     onClick={handleReply}
                                     disabled={!replyText.trim() || isSubmitting}
-                                    className="gap-2"
+                                    className="gap-2 disabled:opacity-70"
                                 >
                                     {isSubmitting ? (
                                         <>
@@ -308,8 +320,8 @@ const CommentItem = ({ comment, user, blogSlug }: CommentItemProps) => {
                 onConfirm={confirmDialog.onConfirm}
                 title={confirmDialog.title}
                 description={confirmDialog.description}
-                variant="destructive"
-                confirmText="Delete"
+                variant={confirmDialog.variant}
+                confirmText={confirmDialog.confirmText}
                 isLoading={confirmDialog.isLoading}
             />
         </>

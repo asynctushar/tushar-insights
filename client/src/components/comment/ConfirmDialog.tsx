@@ -13,19 +13,19 @@ import {
 import { Loader2 } from "lucide-react";
 
 interface ConfirmDialogProps {
-    open: boolean;
+    open: boolean | undefined;
     onOpenChange: (open: boolean) => void;
     onConfirm: () => Promise<void>;
     title: string;
     description: string;
     confirmText?: string;
     cancelText?: string;
-    variant?: "default" | "destructive";
+    variant?: "default" | "destructive" | "ghost" | "outline" | "secondary";
     isLoading?: boolean;
 }
 
 const ConfirmDialog = ({
-    open,
+    open = false,
     onOpenChange,
     onConfirm,
     title,
@@ -53,7 +53,8 @@ const ConfirmDialog = ({
                     <AlertDialogAction
                         onClick={handleConfirm}
                         disabled={isLoading}
-                        className={variant === "destructive" ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : ""}
+                        variant={variant}
+                    // className={variant === "destructive" ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : ""}
                     >
                         {isLoading ? (
                             <>

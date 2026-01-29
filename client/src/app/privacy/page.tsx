@@ -1,8 +1,55 @@
-import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { getPolicies } from '@/services/company.service';
+import { Policy } from '@/types/company.type';
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+import remarkBreaks from "remark-breaks";
 
-const PrivacyPolicy = () => {
+interface PolicyProps {
+    searchParams: {
+        lang?: string;
+    };
+};
+
+const PrivacyPolicy = async ({ searchParams }: PolicyProps) => {
+    const { lang } = await searchParams;
+    const policies: Policy[] = await getPolicies();
+
     return (
-        <div>Privacy Policy</div>
+
+        <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+            {/* Hero Section */}
+            <Card className="bg-linear-to-r from-primary to-primary/90 border-none">
+                <CardContent className="p-6 sm:p-12 space-y-2 text-left text-primary-foreground">
+                    <h1 className="text-3xl sm:text-4xl font-bold">Privacy Policy</h1>
+                    <p className="max-w-2xl">
+                        See how we collect, use, and protect your personal information.
+                    </p>
+                </CardContent>
+            </Card>
+
+            <Card className="shadow-md border-0">
+                <CardContent className='space-y-4'>
+                    {
+                        policies.map((policy) => (
+                            <div key={policy.documentId} className='space-y-2'>
+                                <h4 className='text-xl font-semibold'>{`${policy.sort}. ${policy.title}`}</h4>
+                                <div className="rich-text privacy-desc prose prose-slate dark:prose-invert max-w-none pl-11">
+                                    <ReactMarkdown
+                                        remarkPlugins={[remarkGfm, remarkBreaks]}
+                                        rehypePlugins={[rehypeRaw]}
+                                    >
+                                        {policy.desc}
+                                    </ReactMarkdown>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </CardContent>
+            </Card>
+        </div>
     );
 };
 

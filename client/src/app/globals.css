@@ -126,7 +126,7 @@
 @layer components {
   /* Base */
   .rich-text {
-    @apply text-sm text-muted-foreground leading-relaxed;
+    @apply text-base text-muted-foreground leading-relaxed;
   }
 
   /* Headings */
@@ -182,7 +182,7 @@
 
   /* Lists */
   .rich-text ul {
-    @apply list-disc pl-6 mb-3 space-y-1;
+    @apply list-disc pl-4 mb-3 space-y-1;
   }
 
   .rich-text ol {
@@ -262,6 +262,7 @@
     -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    @apply text-sm
   }
 
   .blog-card-desc img,
@@ -285,6 +286,38 @@
   .blog-card-desc ol {
     @apply mb-1;
   }
+
+
+  /* privacy and term specific - clamp and hide media */
+  .privacy-desc, .term-desc {
+    display: -webkit-box;
+    line-clamp: 4;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  :is(.privacy-desc, .term-desc) img,
+  :is(.privacy-desc, .term-desc) pre,
+  :is(.privacy-desc, .term-desc) blockquote,
+  :is(.privacy-desc, .term-desc) table,
+  :is(.privacy-desc, .term-desc) hr {
+    @apply hidden;
+  }
+
+  :is(.privacy-desc, .term-desc) h1,
+  :is(.privacy-desc, .term-desc) h2,
+  :is(.privacy-desc, .term-desc) h3,
+  :is(.privacy-desc, .term-desc) h4,
+  :is(.privacy-desc, .term-desc) h5,
+  :is(.privacy-desc, .term-desc) h6 {
+    @apply text-sm font-medium mt-0 mb-1;
+  }
+
+  :is(.privacy-desc, .term-desc) p {
+    @apply text-foreground;
+  }
+
 }
 
 /* Custom scrollbar */
@@ -303,8 +336,6 @@
   }
   
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted-foreground/50;
+    @apply bg-muted-foreground/50; 
   }
 }
-
-
