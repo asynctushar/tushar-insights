@@ -28,14 +28,15 @@ const Blogs = async ({ searchParams }: BlogsProps) => {
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-4 sm:space-y-6">
             {/* Hero Section */}
-            <Card className="bg-linear-to-r from-primary to-primary/90 border-none">
-                <CardContent className="p-6 sm:p-12 space-y-2 text-left text-primary-foreground">
-                    <h1 className="text-3xl sm:text-4xl font-bold">Blogs</h1>
-                    <p className="max-w-2xl">
+            <Card className="bg-muted/50 border-muted shadow-sm">
+                <CardContent className="p-6 sm:p-12 space-y-2 text-left">
+                    <h1 className="text-3xl sm:text-4xl font-bold text-foreground">Blogs</h1>
+                    <p className="max-w-2xl text-muted-foreground">
                         Explore insights across technology, poems, novels, and more.
                     </p>
                 </CardContent>
             </Card>
+
 
             {/* Filters */}
             <Card className="py-6 sm:py-8">

@@ -68,7 +68,7 @@ export async function getMe() {
     const jwt = await getJwtFromCookies();
     if (!jwt) return null;
 
-    const res = await fetch(`${STRAPI_URL}/api/users/me?populate=role`, {
+    const res = await fetch(`${STRAPI_URL}/api/users/me?populate[role]=true&populate[profilePic]=true`, {
         headers: {
             Authorization: `Bearer ${jwt}`,
         },

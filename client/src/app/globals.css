@@ -126,7 +126,7 @@
 @layer components {
   /* Base */
   .rich-text {
-    @apply text-base text-muted-foreground leading-relaxed;
+    @apply text-base text-foreground leading-relaxed;
   }
 
   /* Headings */
@@ -182,11 +182,11 @@
 
   /* Lists */
   .rich-text ul {
-    @apply list-disc pl-4 mb-3 space-y-1;
+    @apply list-disc pl-4 ms-8 mb-3 space-y-1;
   }
 
   .rich-text ol {
-    @apply list-decimal pl-6 mb-3 space-y-1;
+    @apply list-decimal pl-6 ms-8 mb-3 space-y-1;
   }
 
   .rich-text li {
@@ -316,6 +316,27 @@
 
   :is(.privacy-desc, .term-desc) p {
     @apply text-foreground;
+  }
+
+
+  /* about card specific - clamp and hide media */
+ .about-card {
+    @apply text-base md:text-lg;
+  }
+
+  .about-card p {
+    @apply text-foreground;
+  }
+
+ .about-card img,
+ .about-card pre,
+ .about-card table {
+    @apply hidden;
+  }
+
+ .about-card ul,
+ .about-card ol {
+    @apply mb-3
   }
 
 }

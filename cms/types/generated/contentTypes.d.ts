@@ -486,13 +486,32 @@ export interface ApiAboutAbout extends Struct.SingleTypeSchema {
       }>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::about.about'>;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 40;
+        minLength: 5;
+      }> &
+      Schema.Attribute.DefaultTo<'Tushar Biswas'>;
+    profilePic: Schema.Attribute.Media<'images' | 'files'> &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
     publishedAt: Schema.Attribute.DateTime;
     roles: Schema.Attribute.JSON &
       Schema.Attribute.Required &
       Schema.Attribute.CustomField<
         'plugin::advanced-fields.checkbox',
         {
-          checkboxOptions: 'ui_ux|UI/UX Designer\nfull_stack_web_devloper|Full Stack Web Developer\ntextile_engineer|Textile Engineer';
+          checkboxOptions: 'UI/UX Designer|UI/UX Designer\nFull Stack Web Developer|Full Stack Web Developer\nTextile Engineer|Textile Engineer';
           checkboxType: 'multiple';
           layout: 'vertical';
           maxChoices: 3;

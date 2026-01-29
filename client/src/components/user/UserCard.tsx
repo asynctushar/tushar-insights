@@ -20,7 +20,7 @@ const UserCard = ({ user, time, name = true }: UserCardProps) => {
 
     const displayName = user.fullName ?? user.username;
     const avatarUrl = user.profilePic
-        ? `${process.env.NEXT_PUBLIC_STRAPI_API_URL}${user.profilePic}`
+        ? `${process.env.NEXT_PUBLIC_STRAPI_API_URL}${user.profilePic.url}`
         : undefined;
 
     return (
@@ -36,6 +36,7 @@ const UserCard = ({ user, time, name = true }: UserCardProps) => {
                 {name && (
                     <span className="text-sm font-medium leading-none">
                         {displayName}
+                        {time && user.role?.name === "author" && " (Author)"}
                     </span>
                 )}
                 {time && (

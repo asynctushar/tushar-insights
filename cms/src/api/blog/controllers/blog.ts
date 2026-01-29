@@ -10,9 +10,15 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
         // Ensure user and category are populated as before
         ctx.query.populate = {
             cover: {
-                fields: ['url', 'name', 'width', 'height', 'alternativeText', 'ext'], // general fields
+                fields: ['url', 'name', 'width', 'height', 'alternativeText', 'ext'],
             },
-            user: true,
+            user: {
+                populate: {
+                    profilePic: {
+                        fields: ['url', 'name', 'width', 'height', 'alternativeText'],
+                    },
+                },
+            },
             category: true,
         };
 
@@ -92,7 +98,11 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
                         'ext',
                     ],
                 },
-                user: true,
+                user: {
+                    populate: {
+                        profilePic: true
+                    }
+                },
                 category: true,
             },
         });
@@ -115,6 +125,7 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
                 user: {
                     populate: {
                         role: true, // 👈 populate user's role
+                        profilePic: true
                     },
                 },
                 comment: true,

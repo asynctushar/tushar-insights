@@ -15,23 +15,6 @@
     }
   },
   "attributes": {
-    "roles": {
-      "type": "customField",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      },
-      "customField": "plugin::advanced-fields.checkbox",
-      "options": {
-        "checkboxType": "multiple",
-        "minChoices": 1,
-        "maxChoices": 3,
-        "layout": "vertical",
-        "checkboxOptions": "ui_ux|UI/UX Designer\nfull_stack_web_devloper|Full Stack Web Developer\ntextile_engineer|Textile Engineer"
-      },
-      "required": true
-    },
     "biography": {
       "type": "richtext",
       "pluginOptions": {
@@ -83,6 +66,49 @@
         "i18n": {
           "localized": true
         }
+      },
+      "required": true
+    },
+    "profilePic": {
+      "type": "media",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
+    },
+    "name": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "default": "Tushar Biswas",
+      "minLength": 5,
+      "maxLength": 40,
+      "required": true
+    },
+    "roles": {
+      "type": "customField",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "customField": "plugin::advanced-fields.checkbox",
+      "options": {
+        "checkboxType": "multiple",
+        "minChoices": 1,
+        "maxChoices": 3,
+        "layout": "vertical",
+        "checkboxOptions": "UI/UX Designer|UI/UX Designer\nFull Stack Web Developer|Full Stack Web Developer\nTextile Engineer|Textile Engineer"
       },
       "required": true
     }

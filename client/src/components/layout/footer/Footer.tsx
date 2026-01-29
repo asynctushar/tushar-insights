@@ -32,7 +32,7 @@ const Footer = () => {
                             <Link
                                 key={item.href}
                                 href={`${item.href}${lang ? `?lang=${lang}` : ""}`}
-                                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                                className="text-base text-muted-foreground hover:text-foreground transition-colors"
                             >
                                 {item.label}
                             </Link>
@@ -49,7 +49,7 @@ const Footer = () => {
                                     href={item.href}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-muted-foreground hover:text-foreground transition-colors"
+                                    className="text-background transition-colors duration-300 bg-primary/80 hover:bg-primary p-2 rounded-sm shadow-sm"
                                     aria-label={item.label}
                                 >
                                     <Icon className="h-5 w-5" />
@@ -59,7 +59,7 @@ const Footer = () => {
                     </div>
 
                     {/* Copyright */}
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-base text-muted-foreground">
                         &copy; {new Date().getFullYear()} Tushar Insights. All rights reserved.
                     </div>
                 </div>

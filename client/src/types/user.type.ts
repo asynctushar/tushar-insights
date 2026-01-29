@@ -1,7 +1,7 @@
 export interface User {
     fullName?: string;
     username: string;
-    profilePic?: string;
+    profilePic?: ProfilePic;
     email: string;
     accountStatus: string;
     id: string;
@@ -16,5 +16,15 @@ export interface Role {
     id: string;
     documentId: string;
     description: string;
+    createdAt: Date;
+}
+
+export interface ProfilePic {
+    id: string;
+    documentId: string;
+    name: string;
+    width: number;
+    height: number;
+    url: string;
     createdAt: Date;
 }
