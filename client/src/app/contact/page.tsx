@@ -74,7 +74,7 @@ const Contact = () => {
             {/* Hero Section */}
             <Card className="bg-muted/50 border-muted shadow-sm">
                 <CardContent className="p-6 sm:p-12 space-y-2 text-left">
-                    <h1 className="text-3xl sm:text-4xl font-bold text-foreground">Blogs</h1>
+                    <h1 className="text-3xl sm:text-4xl font-bold text-foreground">Contact</h1>
                     <p className="max-w-2xl text-muted-foreground">
                         Get in touch for questions, feedback, or collaboration opportunities.
                     </p>

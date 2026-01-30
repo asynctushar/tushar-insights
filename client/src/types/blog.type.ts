@@ -31,6 +31,16 @@ export interface Blog {
     user: User;
     createdAt: Date;
     locale: 'en' | 'bn';
+    commentsCount?: number;
+    reactions?: Reaction[];
+}
+
+export interface Reaction {
+    id: string;
+    documentId: string;
+    type: "like" | "love" | "haha" | "angry" | "sad";
+    createdAt: Date;
+    user?: User
 }
 
 export interface BlogSuggestion {
@@ -41,3 +51,4 @@ export interface BlogSuggestion {
     desc: string;
     locale: 'en' | 'bn';
 }
+

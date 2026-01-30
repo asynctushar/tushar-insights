@@ -25,7 +25,7 @@ const CategoryFilter = ({ categories, lang, currentCategory }: CategoryFilterPro
                 className="border"
             >
                 <Link href={createUrl()}>
-                    All
+                    {lang === "bn" ? "সব" : "All"}
                 </Link>
             </Button>
             {categories.map((category) => (

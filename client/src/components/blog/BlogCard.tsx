@@ -9,6 +9,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import remarkBreaks from "remark-breaks";
+import BlogMeta from "./BlogMeta";
 
 interface BlogCardProps {
     blog: Blog;
@@ -67,8 +68,12 @@ const BlogCard = ({ blog }: BlogCardProps) => {
                     </div>
                 </div>
 
-                <div className="mt-4 pt-4 border-t flex justify-between">
+                <div className="mt-4 pt-4 border-t flex justify-between items-center">
                     <UserCard user={blog.user} />
+
+                    <div className="flex items-center gap-2">
+                        <BlogMeta blog={blog} blogUrl={blogUrl} />
+                    </div>
                 </div>
             </CardContent>
         </Card>

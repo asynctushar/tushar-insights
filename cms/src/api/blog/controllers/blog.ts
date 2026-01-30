@@ -29,11 +29,20 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
                 const blogId = blog.documentId;
 
                 const commentsCount = await strapi.db.query('api::comment.comment').count({
-                    where: { blog: blogId },
+                    where: {
+                        blog: {
+                            documentId: blogId
+                        },
+                        type: "normal"
+                    },
                 });
 
                 const reactions = await strapi.db.query('api::reaction.reaction').findMany({
-                    where: { blog: blogId },
+                    where: {
+                        blog: {
+                            documentId: blogId
+                        }
+                    },
                 });
 
                 return {
@@ -165,6 +174,9 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
                 },
                 publishedAt: { $notNull: true },
             },
+            populate: {
+                user: true
+            }
         });
 
 

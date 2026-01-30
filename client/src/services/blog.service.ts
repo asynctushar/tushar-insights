@@ -176,3 +176,62 @@ export const deleteCommentByAuthor = async (jwt: string, commentId: string) => {
     return res.data;
 };
 
+// Create reaction
+export const createReaction = async (
+    jwt: string,
+    slug: string,
+    data: { type: string; }
+) => {
+    const res = await strapiClient(`/api/blogs/${slug}/reactions`, {
+        method: 'POST',
+        body: data,
+        jwt,
+        cache: 'no-store',
+    });
+
+    if (!res.ok) {
+        throw new Error(res.error?.message || 'Failed to create reaction');
+    }
+
+    return res.data;
+};
+
+// Update reaction
+export const updateReaction = async (
+    jwt: string,
+    slug: string,
+    documentId: string,
+    data: { type: string; }
+) => {
+    const res = await strapiClient(`/api/blogs/${slug}/reactions/${documentId}`, {
+        method: 'PATCH',
+        body: data,
+        jwt,
+        cache: 'no-store',
+    });
+
+    if (!res.ok) {
+        throw new Error(res.error?.message || 'Failed to update reaction');
+    }
+
+    return res.data;
+};
+
+// Delete reaction
+export const deleteReaction = async (
+    jwt: string,
+    slug: string,
+    documentId: string
+) => {
+    const res = await strapiClient(`/api/blogs/${slug}/reactions/${documentId}`, {
+        method: 'DELETE',
+        jwt,
+        cache: 'no-store',
+    });
+
+    if (!res.ok) {
+        throw new Error(res.error?.message || 'Failed to delete reaction');
+    }
+
+    return res.data;
+};

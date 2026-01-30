@@ -17,6 +17,8 @@ import rehypeRaw from "rehype-raw";
 import remarkBreaks from "remark-breaks";
 import BlogCard from "@/components/blog/BlogCard";
 import { linkGenerator } from "@/lib/blog";
+import BlogMeta from "@/components/blog/BlogMeta";
+import ReactBar from "@/components/blog/ReactBar";
 
 type BlogProps = {
     searchParams: {
@@ -128,7 +130,8 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
                             <CardContent className="flex items-center justify-between px-4 sm:px-6">
                                 <UserCard user={blog.user} />
                                 <div className="flex items-center gap-2">
-                                    {/* React, Reactions, Share buttons - later */}
+                                    {user && <ReactBar blog={blog} user={user} />}
+                                    <BlogMeta blog={blog} />
                                 </div>
                             </CardContent>
                         </Card>

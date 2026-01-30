@@ -49,7 +49,7 @@ const Footer = () => {
                                     href={item.href}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-background transition-colors duration-300 bg-primary/80 hover:bg-primary p-2 rounded-sm shadow-sm"
+                                    className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/90 hover:bg-primary text-primary-foreground transition-all duration-300 hover:scale-110 shadow-md"
                                     aria-label={item.label}
                                 >
                                     <Icon className="h-5 w-5" />

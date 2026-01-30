@@ -19,7 +19,7 @@ const Home = async ({ searchParams }: HomeProps) => {
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <h1 className="text-2xl font-bold mb-6">
-                Featured Blogs
+                {lang === "bn" ? "বৈশিষ্ট্যযুক্ত ব্লগ" : "Featured Blogs"}
             </h1>
 
             {blogs.length > 0 ? (

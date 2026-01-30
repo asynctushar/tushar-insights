@@ -25,7 +25,7 @@ const UserCard = ({ user, time, name = true }: UserCardProps) => {
 
     return (
         <div className="flex items-center gap-2">
-            <Avatar className="h-12 w-12 border-2">
+            <Avatar className="h-14 w-14 border-2">
                 {avatarUrl && <AvatarImage src={avatarUrl} alt={displayName} />}
                 <AvatarFallback className="text-xs">
                     {getInitials(displayName)}
