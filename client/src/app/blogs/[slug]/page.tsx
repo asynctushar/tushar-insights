@@ -93,7 +93,7 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
                             {/* Cover Image */}
                             <div className="relative w-full aspect-video rounded-lg overflow-hidden">
                                 <Image
-                                    src={`${process.env.NEXT_PUBLIC_STRAPI_API_URL}${blog.cover.url}`}
+                                    src={`${blog.cover.url}`}
                                     alt={blog.cover.name}
                                     fill
                                     className="object-cover"

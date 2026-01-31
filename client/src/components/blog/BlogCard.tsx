@@ -27,7 +27,7 @@ const BlogCard = ({ blog }: BlogCardProps) => {
                     {/* Image */}
                     <div className="relative w-full sm:w-1/3 aspect-video shrink-0 rounded-md overflow-hidden">
                         <Image
-                            src={`${process.env.NEXT_PUBLIC_STRAPI_API_URL}${blog.cover.url}`}
+                            src={`${blog.cover.url}`}
                             alt={blog.cover.alternativeText || blog.slug}
                             fill
                             className="object-cover"

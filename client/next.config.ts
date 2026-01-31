@@ -12,10 +12,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "remarkable-actor-aa9b49d4b5.strapiapp.com",
-        pathname: "/uploads/**",
+        pathname: "/**",
       },
     ],
-    unoptimized: true,
+    unoptimized: process.env.NODE_ENV === 'development',
   },
 };
 
