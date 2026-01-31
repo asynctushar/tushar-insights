@@ -24,9 +24,9 @@ type BlogProps = {
     searchParams: {
         lang?: string;
     };
-    params: {
+    params: Promise<{
         slug: string;
-    };
+    }>;
 };
 
 const Blog = async ({ searchParams, params }: BlogProps) => {

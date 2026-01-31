@@ -5,7 +5,7 @@ import { validateReactionType } from "@/lib/validations";
 
 export async function PATCH(
     request: NextRequest,
-    { params }: { params: { slug: string; documentId: string; }; }
+    { params }: { params: Promise<{ slug: string; documentId: string; }>; }
 ) {
     try {
         const { slug, documentId } = await params;
