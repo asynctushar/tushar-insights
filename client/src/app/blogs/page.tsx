@@ -4,7 +4,7 @@ import Pagination from "@/components/blog/Pagination";
 import SortBy from "@/components/blog/SortBy";
 import { Card, CardContent } from "@/components/ui/card";
 import { getBlogCategories, getBlogs } from "@/services/blog.service";
-import { Blog, Category } from "@/types/blog.type";
+import { Blog, Category, Pagination as IPagination } from "@/types/blog.type";
 
 type BlogsProps = {
     searchParams: {
@@ -18,12 +18,38 @@ type BlogsProps = {
 const Blogs = async ({ searchParams }: BlogsProps) => {
     const { lang, category, sort, page } = await searchParams;
 
-    const categories: Category[] = await getBlogCategories(lang);
-    const { blogs, pagination } = await getBlogs({
+    const result = await getBlogCategories(lang);
+    if (!result.ok) {
+        return (
+            <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 py-8">
+                <p className="text-red-500">
+                    Failed to load categories: {result.error?.message}
+                </p>
+            </div>
+        );
+    }
+
+    const categories: Category[] = result.data;
+    const res = await getBlogs({
         documentId: category,
         sort,
         page: page ? parseInt(page) : 1
     }, lang);
+
+
+    if (!res.ok) {
+        return (
+            <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 py-8">
+                <p className="text-red-500">
+                    Failed to load blogs page: {res.error?.message}
+                </p>
+            </div>
+        );
+    }
+
+    const blogs: Blog[] = res.data?.blogs;
+    const pagination: IPagination = res.data?.pagination;
+
 
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-4 sm:space-y-6">
@@ -51,7 +77,7 @@ const Blogs = async ({ searchParams }: BlogsProps) => {
             <div>
                 {blogs.length > 0 ? (
                     <div className="flex flex-col gap-6">
-                        {blogs.map((blog: Blog) => (
+                        {blogs.map((blog) => (
                             <BlogCard key={blog.id} blog={blog} />
                         ))}
                     </div>

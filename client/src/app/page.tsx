@@ -14,7 +14,18 @@ type HomeProps = {
 const Home = async ({ searchParams }: HomeProps) => {
     const { lang } = await searchParams;
 
-    const blogs: Blog[] = await getFeaturedBlogs(lang);
+    const result = await getFeaturedBlogs(lang);
+    if (!result.ok) {
+        return (
+            <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 py-8">
+                <p className="text-red-500">
+                    Failed to load featured blog page: {result.error?.message}
+                </p>
+            </div>
+        );
+    }
+
+    const blogs: Blog[] = result.data;
 
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">

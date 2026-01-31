@@ -29,17 +29,15 @@ export async function POST(
             desc: body.desc.trim(),
         });
 
-        return NextResponse.json(result, { status: 201 });
-    } catch (error: any) {
-        console.error("Reply comment error:", error);
-
-        if (error.message?.includes("Unauthorized")) {
+        if (!result.ok) {
             return NextResponse.json(
-                { error: "Unauthorized. Only authors can reply." },
-                { status: 401 }
+                { error: result.error?.message || "Failed to reply" },
+                { status: result.error?.status || 400 }
             );
         }
 
+        return NextResponse.json(result, { status: result.status });
+    } catch (error: any) {
         return NextResponse.json(
             { error: error.message || "Failed to post reply" },
             { status: 500 }

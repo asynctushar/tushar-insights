@@ -14,7 +14,21 @@ interface PolicyProps {
 
 const PrivacyPolicy = async ({ searchParams }: PolicyProps) => {
     const { lang } = await searchParams;
-    const policies: Policy[] = await getPolicies();
+
+    const result = await getPolicies();
+
+    if (!result.ok) {
+        return (
+            <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 py-8">
+                <p className="text-red-500">
+                    Failed to load policy page: {result.error?.message}
+                </p>
+            </div>
+        );
+    }
+
+    // 2️⃣ Safe to use data
+    const policies: Policy[] = result.data;
 
     return (
 

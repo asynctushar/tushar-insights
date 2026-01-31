@@ -16,22 +16,16 @@ export async function PUT(
             );
         }
 
-        await banUser(jwt, id);
-
-        return NextResponse.json(
-            { success: true, message: "User status updated successfully" },
-            { status: 200 }
-        );
-    } catch (error: any) {
-        console.error("Update user status error:", error);
-
-        if (error.message?.includes("Unauthorized")) {
+        const result = await banUser(jwt, id);
+        if (!result.ok) {
             return NextResponse.json(
-                { error: "Unauthorized. Only authors can update user status." },
-                { status: 401 }
+                { error: result.error?.message || "Failed to Ban User" },
+                { status: result.error?.status || 400 }
             );
         }
 
+        return NextResponse.json(result, { status: result.status });
+    } catch (error: any) {
         return NextResponse.json(
             { error: error.message || "Failed to update user status" },
             { status: 500 }
@@ -54,21 +48,17 @@ export async function DELETE(
             );
         }
 
-        await deleteUser(jwt, id);
-
-        return NextResponse.json(
-            { success: true, message: "User deleted successfully" },
-            { status: 200 }
-        );
-    } catch (error: any) {
-        console.error("Delete user error:", error);
-
-        if (error.message?.includes("Unauthorized")) {
+        const result = await deleteUser(jwt, id);
+        if (!result.ok) {
             return NextResponse.json(
-                { error: "Unauthorized. Only authors can delete users." },
-                { status: 401 }
+                { error: result.error?.message || "Failed to Delete User" },
+                { status: result.error?.status || 400 }
             );
         }
+
+        return NextResponse.json(result, { status: result.status });
+    } catch (error: any) {
+        console.error("Delete user error:", error);
 
         return NextResponse.json(
             { error: error.message || "Failed to delete user" },

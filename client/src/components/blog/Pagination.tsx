@@ -2,16 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Pagination as IPagination } from "@/types/blog.type";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 interface PaginationProps {
-    pagination: {
-        page: number;
-        pageSize: number;
-        pageCount: number;
-        total: number;
-    };
+    pagination: IPagination;
 }
 
 const Pagination = ({ pagination }: PaginationProps) => {

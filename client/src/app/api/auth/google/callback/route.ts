@@ -14,19 +14,25 @@ export async function GET(req: NextRequest) {
             params[key] = value;
         });
 
-        const data = await googleAuthCallback(params);
-        if (!data?.jwt) {
-            return NextResponse.redirect(new URL("/login?error=auth", req.url));
+        const result = await googleAuthCallback(params);
+
+        if (!result.ok) {
+            return NextResponse.json(
+                { error: result.error?.message || "Failed to authenticate" },
+                { status: result.error?.status || 400 }
+            );
         }
 
-        await setAuthCookie(data.jwt);
+        await setAuthCookie(result.data.jwt);
         const redirectUrl = await getRedirectCookie();
 
         return NextResponse.redirect(
             new URL(redirectUrl, req.url)
         );
-    } catch (error) {
-        console.error("Google callback error:", error);
-        return NextResponse.redirect(new URL("/login?error=server", req.url));
+    } catch (error: any) {
+        return NextResponse.json(
+            { error: error?.message || "Failed to authenticate" },
+            { status: 500 }
+        );
     }
 }

@@ -21,7 +21,7 @@ import { toast } from 'sonner';
 
 interface CommentItemProps {
     comment: Comment;
-    user?: User;
+    user?: User | null;
     blogSlug: string;
 }
 

@@ -32,27 +32,55 @@ type BlogProps = {
 const Blog = async ({ searchParams, params }: BlogProps) => {
     const { lang } = await searchParams;
     const { slug } = await params;
-    const user: User = await getMe();
-    const blog: IBlog = await getBlog(slug, lang);
 
-    if (!blog) {
+    // 1️⃣ Auth is NON-BLOCKING
+    const meResult = await getMe();
+    const user: User | null = meResult.ok ? meResult.data : null;
+
+    // 2️⃣ Blog is BLOCKING
+    const blogResult = await getBlog(slug, lang);
+
+    if (!blogResult.ok) {
+        // if your service returns status
+        if (blogResult.error?.status === 404) {
+            return (
+                <div className="container mx-auto px-4 py-48 text-center space-y-4">
+                    <h2 className="text-2xl font-semibold">Blog not found</h2>
+                    <Button asChild>
+                        <Link href={linkGenerator("/blogs", lang)}>
+                            Browse all Blogs
+                        </Link>
+                    </Button>
+                </div>
+            );
+        }
+
         return (
-            <div className="container mx-auto px-4 py-48 text-center space-y-4">
-                <h2 className="text-2xl font-semibold">Blog not found</h2>
-                <Button asChild>
-                    <Link href={linkGenerator("/blogs", lang)}>Browse all Blogs</Link>
-                </Button>
+            <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 py-8">
+                <p className="text-destructive text-center">
+                    Failed to load blog: {blogResult.error?.message}
+                </p>
             </div>
         );
     }
 
+    const blog: IBlog = blogResult.data;
     const categoryUrl = `/blogs?category=${blog.category.documentId}&lang=${blog.locale}`;
-    const { blogs: similarBlogs } = await getBlogs({
-        documentId: blog.category.documentId,
-        sort: "createdAt:desc",
-        page: 1,
-        pageSize: 6
-    }, lang);
+
+    // 3️⃣ Similar blogs are NON-BLOCKING
+    const similarResult = await getBlogs(
+        {
+            documentId: blog.category.documentId,
+            sort: "createdAt:desc",
+            page: 1,
+            pageSize: 6,
+        },
+        lang
+    );
+
+    const similarBlogs: IBlog[] =
+        similarResult.ok ? similarResult.data?.blogs : [];
+
 
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 relative">

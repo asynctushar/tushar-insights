@@ -34,18 +34,15 @@ export async function PATCH(
         }
 
         const result = await updateReaction(jwt, slug, documentId, { type: body.type });
-
-        return NextResponse.json(result, { status: 200 });
-    } catch (error: any) {
-        console.error("Update reaction error:", error);
-
-        if (error.message?.includes("Unauthorized")) {
+        if (!result.ok) {
             return NextResponse.json(
-                { error: "Unauthorized" },
-                { status: 401 }
+                { error: result.error?.message || "Failed to update reaction" },
+                { status: result.error?.status || 400 }
             );
         }
 
+        return NextResponse.json(result, { status: result.status });
+    } catch (error: any) {
         return NextResponse.json(
             { error: error.message || "Failed to update reaction" },
             { status: 500 }
@@ -68,22 +65,16 @@ export async function DELETE(
             );
         }
 
-        await deleteReaction(jwt, slug, documentId);
-
-        return NextResponse.json(
-            { success: true, message: "Reaction removed successfully" },
-            { status: 200 }
-        );
-    } catch (error: any) {
-        console.error("Delete reaction error:", error);
-
-        if (error.message?.includes("Unauthorized")) {
+        const result = await deleteReaction(jwt, slug, documentId);
+        if (!result.ok) {
             return NextResponse.json(
-                { error: "Unauthorized" },
-                { status: 401 }
+                { error: result.error?.message || "Failed to remove reaction" },
+                { status: result.error?.status || 400 }
             );
         }
 
+        return NextResponse.json(result, { status: result.status });
+    } catch (error: any) {
         return NextResponse.json(
             { error: error.message || "Failed to delete reaction" },
             { status: 500 }

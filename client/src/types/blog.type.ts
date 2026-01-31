@@ -40,7 +40,7 @@ export interface Reaction {
     documentId: string;
     type: "like" | "love" | "haha" | "angry" | "sad";
     createdAt: Date;
-    user?: User
+    user?: User;
 }
 
 export interface BlogSuggestion {
@@ -52,3 +52,9 @@ export interface BlogSuggestion {
     locale: 'en' | 'bn';
 }
 
+export interface Pagination {
+    page: number;
+    pageSize: number;
+    pageCount: number;
+    total: number;
+};

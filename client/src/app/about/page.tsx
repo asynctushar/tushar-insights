@@ -24,7 +24,20 @@ interface AboutProps {
 
 const About = async ({ searchParams }: AboutProps) => {
     const { lang } = await searchParams;
-    const about: IAbout = await getAbout();
+    const result = await getAbout();
+
+    if (!result.ok) {
+        return (
+            <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 py-8">
+                <p className="text-red-500">
+                    Failed to load about page: {result.error?.message}
+                </p>
+            </div>
+        );
+    }
+
+    // 2️⃣ Safe to use data
+    const about: IAbout = result.data;
 
     const profilePic = about.profilePic
         ? `${process.env.NEXT_PUBLIC_STRAPI_API_URL}${about.profilePic.url}`

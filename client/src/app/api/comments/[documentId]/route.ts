@@ -17,22 +17,16 @@ export async function DELETE(
             );
         }
 
-        const { message } = await deleteCommentByAuthor(jwt, documentId);
-
-        return NextResponse.json(
-            { success: true, message },
-            { status: 200 }
-        );
-    } catch (error: any) {
-        console.error("Delete reply (author) error:", error);
-
-        if (error.message?.includes("Unauthorized")) {
+        const result = await deleteCommentByAuthor(jwt, documentId);
+        if (!result.ok) {
             return NextResponse.json(
-                { error: "Unauthorized. Only authors can delete reply." },
-                { status: 401 }
+                { error: result.error?.message || "Failed to authenticate" },
+                { status: result.error?.status || 400 }
             );
         }
 
+        return NextResponse.json(result, { status: result.status });
+    } catch (error: any) {
         return NextResponse.json(
             { error: error.message || "Failed to delete comment" },
             { status: 500 }

@@ -9,7 +9,22 @@ export const getFeaturedBlogs = async (lang?: string) => {
         }
     );
 
-    return res.data;
+    if (!res.ok) {
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
+    }
+
+    return {
+        ok: true,
+        status: res.status,
+        data: res.data
+    };
 };
 
 
@@ -22,7 +37,22 @@ export const searchBlogSuggestions = async (query: string, lang?: string) => {
         }
     );
 
-    return res.data;
+    if (!res.ok) {
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
+    }
+
+    return {
+        ok: true,
+        status: res.status,
+        data: res.data
+    };
 };
 
 export const searchBlogs = async (query: string, lang?: string) => {
@@ -34,7 +64,22 @@ export const searchBlogs = async (query: string, lang?: string) => {
         }
     );
 
-    return res.data;
+    if (!res.ok) {
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
+    }
+
+    return {
+        ok: true,
+        status: res.status,
+        data: res.data
+    };
 };
 
 export const getBlogCategories = async (lang?: string) => {
@@ -46,7 +91,22 @@ export const getBlogCategories = async (lang?: string) => {
         }
     );
 
-    return res.data;
+    if (!res.ok) {
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
+    }
+
+    return {
+        ok: true,
+        status: res.status,
+        data: res.data
+    };
 };
 
 export const getBlogs = async (
@@ -79,9 +139,24 @@ export const getBlogs = async (
     );
 
 
+    if (!res.ok) {
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
+    }
+
     return {
-        blogs: res.data,
-        pagination: res.meta?.pagination || null,
+        ok: true,
+        status: res.status,
+        data: {
+            blogs: res.data,
+            pagination: res.meta?.pagination || null,
+        }
     };
 };
 
@@ -91,11 +166,22 @@ export const getBlog = async (slug: string, lang?: string) => {
         { lang: lang ?? "en", cache: "no-store" }
     );
 
-    if (!res.ok || res.status === 404) {
-        return null;
+    if (!res.ok) {
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
     }
 
-    return res.data;
+    return {
+        ok: true,
+        status: res.status,
+        data: res.data
+    };
 };
 
 // Create comment
@@ -115,10 +201,21 @@ export const createComment = async (
     });
 
     if (!res.ok) {
-        throw new Error(res.error?.message || 'Failed to create comment');
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
     }
 
-    return res.data;
+    return {
+        ok: true,
+        status: res.status,
+        data: res.data
+    };
 };
 
 // Delete comment (normal user)
@@ -134,10 +231,21 @@ export const deleteComment = async (
     });
 
     if (!res.ok) {
-        throw new Error(res.error?.message || 'Failed to delete comment');
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
     }
 
-    return res.data;
+    return {
+        ok: true,
+        status: res.status,
+        data: res.data
+    };
 };
 
 // Reply to comment (author only)
@@ -155,10 +263,21 @@ export const replyComment = async (
     });
 
     if (!res.ok) {
-        throw new Error(res.error?.message || 'Failed to post reply');
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
     }
 
-    return res.data;
+    return {
+        ok: true,
+        status: res.status,
+        data: res.data
+    };
 };
 
 // Delete reply (author only)
@@ -170,10 +289,21 @@ export const deleteCommentByAuthor = async (jwt: string, commentId: string) => {
     });
 
     if (!res.ok) {
-        throw new Error(res.error?.message || 'Failed to delete comment');
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
     }
 
-    return res.data;
+    return {
+        ok: true,
+        status: res.status,
+        data: res.data
+    };
 };
 
 // Create reaction
@@ -190,10 +320,21 @@ export const createReaction = async (
     });
 
     if (!res.ok) {
-        throw new Error(res.error?.message || 'Failed to create reaction');
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
     }
 
-    return res.data;
+    return {
+        ok: true,
+        status: res.status,
+        data: res.data
+    };
 };
 
 // Update reaction
@@ -211,10 +352,21 @@ export const updateReaction = async (
     });
 
     if (!res.ok) {
-        throw new Error(res.error?.message || 'Failed to update reaction');
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
     }
 
-    return res.data;
+    return {
+        ok: true,
+        status: res.status,
+        data: res.data
+    };
 };
 
 // Delete reaction
@@ -229,9 +381,22 @@ export const deleteReaction = async (
         cache: 'no-store',
     });
 
+
+
     if (!res.ok) {
-        throw new Error(res.error?.message || 'Failed to delete reaction');
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
     }
 
-    return res.data;
+    return {
+        ok: true,
+        status: res.status,
+        data: res.data,
+    };
 };

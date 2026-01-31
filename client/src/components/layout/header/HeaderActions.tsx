@@ -23,7 +23,7 @@ const HeaderActions = ({ user }: HeaderActionsProps) => {
                 <SearchBar isMobile />
             </div>
 
-            {user && <NotificationButton />}
+            {/* {user && <NotificationButton />} */}
             <LanguageToggle />
             <ThemeToggle />
         </div>

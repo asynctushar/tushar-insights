@@ -14,7 +14,19 @@ interface TermsProps {
 
 const TermsAndConditions = async ({ searchParams }: TermsProps) => {
     const { lang } = await searchParams;
-    const terms: Term[] = await getTerms();
+    const result = await getTerms();
+
+    if (!result.ok) {
+        return (
+            <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 py-8">
+                <p className="text-red-500">
+                    Failed to load term page: {result.error?.message}
+                </p>
+            </div>
+        );
+    }
+
+    const terms: Term[] = result.data;
 
     return (
         <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">

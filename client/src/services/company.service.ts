@@ -7,10 +7,21 @@ export const getTerms = async (lang?: string) => {
     );
 
     if (!res.ok) {
-        return null;
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
     }
 
-    return res.data;
+    return {
+        ok: true,
+        status: res.status,
+        data: res.data
+    };
 };
 
 export const getPolicies = async (lang?: string) => {
@@ -20,10 +31,21 @@ export const getPolicies = async (lang?: string) => {
     );
 
     if (!res.ok) {
-        return null;
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
     }
 
-    return res.data;
+    return {
+        ok: true,
+        status: res.status,
+        data: res.data
+    };
 };
 
 export const getAbout = async (lang?: string) => {
@@ -33,8 +55,19 @@ export const getAbout = async (lang?: string) => {
     );
 
     if (!res.ok) {
-        return null;
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
     }
 
-    return res.data;
+    return {
+        ok: true,
+        status: res.status,
+        data: res.data
+    };
 };

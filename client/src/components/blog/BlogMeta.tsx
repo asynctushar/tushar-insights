@@ -98,7 +98,9 @@ const BlogMeta = ({ blog, blogUrl }: BlogMetaProps) => {
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent className="sm:max-w-md" showCloseButton={false}>
                     <DialogHeader>
-                        <DialogTitle>Reactions</DialogTitle>
+                        <DialogTitle
+                            className='text-center'
+                        >Reactions</DialogTitle>
                     </DialogHeader>
 
                     <div className="space-y-4 py-4">

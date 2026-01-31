@@ -1,26 +1,32 @@
 import { strapiClient } from "@/lib/strapi";
 import { cookies } from "next/headers";
 
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL!;
-
 type GoogleCallbackParams = Record<string, string>;
 
 export async function googleAuthCallback(params: GoogleCallbackParams) {
     const query = new URLSearchParams(params).toString();
 
-    const res = await fetch(
-        `${STRAPI_URL}/api/auth/google/callback?${query}`,
-        {
-            method: "GET",
-            cache: "no-store",
-        }
-    );
+    const res = await strapiClient(`/api/auth/google/callback?${query}`, {
+        method: 'GET',
+        cache: 'no-store',
+    });
 
     if (!res.ok) {
-        throw new Error("Google auth failed");
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
     }
 
-    return res.json(); // { jwt, user }
+    return {
+        ok: true,
+        status: res.status,
+        data: res.data
+    };
 }
 
 export async function setAuthCookie(jwt: string) {
@@ -66,18 +72,37 @@ export async function getJwtFromCookies() {
 
 export async function getMe() {
     const jwt = await getJwtFromCookies();
-    if (!jwt) return null;
-
-    const res = await fetch(`${STRAPI_URL}/api/users/me?populate[role]=true&populate[profilePic]=true`, {
-        headers: {
-            Authorization: `Bearer ${jwt}`,
+    if (!jwt) return {
+        ok: false,
+        error: {
+            message: "Unauthorized",
+            status: 401,
         },
-        cache: "no-store",
+
+    };
+
+    const res = await strapiClient(`/api/users/me?populate[role]=true&populate[profilePic]=true`, {
+        method: 'GET',
+        jwt,
+        cache: 'no-store',
     });
 
-    if (!res.ok) return null;
+    if (!res.ok) {
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
 
-    return res.json();
+        };
+    }
+
+    return {
+        ok: true,
+        status: res.status,
+        data: res.data
+    };
 }
 
 
@@ -90,10 +115,21 @@ export const banUser = async (jwt: string, userId: string) => {
     });
 
     if (!res.ok) {
-        throw new Error(res.error?.message || 'Failed to update user status');
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
     }
 
-    return res.data;
+    return {
+        ok: true,
+        status: res.status,
+        data: res.data
+    };
 };
 
 // Delete user (author only)
@@ -105,8 +141,19 @@ export const deleteUser = async (jwt: string, userId: string) => {
     });
 
     if (!res.ok) {
-        throw new Error(res.error?.message || 'Failed to delete user');
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
     }
 
-    return res.data;
+    return {
+        ok: true,
+        status: res.status,
+        data: res.data
+    };
 };

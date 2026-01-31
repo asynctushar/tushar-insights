@@ -17,22 +17,16 @@ export async function DELETE(
             );
         }
 
-        await deleteComment(jwt, slug, documentId);
-
-        return NextResponse.json(
-            { success: true, message: "Comment deleted successfully" },
-            { status: 200 }
-        );
-    } catch (error: any) {
-        console.error("Delete comment error:", error);
-
-        if (error.message?.includes("Unauthorized")) {
+        const result = await deleteComment(jwt, slug, documentId);
+        if (!result.ok) {
             return NextResponse.json(
-                { error: "Unauthorized" },
-                { status: 401 }
+                { error: result.error?.message || "Failed to delete Comment" },
+                { status: result.error?.status || 400 }
             );
         }
 
+        return NextResponse.json(result, { status: result.status });
+    } catch (error: any) {
         return NextResponse.json(
             { error: error.message || "Failed to delete comment" },
             { status: 500 }

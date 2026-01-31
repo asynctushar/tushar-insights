@@ -30,17 +30,15 @@ export async function POST(
             desc: body.desc.trim(),
         });
 
-        return NextResponse.json(result, { status: 201 });
-    } catch (error: any) {
-        console.error("Create comment error:", error);
-
-        if (error.message?.includes("Unauthorized")) {
+        if (!result.ok) {
             return NextResponse.json(
-                { error: "Unauthorized. Please login to comment." },
-                { status: 401 }
+                { error: result.error?.message || "Failed to Create Comment" },
+                { status: result.error?.status || 400 }
             );
         }
 
+        return NextResponse.json(result, { status: result.status });
+    } catch (error: any) {
         return NextResponse.json(
             { error: error.message || "Failed to create comment" },
             { status: 500 }
