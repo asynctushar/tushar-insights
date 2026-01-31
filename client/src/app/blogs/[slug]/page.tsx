@@ -102,7 +102,7 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
                             </div>
 
                             {/* Title */}
-                            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">
+                            <h1 className="text-3xl sm:text-4xl font-bold leading-tight">
                                 {blog.title}
                             </h1>
 

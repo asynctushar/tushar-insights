@@ -15,7 +15,6 @@ export async function GET(req: NextRequest) {
         });
 
         const result = await googleAuthCallback(params);
-
         if (!result.ok) {
             return NextResponse.json(
                 { error: result.error?.message || "Failed to authenticate" },

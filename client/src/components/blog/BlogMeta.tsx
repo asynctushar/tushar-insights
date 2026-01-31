@@ -68,7 +68,7 @@ const BlogMeta = ({ blog, blogUrl }: BlogMetaProps) => {
                 )}
 
                 {/* Reactions Button */}
-                {totalReactions >= 0 && (
+                {totalReactions > 0 && (
                     <Button
                         onClick={() => setOpen(true)}
                         variant="outline"

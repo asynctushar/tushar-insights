@@ -36,7 +36,6 @@ const Blogs = async ({ searchParams }: BlogsProps) => {
         page: page ? parseInt(page) : 1
     }, lang);
 
-
     if (!res.ok) {
         return (
             <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 py-8">

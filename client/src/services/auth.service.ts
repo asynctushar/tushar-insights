@@ -3,30 +3,98 @@ import { cookies } from "next/headers";
 
 type GoogleCallbackParams = Record<string, string>;
 
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL;
+
 export async function googleAuthCallback(params: GoogleCallbackParams) {
-    const query = new URLSearchParams(params).toString();
+    try {
+        const query = new URLSearchParams(params).toString();
 
-    const res = await strapiClient(`/api/auth/google/callback?${query}`, {
-        method: 'GET',
-        cache: 'no-store',
-    });
+        const res = await fetch(`${STRAPI_URL}/api/auth/google/callback?${query}`, {
+            cache: 'no-store',
+        });
 
-    if (!res.ok) {
+        const data = await res.json();
+        // Handle non-OK responses
+        if (!res.ok) {
+            return {
+                ok: false,
+                error: {
+                    message: data?.error || {
+                        message: `Request failed with status ${res.status}`,
+                        status: res.status,
+
+                    }
+                }
+            };
+        }
+
+        return {
+            ok: true,
+            status: res.status,
+            data
+        };
+
+    } catch (error: any) {
         return {
             ok: false,
             error: {
-                message: res.error.message,
-                status: res.status,
+                message: error.message || 'Network error occurred',
+                status: 500,
+            }
+        };
+    }
+}
+
+export async function getMe() {
+    try {
+        const jwt = await getJwtFromCookies();
+        if (!jwt) return {
+            ok: false,
+            error: {
+                message: "Unauthorized",
+                status: 401,
             },
 
         };
-    }
 
-    return {
-        ok: true,
-        status: res.status,
-        data: res.data
-    };
+        const res = await fetch(`${STRAPI_URL}/api/users/me?populate[role]=true&populate[profilePic]=true`, {
+            headers: {
+                Authorization: `Bearer ${jwt}`,
+            },
+            cache: 'no-store',
+        });
+
+        const data = await res.json();
+        // Handle non-OK responses
+        if (!res.ok) {
+            return {
+                ok: false,
+                error: {
+                    message: data?.error || {
+                        message: `Request failed with status ${res.status}`,
+                        status: res.status,
+
+                    }
+                }
+            };
+        }
+
+        return {
+            ok: true,
+            status: res.status,
+            data
+        };
+
+    } catch (error: any) {
+        return {
+            ok: false,
+
+            error: {
+                message: error.message || 'Network error occurred',
+                status: 500,
+            }
+        };
+    }
 }
 
 export async function setAuthCookie(jwt: string) {
@@ -67,42 +135,6 @@ export async function getRedirectCookie() {
 export async function getJwtFromCookies() {
     const cookieStore = await cookies();
     return cookieStore.get("jwt")?.value || null;
-}
-
-
-export async function getMe() {
-    const jwt = await getJwtFromCookies();
-    if (!jwt) return {
-        ok: false,
-        error: {
-            message: "Unauthorized",
-            status: 401,
-        },
-
-    };
-
-    const res = await strapiClient(`/api/users/me?populate[role]=true&populate[profilePic]=true`, {
-        method: 'GET',
-        jwt,
-        cache: 'no-store',
-    });
-
-    if (!res.ok) {
-        return {
-            ok: false,
-            error: {
-                message: res.error.message,
-                status: res.status,
-            },
-
-        };
-    }
-
-    return {
-        ok: true,
-        status: res.status,
-        data: res.data
-    };
 }
 
 
