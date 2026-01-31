@@ -7,7 +7,7 @@ import ThemeToggle from '@/components/theme/ThemeToggle';
 import { User } from '@/types/user.type';
 
 type HeaderActionsProps = {
-    user?: User;
+    user?: User | null;
 };
 
 const HeaderActions = ({ user }: HeaderActionsProps) => {
