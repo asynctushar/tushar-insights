@@ -17,6 +17,8 @@ export const metadata: Metadata = {
     description: "A modern blog application for insights and articles",
 };
 
+export const dynamic = 'force-dynamic';
+
 export default function RootLayout({
     children,
 }: Readonly<{

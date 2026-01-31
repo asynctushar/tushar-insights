@@ -21,9 +21,9 @@ import BlogMeta from "@/components/blog/BlogMeta";
 import ReactBar from "@/components/blog/ReactBar";
 
 type BlogProps = {
-    searchParams: {
+    searchParams: Promise<{
         lang?: string;
-    };
+    }>;
     params: Promise<{
         slug: string;
     }>;

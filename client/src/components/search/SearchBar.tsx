@@ -60,12 +60,16 @@ const SearchBar = ({ isMobile = false }: SearchBarProps) => {
         const timer = setTimeout(async () => {
             try {
                 // TODO: Replace with actual API call
-                const results = await searchBlogSuggestions(value, lang);
+                const result = await searchBlogSuggestions(value, lang);
 
-                setSuggestions(results);
+                if (!result.ok) {
+                    setSuggestions([]);
+                    setShowSuggestions(false);
+                }
+
+                setSuggestions(result.data);
                 setShowSuggestions(true);
             } catch (error) {
-                console.error('Failed to fetch suggestions:', error);
                 setSuggestions([]);
             } finally {
                 setIsLoading(false);

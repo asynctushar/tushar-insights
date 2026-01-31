@@ -7,9 +7,9 @@ import rehypeRaw from "rehype-raw";
 import remarkBreaks from "remark-breaks";
 
 interface PolicyProps {
-    searchParams: {
+    searchParams: Promise<{
         lang?: string;
-    };
+    }>;
 };
 
 const PrivacyPolicy = async ({ searchParams }: PolicyProps) => {

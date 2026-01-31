@@ -17,6 +17,7 @@ const Header = async () => {
                     {/* Logo */}
                     <Logo />
 
+
                     {/* Desktop Navigation */}
                     <div className="hidden lg:flex flex-1 justify-center">
                         <Suspense fallback={<div className="h-6 w-64 animate-pulse bg-muted rounded" />}>

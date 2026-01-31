@@ -6,10 +6,10 @@ import { Blog } from "@/types/blog.type";
 import Link from "next/link";
 
 type SearchProps = {
-    searchParams: {
+    searchParams: Promise<{
         lang?: string;
         q?: string;
-    };
+    }>;
 };
 
 const Search = async ({ searchParams }: SearchProps) => {

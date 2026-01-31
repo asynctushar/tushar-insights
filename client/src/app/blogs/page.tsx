@@ -5,14 +5,15 @@ import SortBy from "@/components/blog/SortBy";
 import { Card, CardContent } from "@/components/ui/card";
 import { getBlogCategories, getBlogs } from "@/services/blog.service";
 import { Blog, Category, Pagination as IPagination } from "@/types/blog.type";
+import { connection } from "next/server";
 
 type BlogsProps = {
-    searchParams: {
+    searchParams: Promise<{
         lang?: string;
         category?: string;
         sort?: string;
         page?: string;
-    };
+    }>;
 };
 
 const Blogs = async ({ searchParams }: BlogsProps) => {

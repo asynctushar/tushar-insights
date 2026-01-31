@@ -17,9 +17,9 @@ const socials = [
 ];
 
 interface AboutProps {
-    searchParams: {
+    searchParams: Promise<{
         lang?: string;
-    };
+    }>;
 };
 
 const About = async ({ searchParams }: AboutProps) => {

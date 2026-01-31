@@ -7,9 +7,9 @@ import rehypeRaw from "rehype-raw";
 import remarkBreaks from "remark-breaks";
 
 interface TermsProps {
-    searchParams: {
+    searchParams: Promise<{
         lang?: string;
-    };
+    }>;
 };
 
 const TermsAndConditions = async ({ searchParams }: TermsProps) => {
