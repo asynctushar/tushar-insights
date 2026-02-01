@@ -9,14 +9,10 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
     async find(ctx) {
         // Ensure user and category are populated as before
         ctx.query.populate = {
-            cover: {
-                fields: ['url', 'name', 'width', 'height', 'alternativeText', 'ext'],
-            },
+            cover: true,
             user: {
                 populate: {
-                    profilePic: {
-                        fields: ['url', 'name', 'width', 'height', 'alternativeText'],
-                    },
+                    profilePic: true
                 },
             },
             category: true,
@@ -97,16 +93,7 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
                 publishedAt: { $notNull: true },
             },
             populate: {
-                cover: {
-                    select: [
-                        'url',
-                        'name',
-                        'width',
-                        'height',
-                        'alternativeText',
-                        'ext',
-                    ],
-                },
+                cover: true,
                 user: {
                     populate: {
                         profilePic: true

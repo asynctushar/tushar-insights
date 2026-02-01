@@ -81,6 +81,9 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
     const similarBlogs: IBlog[] =
         similarResult.ok ? similarResult.data?.blogs : [];
 
+    const coverSrc = blog.cover.formats?.medium.url?.startsWith("http")
+        ? blog.cover.formats.medium.url
+        : `${process.env.NEXT_PUBLIC_STRAPI_API_URL}${blog.cover.formats?.medium.url}`;
 
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 relative">
@@ -93,7 +96,7 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
                             {/* Cover Image */}
                             <div className="relative w-full aspect-video rounded-lg overflow-hidden">
                                 <Image
-                                    src={`${blog.cover.url}`}
+                                    src={`${coverSrc}`}
                                     alt={blog.cover.name}
                                     fill
                                     className="object-cover"
@@ -141,6 +144,7 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
                                                         height={300}
                                                         src={imageSrc}
                                                         alt={alt}
+
                                                         className="rounded-lg w-2/3 h-auto shadow-md"
                                                     />
                                                 </div>

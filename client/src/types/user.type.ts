@@ -8,6 +8,7 @@ export interface User {
     documentId: string;
     createdAt: Date;
     role?: Role;
+
 }
 
 export interface Role {
@@ -27,4 +28,18 @@ export interface ProfilePic {
     height: number;
     url: string;
     createdAt: Date;
+    formats?: {
+        thumbnail: {
+            url: string;
+        };
+        small: {
+            url: string;
+        };
+        medium: {
+            url: string;
+        };
+        large: {
+            url: string;
+        };
+    };
 }

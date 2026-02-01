@@ -5,7 +5,11 @@ export const getFeaturedBlogs = async (lang?: string) => {
         '/api/blogs?filters[featured]=true',
         {
             lang: lang ?? 'en',
-            cache: 'no-store',
+            cache: 'force-cache',
+            next: {
+                tags: [`featured:blogs`],
+                revalidate: 60 * 10, // 10 minutes (optional)
+            },
         }
     );
 
@@ -33,7 +37,11 @@ export const searchBlogSuggestions = async (query: string, lang?: string) => {
         `/api/blogs/search?query=${encodeURIComponent(query)}`,
         {
             lang: lang ?? "en",
-            cache: 'no-store',
+            cache: 'force-cache',
+            next: {
+                tags: [`search:${query}`],
+                revalidate: 60 * 10, // 10 minutes (optional)
+            },
         }
     );
 
@@ -60,7 +68,11 @@ export const searchBlogs = async (query: string, lang?: string) => {
         `/api/blogs?filters[title][$containsi]=${encodeURIComponent(query)}`,
         {
             lang: lang ?? "en",
-            cache: 'no-store',
+            cache: 'force-cache',
+            next: {
+                tags: [`search:blogs`],
+                revalidate: 60 * 10, // 10 minutes (optional)
+            },
         }
     );
 
@@ -87,7 +99,11 @@ export const getBlogCategories = async (lang?: string) => {
         `/api/categories`,
         {
             lang: lang ?? "en",
-            cache: 'no-store',
+            cache: 'force-cache',
+            next: {
+                tags: [`categories`],
+                revalidate: 60 * 10, // 10 minutes (optional)
+            },
         }
     );
 
@@ -134,7 +150,11 @@ export const getBlogs = async (
         `/api/blogs?${params.toString()}`,
         {
             lang: lang ?? "en",
-            cache: 'no-store',
+            cache: 'force-cache',
+            next: {
+                tags: [`blogs`],
+                revalidate: 60 * 10, // 10 minutes (optional)
+            },
         }
     );
 
@@ -163,7 +183,14 @@ export const getBlogs = async (
 export const getBlog = async (slug: string, lang?: string) => {
     const res = await strapiClient(
         `/api/blogs/${encodeURIComponent(slug)}`,
-        { lang: lang ?? "en", cache: "no-store" }
+        {
+            lang: lang ?? "en",
+            cache: 'force-cache',
+            next: {
+                tags: [`blog:${slug}`],
+                revalidate: 60 * 10, // 10 minutes (optional)
+            },
+        }
     );
 
     if (!res.ok) {

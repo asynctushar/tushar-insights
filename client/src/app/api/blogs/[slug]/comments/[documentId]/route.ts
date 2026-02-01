@@ -1,6 +1,7 @@
 import { deleteComment } from "@/services/blog.service";
 import { getJwtFromCookies } from "@/services/auth.service";
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTags } from "@/lib/cache";
 
 export async function DELETE(
     request: NextRequest,
@@ -25,6 +26,7 @@ export async function DELETE(
             );
         }
 
+        revalidateTags(["blogs", "featured:blogs", "search:blogs", `blog:${slug}`]);
         return NextResponse.json(result, { status: result.status });
     } catch (error: any) {
         return NextResponse.json(

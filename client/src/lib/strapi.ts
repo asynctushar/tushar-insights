@@ -1,5 +1,3 @@
-// lib/strapi/client.ts
-
 type StrapiClientOptions = {
     lang?: string;
     cache?: RequestCache;
@@ -7,7 +5,12 @@ type StrapiClientOptions = {
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
     body?: any;
     headers?: Record<string, string>;
+    next?: {
+        tags?: string[];
+        revalidate?: number;
+    };
 };
+
 
 type StrapiClientResponse<T> = {
     ok: boolean;
@@ -43,11 +46,20 @@ export const strapiClient = async <T = any>(
         ...(options?.headers || {}),
     };
 
-    const fetchOptions: RequestInit = {
+    const fetchOptions: RequestInit & {
+        next?: {
+            tags?: string[];
+            revalidate?: number;
+        };
+    } = {
         method,
         headers,
-        cache: options?.cache ?? (method === 'GET' ? 'force-cache' : 'no-store'),
+        cache:
+            options?.cache ??
+            (method === 'GET' ? 'force-cache' : 'no-store'),
+        next: options?.next,
     };
+
 
     // Add body for POST, PUT, PATCH requests
     if (hasBody && options?.body) {

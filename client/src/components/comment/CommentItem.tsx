@@ -74,7 +74,6 @@ const CommentItem = ({ comment, user, blogSlug }: CommentItemProps) => {
             }
 
             toast.success("Comment deleted successfully.");
-            router.refresh();
             setConfirmDialog(prev => ({ ...prev, open: false, isLoading: false }));
         } catch (error: any) {
             toast.error(error.message || "Failed to delete comment.");
@@ -86,7 +85,13 @@ const CommentItem = ({ comment, user, blogSlug }: CommentItemProps) => {
         setConfirmDialog(prev => ({ ...prev, isLoading: true }));
         try {
             const endpoint = `/api/comments/${comment.documentId}`;
-            const res = await fetch(endpoint, { method: 'DELETE' });
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                body: JSON.stringify({
+                    slug: blogSlug
+                })
+            });
+
 
             if (!res.ok) {
                 const data = await res.json();
@@ -94,7 +99,6 @@ const CommentItem = ({ comment, user, blogSlug }: CommentItemProps) => {
             }
 
             toast.success(`${comment.type === "normal" ? "Comment" : "Reply"} deleted successfully.`);
-            router.refresh();
             setConfirmDialog(prev => ({ ...prev, open: false, isLoading: false }));
         } catch (error: any) {
             toast.error(error.message || `Failed to delete ${comment.type === "normal" ? "comment" : "reply"}.`);
@@ -116,7 +120,6 @@ const CommentItem = ({ comment, user, blogSlug }: CommentItemProps) => {
 
             const action = comment.user.accountStatus === 'banned' ? 'unbanned' : 'banned';
             toast.success(`User ${action} successfully.`);
-            router.refresh();
             setConfirmDialog(prev => ({ ...prev, open: false, isLoading: false }));
         } catch (error: any) {
             toast.error(error.message || "Failed to update user status.");
@@ -137,7 +140,6 @@ const CommentItem = ({ comment, user, blogSlug }: CommentItemProps) => {
             }
 
             toast.success("User deleted successfully.");
-            router.refresh();
             setConfirmDialog(prev => ({ ...prev, open: false, isLoading: false }));
         } catch (error: any) {
             toast.error(error.message || "Failed to delete user.");
@@ -163,7 +165,6 @@ const CommentItem = ({ comment, user, blogSlug }: CommentItemProps) => {
 
             toast.success("Reply posted successfully.");
             setReplyText('');
-            router.refresh();
         } catch (error: any) {
             toast.error(error.message || "Failed to post reply.");
         } finally {

@@ -18,6 +18,9 @@ interface BlogCardProps {
 const BlogCard = ({ blog }: BlogCardProps) => {
     const blogUrl = `/blogs/${blog.slug}${blog.locale === "bn" ? `?lang=${blog.locale}` : ""}`;
     const categoryUrl = `/blogs?category=${blog.category.documentId}&lang=${blog.locale}`;
+    const coverSrc = blog.cover.formats?.small.url?.startsWith("http")
+        ? blog.cover.formats.small.url
+        : `${process.env.NEXT_PUBLIC_STRAPI_API_URL}${blog.cover.formats?.small.url}`;
 
 
     return (
@@ -27,7 +30,7 @@ const BlogCard = ({ blog }: BlogCardProps) => {
                     {/* Image */}
                     <div className="relative w-full sm:w-1/3 aspect-video shrink-0 rounded-md overflow-hidden">
                         <Image
-                            src={`${blog.cover.url}`}
+                            src={`${coverSrc}`}
                             alt={blog.cover.alternativeText || blog.slug}
                             fill
                             className="object-cover"

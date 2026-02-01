@@ -89,7 +89,7 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
         });
 
         if (!comment) {
-            return ctx.notFound(`${comment.type === "normal" ? "Comment" : "Reply"} not found`);
+            return ctx.notFound(`Not found`);
         }
 
         // 5️⃣ If it's a "normal" comment, delete all its replies first

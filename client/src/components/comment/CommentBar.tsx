@@ -50,7 +50,6 @@ const CommentBar = ({ user, blog }: CommentBarProps) => {
             toast.success("Your comment has been posted successfully.");
 
             setComment('');
-            router.refresh();
         } catch (error: any) {
             console.error('Comment submission error:', error);
             toast.error(error.message || "Failed to post comment. Please try again.");

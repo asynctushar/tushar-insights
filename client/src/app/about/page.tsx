@@ -39,9 +39,10 @@ const About = async ({ searchParams }: AboutProps) => {
     // 2️⃣ Safe to use data
     const about: IAbout = result.data;
 
-    const profilePic = about.profilePic
-        ? `${process.env.NEXT_PUBLIC_STRAPI_API_URL}${about.profilePic.url}`
-        : undefined;
+
+    const profilePic = about.profilePic?.url.startsWith("http")
+        ? about.profilePic?.url
+        : `${process.env.NEXT_PUBLIC_STRAPI_API_URL}${about.profilePic?.url}`;
 
 
     return (

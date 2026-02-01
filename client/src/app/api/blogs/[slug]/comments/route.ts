@@ -1,6 +1,7 @@
 import { createComment } from "@/services/blog.service";
 import { getJwtFromCookies } from "@/services/auth.service";
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTags } from "@/lib/cache";
 
 export async function POST(
     request: NextRequest,
@@ -37,6 +38,7 @@ export async function POST(
             );
         }
 
+        revalidateTags(["blogs", "featured:blogs", "search:blogs", `blog:${slug}`]);
         return NextResponse.json(result, { status: result.status });
     } catch (error: any) {
         return NextResponse.json(

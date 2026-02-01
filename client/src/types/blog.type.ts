@@ -8,6 +8,20 @@ interface Cover {
     height: number;
     ext: number;
     alternativeText: string | null;
+    formats?: {
+        thumbnail: {
+            url: string;
+        };
+        small: {
+            url: string;
+        };
+        medium: {
+            url: string;
+        };
+        large: {
+            url: string;
+        };
+    };
 }
 
 
@@ -58,3 +72,7 @@ export interface Pagination {
     pageCount: number;
     total: number;
 };
+
+export interface Picture {
+
+}

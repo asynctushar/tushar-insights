@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/dialog";
 import { Blog } from '@/types/blog.type';
 import { User } from '@/types/user.type';
-import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { reactionTypes } from '@/lib/blog';
 
@@ -23,7 +22,6 @@ interface ReactBarProps {
 const ReactBar = ({ blog, user }: ReactBarProps) => {
     const [open, setOpen] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const router = useRouter();
 
     // Find user's current reaction
     const userReaction = blog.reactions?.find(
@@ -79,7 +77,6 @@ const ReactBar = ({ blog, user }: ReactBarProps) => {
             }
 
             setOpen(false);
-            router.refresh();
         } catch (error: any) {
             toast.error(error.message || 'Failed to process reaction');
         } finally {

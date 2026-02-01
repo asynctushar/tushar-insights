@@ -2,6 +2,7 @@ import { updateReaction, deleteReaction } from "@/services/blog.service";
 import { getJwtFromCookies } from "@/services/auth.service";
 import { NextRequest, NextResponse } from "next/server";
 import { validateReactionType } from "@/lib/validations";
+import { revalidateTags } from "@/lib/cache";
 
 export async function PATCH(
     request: NextRequest,
@@ -41,6 +42,7 @@ export async function PATCH(
             );
         }
 
+        revalidateTags(["blogs", "featured:blogs", "search:blogs", `blog:${slug}`]);
         return NextResponse.json(result, { status: result.status });
     } catch (error: any) {
         return NextResponse.json(
@@ -73,6 +75,8 @@ export async function DELETE(
             );
         }
 
+
+        revalidateTags(["blogs", "featured:blogs", "search:blogs", `blog:${slug}`]);
         return NextResponse.json(result, { status: result.status });
     } catch (error: any) {
         return NextResponse.json(

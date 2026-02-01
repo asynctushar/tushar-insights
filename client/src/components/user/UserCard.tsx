@@ -19,9 +19,9 @@ const UserCard = ({ user, time, name = true }: UserCardProps) => {
     };
 
     const displayName = user.fullName ?? user.username;
-    const avatarUrl = user.profilePic
-        ? `${process.env.NEXT_PUBLIC_STRAPI_API_URL}${user.profilePic.url}`
-        : undefined;
+    const avatarUrl = user.profilePic?.formats?.thumbnail.url?.startsWith("http")
+        ? user.profilePic.formats?.thumbnail.url
+        : `${process.env.NEXT_PUBLIC_STRAPI_API_URL}${user.profilePic?.formats?.thumbnail.url}`;
 
     return (
         <div className="flex items-center gap-2">
