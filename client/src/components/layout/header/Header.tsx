@@ -7,8 +7,8 @@ import { getMe } from '@/services/auth.service';
 import { User } from '@/types/user.type';
 
 const Header = async () => {
-    const result = await getMe();
-    const user: User | null = result.ok ? result.data : null;
+    // const result = await getMe();
+    // const user: User | null = result.ok ? result.data : null;
 
     return (
         <header className="sticky top-0 z-50 w-full shadow-md bg-primary text-primary-foreground">
@@ -28,7 +28,7 @@ const Header = async () => {
                     {/* Actions */}
                     <div className="flex items-center gap-2">
                         <Suspense fallback={<div className="h-9 w-32 animate-pulse bg-muted rounded" />}>
-                            <HeaderActions user={user} />
+                            <HeaderActions />
                         </Suspense>
                     </div>
 

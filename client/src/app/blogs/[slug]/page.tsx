@@ -19,6 +19,7 @@ import BlogCard from "@/components/blog/BlogCard";
 import { linkGenerator } from "@/lib/blog";
 import BlogMeta from "@/components/blog/BlogMeta";
 import ReactBar from "@/components/blog/ReactBar";
+import CommentList from "@/components/comment/CommentList";
 
 type BlogProps = {
     searchParams: Promise<{
@@ -187,35 +188,11 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
                                 </CardContent>
                             </Card>
                         ) : (
-                            <CommentBar user={user} blog={blog} />
+                            <CommentBar user={user} blogId={blog.documentId} />
                         )}
 
                         {/* Comments List */}
-                        <Card className="shadow-sm py-4 sm:py-6">
-                            <CardContent className="px-4 sm:px-6">
-                                <h3 className="text-xl font-semibold mb-4">
-                                    Comments ({blog.comments.length})
-                                </h3>
-                                {blog.comments.length > 0 ? (
-                                    <div className="space-y-4">
-                                        {blog.comments.map((comment) => (
-                                            <CommentItem
-                                                comment={comment}
-                                                key={comment.documentId}
-                                                user={user}
-                                                blogSlug={blog.slug}
-                                            />
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <div className="text-center py-12">
-                                        <p className="text-muted-foreground">
-                                            No comments yet. Be the first to share your thoughts!
-                                        </p>
-                                    </div>
-                                )}
-                            </CardContent>
-                        </Card>
+                        <CommentList user={user} blog={blog} />
                     </CardContent>
                 </Card>
 

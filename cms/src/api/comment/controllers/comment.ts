@@ -60,6 +60,14 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
                 blog: blog.documentId,
                 comment: parentComment.documentId,
             },
+            populate: {
+                user: {
+                    populate: {
+                        role: true, // 👈 populate user's role
+                        profilePic: true
+                    },
+                },
+            },
             publish: true, // 👈 THIS is what Admin respects
         });
 
@@ -67,7 +75,7 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
 
 
         return {
-            data: reply,
+            data: { reply },
             message: 'Reply created successfully',
         };
 

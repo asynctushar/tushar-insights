@@ -16,13 +16,15 @@ import { Comment } from '@/types/comment.type';
 import { User } from '@/types/user.type';
 import { MoreVertical, Trash2, UserX, Ban, Reply, Send, Loader2 } from 'lucide-react';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { useAppDispatch } from '@/redux/hooks';
+import { addReply, removeComment, removeReply } from '@/redux/slices/blog.slice';
 
 interface CommentItemProps {
     comment: Comment;
     user?: User | null;
     blogSlug: string;
+    blogId: string;
 }
 
 interface openConfirmDialogProps {
@@ -35,7 +37,7 @@ interface openConfirmDialogProps {
     isLoading?: boolean;
 }
 
-const CommentItem = ({ comment, user, blogSlug }: CommentItemProps) => {
+const CommentItem = ({ comment, user, blogSlug, blogId }: CommentItemProps) => {
     const [showReplyInput, setShowReplyInput] = useState(false);
     const [replyText, setReplyText] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -49,7 +51,8 @@ const CommentItem = ({ comment, user, blogSlug }: CommentItemProps) => {
         onConfirm: async () => { },
     });
 
-    const router = useRouter();
+    const dispatch = useAppDispatch();
+
 
     const isAuthor = user?.role?.name === 'author';
     const isAuthorComment = comment.user.role?.name === "author";
@@ -67,12 +70,13 @@ const CommentItem = ({ comment, user, blogSlug }: CommentItemProps) => {
         try {
             const endpoint = `/api/blogs/${blogSlug}/comments/${comment.documentId}`;
             const res = await fetch(endpoint, { method: 'DELETE' });
+            const data = await res.json();
 
             if (!res.ok) {
-                const data = await res.json();
                 throw new Error(data.error || 'Failed to delete comment');
             }
 
+            dispatch(removeComment({ blogId, commentId: comment.documentId }));
             toast.success("Comment deleted successfully.");
             setConfirmDialog(prev => ({ ...prev, open: false, isLoading: false }));
         } catch (error: any) {
@@ -91,13 +95,18 @@ const CommentItem = ({ comment, user, blogSlug }: CommentItemProps) => {
                     slug: blogSlug
                 })
             });
+            const data = await res.json();
 
 
             if (!res.ok) {
-                const data = await res.json();
                 throw new Error(data.error || `Failed to delete ${comment.type === "normal" ? "comment" : "reply"}.`);
             }
 
+            if (comment.type === "reply" && comment.comment) {
+                dispatch(removeReply({ blogId, parentCommentId: comment.comment?.documentId, replyId: comment.documentId }));
+            } else {
+                dispatch(removeComment({ blogId, commentId: comment.documentId }));
+            }
             toast.success(`${comment.type === "normal" ? "Comment" : "Reply"} deleted successfully.`);
             setConfirmDialog(prev => ({ ...prev, open: false, isLoading: false }));
         } catch (error: any) {
@@ -112,9 +121,9 @@ const CommentItem = ({ comment, user, blogSlug }: CommentItemProps) => {
             const res = await fetch(`/api/auth/${comment.user.id}`, {
                 method: 'PUT',
             });
+            const data = await res.json();
 
             if (!res.ok) {
-                const data = await res.json();
                 throw new Error(data.error || 'Failed to update user status');
             }
 
@@ -133,9 +142,9 @@ const CommentItem = ({ comment, user, blogSlug }: CommentItemProps) => {
             const res = await fetch(`/api/auth/${comment.user.id}`, {
                 method: 'DELETE',
             });
+            const data = await res.json();
 
             if (!res.ok) {
-                const data = await res.json();
                 throw new Error(data.error || 'Failed to delete user');
             }
 
@@ -157,12 +166,13 @@ const CommentItem = ({ comment, user, blogSlug }: CommentItemProps) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ desc: replyText.trim() }),
             });
+            const data = await res.json();
 
             if (!res.ok) {
-                const data = await res.json();
                 throw new Error(data.error || 'Failed to post reply');
             }
 
+            dispatch(addReply({ blogId: blogId, parentCommentId: comment.documentId, reply: data.data.reply }));
             toast.success("Reply posted successfully.");
             setReplyText('');
         } catch (error: any) {
@@ -306,6 +316,7 @@ const CommentItem = ({ comment, user, blogSlug }: CommentItemProps) => {
                 <div className="ml-8 mt-3 space-y-3">
                     {comment.replies.map((reply) => (
                         <CommentItem
+                            blogId={blogId}
                             key={reply.documentId}
                             comment={reply}
                             user={user}

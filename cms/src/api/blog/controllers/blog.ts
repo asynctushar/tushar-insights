@@ -240,20 +240,20 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
         });
 
         //Create notification here (react) 
-        const notification = await strapi.documents('api::notification.notification').create({
-            data: {
-                blog: blog.documentId,
-                type: 'react',
-                user: blog.user.id,
-                interacted_by: user.id,
-                seen: false
-            },
-            publish: true,
-        });
+        // const notification = await strapi.documents('api::notification.notification').create({
+        //     data: {
+        //         blog: blog.documentId,
+        //         type: 'react',
+        //         user: blog.user.id,
+        //         interacted_by: user.id,
+        //         seen: false
+        //     },
+        //     publish: true,
+        // });
 
 
-        // Websocket implementation here(to notification.user) 
-        console.log(notification);
+        // // Websocket implementation here(to notification.user) 
+        // console.log(notification);
 
         // 5️⃣ Return final response
         return {
@@ -394,20 +394,20 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
 
 
         //Create notification here (unreact) 
-        const notification = await strapi.documents('api::notification.notification').create({
-            data: {
-                blog: blog.documentId,
-                interacted_by: user.id,
-                type: 'unreact',
-                user: blog.user.id,
-                seen: false
-            },
-            publish: true,
-        });
+        // const notification = await strapi.documents('api::notification.notification').create({
+        //     data: {
+        //         blog: blog.documentId,
+        //         interacted_by: user.id,
+        //         type: 'unreact',
+        //         user: blog.user.id,
+        //         seen: false
+        //     },
+        //     publish: true,
+        // });
 
 
-        // Websocket implementation here(to notification.user) 
-        console.log(notification);
+        // // Websocket implementation here(to notification.user) 
+        // console.log(notification);
 
         // 5️⃣ Return final response
         return {
@@ -471,25 +471,33 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
                 user: user.id,
                 type: ctx.request.body.type,
                 desc: ctx.request.body.desc,
+            },
+            populate: {
+                user: {
+                    populate: {
+                        role: true, // 👈 populate user's role
+                        profilePic: true
+                    },
+                },
             }
         });
 
 
         //Create notification here (comment) 
-        const notification = await strapi.documents('api::notification.notification').create({
-            data: {
-                blog: blog.documentId,
-                interacted_by: user.id,
-                type: 'comment',
-                seen: false,
-                user: blog.user.id,
-            },
-            publish: true,
-        });
+        // const notification = await strapi.documents('api::notification.notification').create({
+        //     data: {
+        //         blog: blog.documentId,
+        //         interacted_by: user.id,
+        //         type: 'comment',
+        //         seen: false,
+        //         user: blog.user.id,
+        //     },
+        //     publish: true,
+        // });
 
 
-        // Websocket implementation here(to notification.user) 
-        console.log(notification);
+        // // Websocket implementation here(to notification.user) 
+        // console.log(notification);
 
 
 
@@ -569,21 +577,21 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
         });
 
         //Create notification here (react) 
-        const notification = await strapi.documents('api::notification.notification')
-            .create({
-                data: {
-                    blog: blog.documentId,
-                    interacted_by: user.id,
-                    seen: false,
-                    type: "deleteComment",
-                    user: blog.user.id,
-                },
-                publish: true
-            });
+        // const notification = await strapi.documents('api::notification.notification')
+        //     .create({
+        //         data: {
+        //             blog: blog.documentId,
+        //             interacted_by: user.id,
+        //             seen: false,
+        //             type: "deleteComment",
+        //             user: blog.user.id,
+        //         },
+        //         publish: true
+        //     });
 
 
-        // Websocket implementation here(to notification.user) 
-        console.log(notification);
+        // // Websocket implementation here(to notification.user) 
+        // console.log(notification);
 
 
         // 5️⃣ Return final response

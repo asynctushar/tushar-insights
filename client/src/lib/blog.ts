@@ -1,3 +1,4 @@
+import { Comment } from '@/types/comment.type';
 import { Heart, Frown, Flame, Laugh, ThumbsUp } from 'lucide-react';
 
 export const linkGenerator = (link: string, lang?: string) => {
@@ -24,3 +25,24 @@ export const reactionIcons = {
     angry: { icon: Flame, label: "Angry", color: "text-orange-500" },
     haha: { icon: Laugh, label: "Haha", color: "text-green-500" },
 };
+
+export const removeTopLevelComment = (
+    comments: Comment[],
+    commentId: string
+) => comments.filter(c => c.documentId !== commentId);
+
+export const removeReplyFromParent = (
+    comments: Comment[],
+    parentCommentId: string,
+    replyId: string
+) =>
+    comments.map(comment =>
+        comment.documentId === parentCommentId
+            ? {
+                ...comment,
+                replies: comment.replies.filter(
+                    reply => reply.documentId !== replyId
+                ),
+            }
+            : comment
+    );

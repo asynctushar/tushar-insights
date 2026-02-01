@@ -10,16 +10,22 @@ import { LogOut, Send, Loader2 } from 'lucide-react';
 import UserCard from '../user/UserCard';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from "sonner";
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { addComment } from '@/redux/slices/blog.slice';
 
 type CommentBarProps = {
     user: User;
-    blog: Blog;
+    blogId: string;
 };
 
-const CommentBar = ({ user, blog }: CommentBarProps) => {
+const CommentBar = ({ user, blogId }: CommentBarProps) => {
     const [comment, setComment] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+    const blog = useAppSelector((state) => state.blog.blogs[blogId]);
+    const dispatch = useAppDispatch();
+
     const router = useRouter();
     const searchParams = useSearchParams();
     const lang = searchParams.get('lang') || 'en';
@@ -47,8 +53,8 @@ const CommentBar = ({ user, blog }: CommentBarProps) => {
                 throw new Error(data.error || 'Failed to post comment');
             }
 
+            dispatch(addComment({ blogId, comment: data.data.comment }));
             toast.success("Your comment has been posted successfully.");
-
             setComment('');
         } catch (error: any) {
             console.error('Comment submission error:', error);

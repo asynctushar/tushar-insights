@@ -8,4 +8,5 @@ export interface Comment {
     createdAt: Date;
     replies: Comment[];
     user: User;
+    comment?: Comment;
 }

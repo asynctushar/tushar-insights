@@ -9,9 +9,11 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import Link from "next/link";
-import { MessageSquare, Heart, ThumbsUp, Frown, Flame, Laugh } from "lucide-react";
-import { useState } from "react";
+import { MessageSquare } from "lucide-react";
+import { useEffect, useState } from "react";
 import { reactionIcons } from "@/lib/blog";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { updateBlog } from "@/redux/slices/blog.slice";
 
 interface BlogMetaProps {
     blog: Blog;
@@ -28,11 +30,23 @@ interface ReactionCounts {
 
 
 
-const BlogMeta = ({ blog, blogUrl }: BlogMetaProps) => {
+const BlogMeta = ({ blog: initialBlog, blogUrl }: BlogMetaProps) => {
     const [open, setOpen] = useState<boolean>(false);
 
+    const dispatch = useAppDispatch();
+    const blog = useAppSelector((state) => state.blog.blogs[initialBlog.documentId]);
+
+    useEffect(() => {
+        dispatch(updateBlog({
+            commentsCount: initialBlog.commentsCount,
+            reactions: initialBlog.reactions,
+            documentId: initialBlog.documentId,
+            slug: initialBlog.slug
+        }));
+    }, [initialBlog]);
+
     // Calculate reaction counts
-    const reactionCounts: ReactionCounts = blog.reactions?.reduce(
+    const reactionCounts: ReactionCounts = blog?.reactions?.reduce(
         (acc, reaction) => {
             if (reaction.type in acc) {
                 acc[reaction.type as keyof ReactionCounts] += 1;
@@ -62,7 +76,7 @@ const BlogMeta = ({ blog, blogUrl }: BlogMetaProps) => {
                     >
                         <Link href={blogUrl}>
                             <MessageSquare className="h-4 w-4" />
-                            <span className="text-sm">{blog.commentsCount || 0}</span>
+                            <span className="text-sm">{blog?.commentsCount || 0}</span>
                         </Link>
                     </Button>
                 )}
