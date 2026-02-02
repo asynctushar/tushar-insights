@@ -1,5 +1,6 @@
+import { Reaction } from '@/types/blog.type';
 import { Comment } from '@/types/comment.type';
-import { Heart, Frown, Flame, Laugh, ThumbsUp } from 'lucide-react';
+import { Heart, Frown, Flame, Laugh, ThumbsUp, type LucideIcon } from 'lucide-react';
 
 export const linkGenerator = (link: string, lang?: string) => {
     if (!lang || lang !== "bn") {
@@ -9,7 +10,15 @@ export const linkGenerator = (link: string, lang?: string) => {
     }
 };
 
-export const reactionTypes = [
+type reactionTypesProps = {
+    type: Reaction["type"];
+    label: string;
+    hoverColor: string;
+    activeColor: string;
+    icon: LucideIcon;
+};
+
+export const reactionTypes: reactionTypesProps[] = [
     { type: 'like', icon: Heart, label: 'Like', hoverColor: 'hover:bg-blue-500/10 hover:text-blue-500', activeColor: 'text-blue-500' },
     { type: 'love', icon: Heart, label: 'Love', hoverColor: 'hover:bg-red-500/10 hover:text-red-500', activeColor: 'text-red-500' },
     { type: 'haha', icon: Laugh, label: 'Haha', hoverColor: 'hover:bg-green-500/10 hover:text-green-500', activeColor: 'text-green-500' },
