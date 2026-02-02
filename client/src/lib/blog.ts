@@ -55,3 +55,29 @@ export const removeReplyFromParent = (
             }
             : comment
     );
+
+
+export const removeUserFromComments = (comments: Comment[], userId: string): Comment[] => {
+    return comments
+        .filter(comment => comment.user.documentId !== userId)
+        .map(comment => ({
+            ...comment,
+            replies: comment.replies
+                ? removeUserFromComments(comment.replies, userId)
+                : [],
+        }));
+};
+
+export const updateUserBanStatus = (comments: Comment[], userId: string, isBanned: boolean) => {
+    for (const comment of comments) {
+        if (comment.user.documentId === userId) {
+            comment.user.accountStatus = isBanned ? "banned" : "active";
+        }
+
+        if (comment.replies?.length) {
+            updateUserBanStatus(comment.replies, userId, isBanned);
+        }
+    }
+}
+
+

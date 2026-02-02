@@ -1,5 +1,6 @@
-import { removeReplyFromParent, removeTopLevelComment } from '@/lib/blog';
+import { removeReplyFromParent, removeTopLevelComment, removeUserFromComments, updateUserBanStatus } from '@/lib/blog';
 import { Blog, Reaction } from '@/types/blog.type';
+import { Comment } from '@/types/comment.type';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface BlogState {
@@ -165,7 +166,47 @@ const blogSlice = createSlice({
                 );
 
             }
+        },
+
+        banUser(
+            state,
+            action: PayloadAction<{
+                blogId: string;
+                userId: string;
+                isBanned: boolean;
+            }>
+        ) {
+            const blog = state.blogs[action.payload.blogId];
+            if (!blog || !blog.comments?.length) return;
+
+            updateUserBanStatus(
+                blog.comments,
+                action.payload.userId,
+                action.payload.isBanned
+            );
+        },
+
+        removeUser(
+            state,
+            action: PayloadAction<{
+                blogId: string;
+                userId: string;
+            }>
+        ) {
+            const blog = state.blogs[action.payload.blogId];
+            if (!blog || !blog.comments?.length) return;
+
+            const cleanedComments = removeUserFromComments(
+                blog.comments,
+                action.payload.userId
+            );
+
+            blog.comments = cleanedComments;
+            blog.commentsCount = cleanedComments.length;
+
         }
+
+
 
     },
 });
@@ -179,6 +220,8 @@ export const {
     removeComment,
     addReply,
     removeReply,
+    banUser,
+    removeUser
 } = blogSlice.actions;
 
 export default blogSlice.reducer;

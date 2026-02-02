@@ -18,7 +18,7 @@ import { MoreVertical, Trash2, UserX, Ban, Reply, Send, Loader2 } from 'lucide-r
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useAppDispatch } from '@/redux/hooks';
-import { addReply, removeComment, removeReply } from '@/redux/slices/blog.slice';
+import { addReply, banUser, removeComment, removeReply, removeUser } from '@/redux/slices/blog.slice';
 
 interface CommentItemProps {
     comment: Comment;
@@ -107,6 +107,7 @@ const CommentItem = ({ comment, user, blogSlug, blogId }: CommentItemProps) => {
             } else {
                 dispatch(removeComment({ blogId, commentId: comment.documentId }));
             }
+
             toast.success(`${comment.type === "normal" ? "Comment" : "Reply"} deleted successfully.`);
             setConfirmDialog(prev => ({ ...prev, open: false, isLoading: false }));
         } catch (error: any) {
@@ -128,6 +129,8 @@ const CommentItem = ({ comment, user, blogSlug, blogId }: CommentItemProps) => {
             }
 
             const action = comment.user.accountStatus === 'banned' ? 'unbanned' : 'banned';
+
+            dispatch(banUser({ blogId, userId: comment.user.documentId, isBanned: comment.user.accountStatus === "active" }));
             toast.success(`User ${action} successfully.`);
             setConfirmDialog(prev => ({ ...prev, open: false, isLoading: false }));
         } catch (error: any) {
@@ -148,6 +151,7 @@ const CommentItem = ({ comment, user, blogSlug, blogId }: CommentItemProps) => {
                 throw new Error(data.error || 'Failed to delete user');
             }
 
+            dispatch(removeUser({ blogId, userId: comment.user.documentId }));
             toast.success("User deleted successfully.");
             setConfirmDialog(prev => ({ ...prev, open: false, isLoading: false }));
         } catch (error: any) {
