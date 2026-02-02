@@ -237,6 +237,9 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
                 type: ctx.request.body.type,
             },
             publish: true,
+            populate: {
+                user: true
+            }
         });
 
         //Create notification here (react) 

@@ -163,7 +163,7 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
                             <CardContent className="flex items-center justify-between px-4 sm:px-6">
                                 <UserCard user={blog.user} />
                                 <div className="flex items-center gap-2">
-                                    {user && <ReactBar blog={blog} user={user} />}
+                                    {user && <ReactBar blogId={blog.documentId} user={user} />}
                                     <BlogMeta blog={blog} />
                                 </div>
                             </CardContent>
