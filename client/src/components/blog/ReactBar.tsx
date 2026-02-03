@@ -9,7 +9,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { Blog, Reaction } from '@/types/blog.type';
+import { Reaction } from '@/types/blog.type';
 import { User } from '@/types/user.type';
 import { toast } from 'sonner';
 import { reactionTypes } from '@/lib/blog';

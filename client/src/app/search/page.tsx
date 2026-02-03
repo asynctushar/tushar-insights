@@ -4,6 +4,27 @@ import { linkGenerator } from "@/lib/blog";
 import { searchBlogs } from "@/services/blog.service";
 import { Blog } from "@/types/blog.type";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Search Blogs",
+    description:
+        "Search blogs on Tushar Insights to find articles on React, Next.js, frontend performance, and full-stack web development.",
+
+    keywords: [
+        "Search Blogs",
+        "Web Development Blog Search",
+        "React Articles",
+        "Next.js Blogs",
+        "Tushar Insights Search",
+    ],
+
+    robots: {
+        index: true,
+        follow: true,
+    },
+};
+
 
 type SearchProps = {
     searchParams: Promise<{

@@ -9,7 +9,7 @@ A modern, full-stack blog application built with Next.js 15, Strapi CMS, and Typ
 
 ### V1 (Current Release)
 - ✅ **Multi-language Support** - English & Bengali (বাংলা)
-- ✅ **Rich Text Editor** - Markdown support with image uploads
+- ✅ **Rich Text** - Markdown support with image uploads
 - ✅ **Authentication** - Google OAuth integration
 - ✅ **Comments System** - Nested replies with role-based permissions
 - ✅ **Reactions** - Like, Love, Haha, Sad, Angry
@@ -35,7 +35,6 @@ A modern, full-stack blog application built with Next.js 15, Strapi CMS, and Typ
 - **Styling:** Tailwind CSS
 - **UI Components:** shadcn/ui
 - **State Management:** Redux Toolkit
-- **Forms:** React Hook Form
 - **Markdown:** ReactMarkdown, remark-gfm, rehype-raw
 - **Date Formatting:** date-fns
 - **Notifications:** Sonner
@@ -123,10 +122,9 @@ npm run develop
    - For **Public** role: Enable search, findBySlug, find/findOne for blogs and find/findOne for categories, policies, terms, about.
    - For **Authenticated** role: Enable createComment, deleteComment, reactBlog, updateBlogReaction, deleteBlogReaction, for blogs.
    - For **Author** role: Enable reply, delete for comments.
-    **Note:** 
-    - **Authenticated** role should have all other permissions of **Public** role.
-    - **Author** role should have all other permissions of **Public** and **Authenticated** role.
-    -
+**Note:** 
+   - **Authenticated** role should have all other permissions of **Public** role.
+   - **Author** role should have all other permissions of **Public** and **Authenticated** role.
 
 ### 3. Frontend Setup (Next.js)
 

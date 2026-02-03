@@ -20,6 +20,7 @@ import { linkGenerator } from "@/lib/blog";
 import BlogMeta from "@/components/blog/BlogMeta";
 import ReactBar from "@/components/blog/ReactBar";
 import CommentList from "@/components/comment/CommentList";
+import type { Metadata } from "next";
 
 type BlogProps = {
     searchParams: Promise<{
@@ -29,6 +30,49 @@ type BlogProps = {
         slug: string;
     }>;
 };
+
+export async function generateMetadata(
+    { params, searchParams }: BlogProps
+): Promise<Metadata> {
+    const { slug } = await params;
+    const { lang } = await searchParams;
+
+    const blogResult = await getBlog(slug, lang);
+    if (!blogResult.ok) {
+        return {
+            title: "Blog Not Found",
+            description:
+                "The blog you are looking for does not exist or may have been removed.",
+            robots: {
+                index: false,
+                follow: false,
+            },
+        };
+    }
+
+    const blog = blogResult.data;
+    return {
+        title: blog.title,
+        description:
+            blog.excerpt ||
+            `Read this article on ${blog.category?.name} at Tushar Insights.`,
+
+        keywords: [
+            blog.title,
+            blog.category?.name,
+            "Tushar Insights",
+            "Web Development Blog",
+            "React",
+            "Next.js",
+        ],
+
+        robots: {
+            index: true,
+            follow: true,
+        },
+    };
+}
+
 
 const Blog = async ({ searchParams, params }: BlogProps) => {
     const { lang } = await searchParams;

@@ -8,6 +8,28 @@ import { About as IAbout } from '@/types/company.type';
 import Image from 'next/image';
 import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
 import Link from 'next/link';
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "About",
+    description:
+        "Learn more about Tushar Biswas, a full-stack and frontend developer building modern, performant web applications using React and Next.js.",
+
+    keywords: [
+        "About Tushar Biswas",
+        "Frontend Developer",
+        "Full Stack Developer",
+        "React Developer",
+        "Next.js Developer",
+        "Web Developer Portfolio",
+    ],
+
+    robots: {
+        index: true,
+        follow: true,
+    },
+};
+
 
 const socials = [
     { href: "https://facebook.com", label: "Facebook", icon: Facebook },

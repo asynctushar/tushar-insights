@@ -5,7 +5,31 @@ import SortBy from "@/components/blog/SortBy";
 import { Card, CardContent } from "@/components/ui/card";
 import { getBlogCategories, getBlogs } from "@/services/blog.service";
 import { Blog, Category, Pagination as IPagination } from "@/types/blog.type";
-import { connection } from "next/server";
+import type { Metadata } from "next";
+
+
+export const metadata: Metadata = {
+    title: "Blogs",
+    description:
+        "Browse all blogs on Tushar Insights covering React, Next.js, frontend performance, full-stack development, and modern web engineering.",
+
+    keywords: [
+        "Web Development Blogs",
+        "React Blog",
+        "Next.js Blog",
+        "Frontend Development Articles",
+        "Full Stack Development Blog",
+        "JavaScript Articles",
+        "TypeScript Blog",
+        "Tushar Insights Blogs",
+        "Tech Blogs",
+    ],
+    robots: {
+        index: true,
+        follow: true,
+    },
+};
+
 
 type BlogsProps = {
     searchParams: Promise<{

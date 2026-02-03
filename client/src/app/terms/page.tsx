@@ -5,6 +5,19 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import remarkBreaks from "remark-breaks";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Terms & Conditions",
+    description:
+        "Read the terms and conditions governing the use of Tushar Insights and its content.",
+
+    robots: {
+        index: true,
+        follow: true,
+    },
+};
+
 
 interface TermsProps {
     searchParams: Promise<{

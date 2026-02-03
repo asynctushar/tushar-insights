@@ -5,6 +5,19 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import remarkBreaks from "remark-breaks";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Privacy Policy",
+    description:
+        "Understand how Tushar Insights collects, uses, and protects user data and privacy.",
+
+    robots: {
+        index: true,
+        follow: true,
+    },
+};
+
 
 interface PolicyProps {
     searchParams: Promise<{
