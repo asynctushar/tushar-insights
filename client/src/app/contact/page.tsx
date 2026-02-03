@@ -10,27 +10,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { validateEmail } from '@/lib/validations';
 import { toast } from 'sonner';
 import { sendContactMessage } from '@/services/contact.service';
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-    title: "Contact",
-    description:
-        "Get in touch with Tushar Biswas for collaboration, freelance work, or web development inquiries.",
-
-    keywords: [
-        "Contact Tushar Biswas",
-        "Hire Frontend Developer",
-        "Hire Full Stack Developer",
-        "Freelance Web Developer",
-        "Web Development Contact",
-    ],
-
-    robots: {
-        index: true,
-        follow: true,
-    },
-};
-
 
 const Contact = () => {
     const [name, setName] = useState('');
