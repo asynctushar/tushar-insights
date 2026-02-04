@@ -130,6 +130,8 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
         ? blog.cover.formats.medium.url
         : `${process.env.NEXT_PUBLIC_STRAPI_API_URL}${blog.cover.formats?.medium.url}`;
 
+    console.log(coverSrc, blog);
+
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 relative">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

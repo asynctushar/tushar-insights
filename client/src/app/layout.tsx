@@ -6,6 +6,8 @@ import Header from "@/components/layout/header/Header";
 import Footer from "@/components/layout/footer/Footer";
 import { Toaster } from "@/components/ui/sonner";
 import StoreProvider from "@/redux/StoreProvider";
+import { Suspense } from "react";
+import { Spinner } from "@/components/ui/spinner";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -72,9 +74,6 @@ export const metadata: Metadata = {
     },
 };
 
-
-export const dynamic = 'force-dynamic';
-
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -91,9 +90,14 @@ export default function RootLayout({
                         disableTransitionOnChange
                     >
                         <div className="relative flex min-h-screen flex-col">
-                            <Header />
-                            <main className="flex-1">{children}</main>
-                            <Footer />
+                            <Suspense fallback={
+                                <div className="container mx-auto flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-8 min-h-[calc(100vh-64px)]">
+                                    <Spinner className='w-8 h-8' />
+                                </div>}>
+                                <Header />
+                                <main className="flex-1">{children}</main>
+                                <Footer />
+                            </Suspense>
                         </div>
                         <Toaster richColors position="bottom-left" />
                     </ThemeProvider>

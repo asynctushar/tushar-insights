@@ -22,6 +22,8 @@ const BlogCard = ({ blog }: BlogCardProps) => {
         ? blog.cover.formats.small.url
         : `${process.env.NEXT_PUBLIC_STRAPI_API_URL}${blog.cover.formats?.small.url}`;
 
+    console.log(coverSrc, blog);
+
 
     return (
         <Card className="shadow-md">

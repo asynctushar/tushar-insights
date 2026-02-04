@@ -4,10 +4,12 @@ import { useState } from 'react';
 import { Button } from '../ui/button';
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogDescription,
     DialogHeader,
     DialogTitle,
+    DialogTrigger,
 } from "@/components/ui/dialog";
 import { Reaction } from '@/types/blog.type';
 import { User } from '@/types/user.type';
@@ -104,26 +106,29 @@ const ReactBar = ({ blogId, user }: ReactBarProps) => {
 
     return (
         <>
-            <Button
-                onClick={() => setOpen(true)}
-                disabled={isLoading}
-                variant="outline"
-                size="sm"
-                className="gap-2"
-            >
-                {CurrentReactionIcon ? (
-                    <>
-                        <CurrentReactionIcon className={`h-4 w-4 ${currentReactionColor}`} />
-                        <span className="capitalize">{userReaction?.type}</span>
-                    </>
-                ) : (
-                    <>
-                        React
-                    </>
-                )}
-            </Button>
+            <Dialog>
+                <Button
+                    disabled={isLoading}
+                    variant="outline"
+                    size="sm"
+                    className="gap-2"
+                    asChild
+                >
+                    <DialogTrigger>
 
-            <Dialog open={open} onOpenChange={setOpen}>
+                        {CurrentReactionIcon ? (
+                            <>
+                                <CurrentReactionIcon className={`h-4 w-4 ${currentReactionColor}`} />
+                                <span className="capitalize">{userReaction?.type}</span>
+                            </>
+                        ) : (
+                            <>
+                                React
+                            </>
+                        )}
+                    </DialogTrigger>
+                </Button>
+
                 <DialogContent
                     className="sm:max-w-md"
                     showCloseButton={false}
@@ -151,16 +156,18 @@ const ReactBar = ({ blogId, user }: ReactBarProps) => {
                                     onClick={() => handleReaction(type)}
                                     className={`flex flex-col items-center gap-2 h-auto py-3 ${!isActive && hoverColor}`}
                                     title={label}
+                                    asChild
                                 >
-
-                                    <Icon className="h-6 w-6" />
-                                    <span className="text-xs">{label}</span>
+                                    <DialogClose>
+                                        <Icon className="h-6 w-6" />
+                                        <span className="text-xs">{label}</span>
+                                    </DialogClose>
                                 </Button>
                             );
                         })}
                     </div>
                 </DialogContent>
-            </Dialog>
+            </Dialog >
         </>
     );
 };
