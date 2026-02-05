@@ -8,7 +8,7 @@ export const getFeaturedBlogs = async (lang?: string) => {
             cache: 'force-cache',
             next: {
                 tags: [`featured:blogs`],
-                revalidate: 60 * 10, // 10 minutes (optional)
+                revalidate: 60 * 60, // 60 minutes (optional)
             },
         }
     );
@@ -40,7 +40,7 @@ export const searchBlogSuggestions = async (query: string, lang?: string) => {
             cache: 'force-cache',
             next: {
                 tags: [`search:${query}`],
-                revalidate: 60 * 10, // 10 minutes (optional)
+                revalidate: 60 * 60, // 60 minutes (optional)
             },
         }
     );
@@ -71,7 +71,7 @@ export const searchBlogs = async (query: string, lang?: string) => {
             cache: 'force-cache',
             next: {
                 tags: [`search:blogs`],
-                revalidate: 60 * 10, // 10 minutes (optional)
+                revalidate: 60 * 60, // 60 minutes (optional)
             },
         }
     );
@@ -102,7 +102,7 @@ export const getBlogCategories = async (lang?: string) => {
             cache: 'force-cache',
             next: {
                 tags: [`categories`],
-                revalidate: 60 * 10, // 10 minutes (optional)
+                revalidate: 60 * 60, // 60 minutes (optional)
             },
         }
     );
@@ -131,7 +131,7 @@ export const getAllBlogs = async (
     } = {},
     lang?: string
 ) => {
-    const { documentId} = options;
+    const { documentId } = options;
 
     const params = new URLSearchParams();
 
@@ -146,7 +146,7 @@ export const getAllBlogs = async (
             cache: 'force-cache',
             next: {
                 tags: [`blogs`],
-                revalidate: 60 * 10, // 10 minutes (optional)
+                revalidate: 60 * 60, // 60 minutes (optional)
             },
         }
     );
@@ -202,7 +202,7 @@ export const getBlogs = async (
             cache: 'force-cache',
             next: {
                 tags: [`blogs`],
-                revalidate: 60 * 10, // 10 minutes (optional)
+                revalidate: 60 * 60, // 60 minutes (optional)
             },
         }
     );
@@ -237,7 +237,7 @@ export const getBlog = async (slug: string, lang?: string) => {
             cache: 'force-cache',
             next: {
                 tags: [`blog:${slug}`],
-                revalidate: 60 * 10, // 10 minutes (optional)
+                revalidate: 60 * 60, // 60 minutes (optional)
             },
         }
     );

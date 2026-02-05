@@ -117,7 +117,6 @@ const SearchBar = ({ isMobile = false }: SearchBarProps) => {
         // If lang is "bn", put it in the path
         const path = lang === "bn" ? `/search/bn` : "/search";
 
-        setShowSuggestions(false);
         return router.push(`${path}${params.toString() ? `?${params.toString()}` : ""}`);
     };
 

@@ -3,12 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getAllBlogs, getBlog, getBlogs } from "@/services/blog.service";
 import { Blog as IBlog } from "@/types/blog.type";
-import { User } from "@/types/user.type";
 import Image from "next/image";
 import Link from "next/link";
-import UserCard from "@/components/user/UserCard";
-import CommentBar from "@/components/comment/CommentBar";
-import { getMe } from "@/services/auth.service";
 import { formatDistanceToNow } from "date-fns";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -16,12 +12,11 @@ import rehypeRaw from "rehype-raw";
 import remarkBreaks from "remark-breaks";
 import BlogCard from "@/components/blog/BlogCard";
 import { linkGenerator } from "@/lib/blog";
-import BlogMeta from "@/components/blog/BlogMeta";
-import ReactBar from "@/components/blog/ReactBar";
-import CommentList from "@/components/comment/CommentList";
+
 import type { Metadata } from "next";
 import { getLangFromLocale } from "@/lib/i18n";
 import { notFound } from "next/navigation";
+import AuthFeatures from "@/components/blog/AuthFeatures";
 
 type BlogProps = {
     params: Promise<{
@@ -29,6 +24,8 @@ type BlogProps = {
         locale?: string[];
     }>;
 };
+
+export const dynamic = "force-static";
 
 export async function generateStaticParams() {
     const locales = ["en", "bn"];
@@ -112,9 +109,6 @@ const Blog = async ({ params }: BlogProps) => {
         return notFound();
     }
 
-    // 1️⃣ Auth is NON-BLOCKING
-    const meResult = await getMe();
-    const user: User | null = meResult.ok ? meResult.data : null;
 
     // 2️⃣ Blog is BLOCKING
     const blogResult = await getBlog(slug, lang);
@@ -236,41 +230,7 @@ const Blog = async ({ params }: BlogProps) => {
                             </div>
                         </article>
 
-                        {/* Author Card */}
-                        <Card className="shadow-sm py-4 sm:py-6">
-                            <CardContent className="flex items-center justify-between px-4 sm:px-6">
-                                <UserCard user={blog.user} />
-                                <div className="flex items-center gap-2">
-                                    {user && <ReactBar blogId={blog.documentId} user={user} />}
-                                    <BlogMeta blog={blog} />
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Comment Section */}
-                        {!user ? (
-                            <Card className="shadow-sm py-4 sm:py-6">
-                                <CardContent className="text-center space-y-4 px-4 sm:px-6">
-                                    <p className="text-muted-foreground text-lg">
-                                        👋 Join the conversation! Sign in to react and comment on this post.
-                                    </p>
-                                    <Button size="lg" variant="outline" asChild>
-                                        <Link
-                                            href={`/api/auth/google?redirect=/blogs/slug/${slug}${lang === "bn" ? `/${lang}` : ""}`}
-                                            className="gap-2"
-                                        >
-                                            <Image src="/images/google.png" alt="Google" width={20} height={20} />
-                                            Login with Google
-                                        </Link>
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                        ) : (
-                            <CommentBar user={user} blogId={blog.documentId} />
-                        )}
-
-                        {/* Comments List */}
-                        <CommentList user={user} blog={blog} />
+                        <AuthFeatures blog={blog} />
                     </CardContent>
                 </Card>
 
