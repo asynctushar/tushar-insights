@@ -2,12 +2,17 @@
 
 import Link from 'next/link';
 import { FileText } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { linkGenerator } from '@/lib/blog';
+import { getLangFromLocale } from '@/lib/i18n';
+
+type LocaleParams = {
+    locale?: string[];
+};
 
 const Logo = () => {
-    const searchParams = useSearchParams();
-    const lang = searchParams.get("lang") || "en";
+    const { locale } = useParams() as LocaleParams;
+    const lang = getLangFromLocale(locale) || "en";
 
     return (
         <Link

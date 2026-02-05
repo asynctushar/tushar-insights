@@ -1,55 +1,32 @@
 import BlogCard from "@/components/blog/BlogCard";
 import { Button } from "@/components/ui/button";
 import { linkGenerator } from "@/lib/blog";
-import { searchBlogs } from "@/services/blog.service";
+import { getLangFromLocale } from "@/lib/i18n";
+import { getFeaturedBlogs } from "@/services/blog.service";
 import { Blog } from "@/types/blog.type";
 import Link from "next/link";
-import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
-export const metadata: Metadata = {
-    title: "Search Blogs",
-    description:
-        "Search blogs on Tushar Insights to find articles on React, Next.js, frontend performance, and full-stack web development.",
-
-    keywords: [
-        "Search Blogs",
-        "Web Development Blog Search",
-        "React Articles",
-        "Next.js Blogs",
-        "Tushar Insights Search",
-    ],
-
-    robots: {
-        index: true,
-        follow: true,
-    },
-};
-
-
-type SearchProps = {
-    searchParams: Promise<{
-        lang?: string;
-        q?: string;
+type HomeProps = {
+    params: Promise<{
+        locale: string[];
     }>;
 };
 
-const Search = async ({ searchParams }: SearchProps) => {
-    const { lang, q: query } = await searchParams;
+const Home = async ({ params }: HomeProps) => {
+    const { locale } = await params;
+    const lang = getLangFromLocale(locale);
 
-    if (!query) {
-        return <h4>
-            Please Input search query
-
-            <Button asChild><Link href="/">Browse all Blogs</Link></Button>
-        </h4>;
+    if (!lang) {
+        return notFound();
     }
 
-    const result = await searchBlogs(query, lang);
+    const result = await getFeaturedBlogs(lang);
     if (!result.ok) {
         return (
             <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 py-8">
                 <p className="text-red-500">
-                    Failed to load search page: {result.error?.message}
+                    Failed to load featured blog page: {result.error?.message}
                 </p>
             </div>
         );
@@ -60,7 +37,7 @@ const Search = async ({ searchParams }: SearchProps) => {
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <h1 className="text-2xl font-bold mb-6">
-                {`Search results for ${query}`}
+                {lang === "bn" ? "বৈশিষ্ট্যযুক্ত ব্লগ" : "Featured Blogs"}
             </h1>
 
             {blogs.length > 0 ? (
@@ -71,7 +48,7 @@ const Search = async ({ searchParams }: SearchProps) => {
                 </div>
             ) : (
                 <div className="container mx-auto px-4 py-48 text-center space-y-4">
-                    <h2 className="text-2xl font-semibold">No blogs found.</h2>
+                    <h2 className="text-2xl font-semibold">No Featured blogs found.</h2>
                     <Button asChild>
                         <Link href={linkGenerator("/blogs", lang)}>Browse all Blogs</Link>
                     </Button>
@@ -81,4 +58,4 @@ const Search = async ({ searchParams }: SearchProps) => {
     );
 };
 
-export default Search;
+export default Home;

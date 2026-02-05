@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
+import { getLangFromLocale } from '@/lib/i18n';
+import { linkGenerator } from '@/lib/blog';
 
 const navItems = [
     { href: "/", label: "Home" },
@@ -15,11 +17,15 @@ const navItems = [
     { href: "/contact", label: "Contact" },
 ];
 
+type LocaleParams = {
+    locale?: string[];
+};
+
 const MobileNav = () => {
     const [open, setOpen] = useState(false);
     const pathname = usePathname();
-    const searchParams = useSearchParams();
-    const lang = searchParams.get("lang");
+    const { locale } = useParams() as LocaleParams;
+    const lang = getLangFromLocale(locale) || "en";
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
@@ -37,7 +43,7 @@ const MobileNav = () => {
                         return (
                             <Link
                                 key={item.href}
-                                href={`${item.href}${lang ? `?lang=${lang}` : ""}`}
+                                href={linkGenerator(item.href, lang)}
                                 onClick={() => setOpen(false)}
                                 className={cn(
                                     "px-4 py-2 rounded-md text-base font-medium transition-colors",

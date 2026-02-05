@@ -2,7 +2,9 @@
 
 import { Facebook, Linkedin, Twitter, Instagram } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
+import { getLangFromLocale } from '@/lib/i18n';
+import { linkGenerator } from "@/lib/blog";
 
 const navItems = [
     { href: "/terms", label: "Terms & Conditions" },
@@ -18,9 +20,15 @@ const socials = [
     { href: "https://instagram.com", label: "Instagram", icon: Instagram },
 ];
 
+
+type LocaleParams = {
+    locale?: string[];
+};
+
+
 const Footer = () => {
-    const searchParams = useSearchParams();
-    const lang = searchParams.get("lang");
+    const { locale } = useParams() as LocaleParams;
+    const lang = getLangFromLocale(locale) || "en";
 
     return (
         <footer className="mt-auto border-t bg-background">
@@ -31,7 +39,7 @@ const Footer = () => {
                         {navItems.map((item) => (
                             <Link
                                 key={item.href}
-                                href={`${item.href}${lang ? `?lang=${lang}` : ""}`}
+                                href={linkGenerator(item.href, lang)}
                                 className="text-base text-muted-foreground hover:text-foreground transition-colors"
                             >
                                 {item.label}

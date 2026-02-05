@@ -1,16 +1,18 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { getPolicies } from '@/services/company.service';
-import { Policy } from '@/types/company.type';
+import { Card, CardContent, } from '@/components/ui/card';
+import { getTerms } from '@/services/company.service';
+import { Term } from '@/types/company.type';
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import remarkBreaks from "remark-breaks";
 import type { Metadata } from "next";
+import { getLangFromLocale } from '@/lib/i18n';
+import { notFound } from 'next/navigation';
 
 export const metadata: Metadata = {
-    title: "Privacy Policy",
+    title: "Terms & Conditions",
     description:
-        "Understand how Tushar Insights collects, uses, and protects user data and privacy.",
+        "Read the terms and conditions governing the use of Tushar Insights and its content.",
 
     robots: {
         index: true,
@@ -18,49 +20,43 @@ export const metadata: Metadata = {
     },
 };
 
-export const dynamic = "force-static";
 
-
-interface PolicyProps {
-    searchParams: Promise<{
-        lang?: string;
+interface TermsProps {
+    params: Promise<{
+        locale?: string[];
     }>;
 };
 
-const PrivacyPolicy = async ({ searchParams }: PolicyProps) => {
-    const { lang } = await searchParams;
+const TermsAndConditions = async ({ params }: TermsProps) => {
+    const { locale } = await params;
+    const lang = getLangFromLocale(locale);
 
-    // build time only
-    await Promise.all([
-        getPolicies("en"),
-        getPolicies("bn"),
-    ]);
+    if (!lang) {
+        return notFound();
+    }
 
-    const result = await getPolicies();
-
+    const result = await getTerms();
     if (!result.ok) {
         return (
             <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 py-8">
                 <p className="text-red-500">
-                    Failed to load policy page: {result.error?.message}
+                    Failed to load term page: {result.error?.message}
                 </p>
             </div>
         );
     }
 
-    // 2️⃣ Safe to use data
-    const policies: Policy[] = result.data;
+    const terms: Term[] = result.data;
 
     return (
-
         <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
             {/* Hero Section */}
             <Card className="bg-muted/50 border-muted shadow-sm">
                 <CardContent className="p-6 sm:p-12 space-y-2 text-left">
-                    <h1 className="text-3xl sm:text-4xl font-bold text-foreground">Privacy Policy</h1>
+                    <h1 className="text-3xl sm:text-4xl font-bold text-foreground">Terms & Conditions</h1>
                     <p className="max-w-2xl text-muted-foreground">
-                        See how we collect, use, and protect your personal information.
+                        Understand the rules and guidelines for using Tushar Insights.
                     </p>
                 </CardContent>
             </Card>
@@ -68,15 +64,16 @@ const PrivacyPolicy = async ({ searchParams }: PolicyProps) => {
             <Card className="shadow-md border-0">
                 <CardContent className='space-y-4'>
                     {
-                        policies.map((policy) => (
-                            <div key={policy.documentId} className='space-y-2'>
-                                <h4 className='text-xl font-semibold'>{`${policy.sort}. ${policy.title}`}</h4>
-                                <div className="rich-text privacy-desc prose prose-slate dark:prose-invert max-w-none pl-11">
+                        terms.map((term) => (
+                            <div key={term.documentId} className='space-y-2'>
+                                <h4 className='text-xl font-semibold'>{`${term.sort}. ${term.title}`}</h4>
+
+                                <div className="rich-text prose prose-slate dark:prose-invert max-w-none pl-11 term-desc">
                                     <ReactMarkdown
                                         remarkPlugins={[remarkGfm, remarkBreaks]}
                                         rehypePlugins={[rehypeRaw]}
                                     >
-                                        {policy.desc}
+                                        {term.desc}
                                     </ReactMarkdown>
                                 </div>
                             </div>
@@ -88,4 +85,4 @@ const PrivacyPolicy = async ({ searchParams }: PolicyProps) => {
     );
 };
 
-export default PrivacyPolicy;
+export default TermsAndConditions;

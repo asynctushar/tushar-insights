@@ -16,7 +16,11 @@ const sortOptions = [
     { value: "createdAt:asc", label: "Oldest First" },
 ];
 
-const SortBy = () => {
+interface SortByProps {
+    lang: string;
+}
+
+const SortBy = ({ lang }: SortByProps) => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const currentSort = searchParams.get("sort") || "title:asc";
@@ -25,7 +29,11 @@ const SortBy = () => {
         const params = new URLSearchParams(searchParams.toString());
         params.set("sort", value);
         params.delete("page");
-        router.push(`/blogs?${params.toString()}`);
+
+        // If lang is "bn", put it in the path
+        const path = lang === "bn" ? `/blogs/bn` : "/blogs";
+
+        return router.push(`${path}${params.toString() ? `?${params.toString()}` : ""}`);
     };
 
     return (

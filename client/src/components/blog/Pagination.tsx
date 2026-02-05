@@ -8,17 +8,22 @@ import { useSearchParams } from "next/navigation";
 
 interface PaginationProps {
     pagination: IPagination;
+    lang: string;
 }
 
-const Pagination = ({ pagination }: PaginationProps) => {
+const Pagination = ({ pagination, lang }: PaginationProps) => {
     const searchParams = useSearchParams();
     const { page, pageCount } = pagination;
 
     const createUrl = (pageNum: number) => {
         const params = new URLSearchParams(searchParams.toString());
-        params.set("page", pageNum.toString());
-        return `/blogs?${params.toString()}`;
+        if (pageNum) params.set("page", pageNum.toString());
+
+        // If lang is "bn", put it in the path
+        const path = lang === "bn" ? `/blogs/bn` : "/blogs";
+        return `${path}${params.toString() ? `?${params.toString()}` : ""}`;
     };
+
 
     const getPageNumbers = () => {
         const pages: (number | string)[] = [];

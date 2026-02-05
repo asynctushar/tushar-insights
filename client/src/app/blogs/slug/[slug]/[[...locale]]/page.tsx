@@ -20,24 +20,23 @@ import BlogMeta from "@/components/blog/BlogMeta";
 import ReactBar from "@/components/blog/ReactBar";
 import CommentList from "@/components/comment/CommentList";
 import type { Metadata } from "next";
+import { getLangFromLocale } from "@/lib/i18n";
+import { notFound } from "next/navigation";
 
 type BlogProps = {
-    searchParams: Promise<{
-        lang?: string;
-    }>;
     params: Promise<{
         slug: string;
+        locale?: string[];
     }>;
 };
 
 export async function generateMetadata(
-    { params, searchParams }: BlogProps
+    { params }: BlogProps
 ): Promise<Metadata> {
-    const { slug } = await params;
-    const { lang } = await searchParams;
+    const { locale, slug } = await params;
+    const lang = getLangFromLocale(locale);
 
-    const blogResult = await getBlog(slug, lang);
-    if (!blogResult.ok) {
+    if (!lang) {
         return {
             title: "Blog Not Found",
             description:
@@ -49,6 +48,7 @@ export async function generateMetadata(
         };
     }
 
+    const blogResult = await getBlog(slug, lang);
     const blog = blogResult.data;
     return {
         title: blog.title,
@@ -73,9 +73,13 @@ export async function generateMetadata(
 }
 
 
-const Blog = async ({ searchParams, params }: BlogProps) => {
-    const { lang } = await searchParams;
-    const { slug } = await params;
+const Blog = async ({ params }: BlogProps) => {
+    const { locale, slug } = await params;
+    const lang = getLangFromLocale(locale);
+
+    if (!lang) {
+        return notFound();
+    }
 
     // 1️⃣ Auth is NON-BLOCKING
     const meResult = await getMe();
@@ -109,7 +113,7 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
     }
 
     const blog: IBlog = blogResult.data;
-    const categoryUrl = `/blogs?category=${blog.category.documentId}&lang=${blog.locale}`;
+    const categoryUrl = `/blogs${blog.locale === "bn" ? "/bn" : ""}?category=${blog.category.documentId}`;
 
     // 3️⃣ Similar blogs are NON-BLOCKING
     const similarResult = await getBlogs(
@@ -221,7 +225,7 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
                                     </p>
                                     <Button size="lg" variant="outline" asChild>
                                         <Link
-                                            href={`/api/auth/google?redirect=/blogs/${slug}${lang ? `?lang=${lang}` : ""}`}
+                                            href={`/api/auth/google?redirect=/blogs/slug/${slug}${lang === "bn" ? `/${lang}` : ""}`}
                                             className="gap-2"
                                         >
                                             <Image src="/images/google.png" alt="Google" width={20} height={20} />

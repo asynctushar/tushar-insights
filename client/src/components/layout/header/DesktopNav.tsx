@@ -1,8 +1,14 @@
 "use client";
 
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname, useParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { linkGenerator } from '@/lib/blog';
+import { getLangFromLocale } from '@/lib/i18n';
+
+type LocaleParams = {
+    locale?: string[];
+};
 
 const navItems = [
     { href: "/", label: "Home" },
@@ -13,8 +19,8 @@ const navItems = [
 
 const DesktopNav = () => {
     const pathname = usePathname();
-    const searchParams = useSearchParams();
-    const lang = searchParams.get("lang");
+    const { locale } = useParams() as LocaleParams;
+    const lang = getLangFromLocale(locale) || "en";
 
     return (
         <nav className="flex items-center gap-1">
@@ -24,7 +30,7 @@ const DesktopNav = () => {
                 return (
                     <Link
                         key={item.href}
-                        href={`${item.href}${lang ? `?lang=${lang}` : ""}`}
+                        href={linkGenerator(item.href, lang)}
                         className={cn(
                             "px-4 py-2 text-sm rounded-xs font-medium transition-colors",
                             isActive

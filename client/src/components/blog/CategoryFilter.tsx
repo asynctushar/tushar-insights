@@ -13,9 +13,12 @@ const CategoryFilter = ({ categories, lang, currentCategory }: CategoryFilterPro
     const createUrl = (categoryId?: string) => {
         const params = new URLSearchParams();
         if (categoryId) params.set("category", categoryId);
-        if (lang) params.set("lang", lang);
-        return `/blogs${params.toString() ? `?${params.toString()}` : ""}`;
+
+        // If lang is "bn", put it in the path
+        const path = lang === "bn" ? `/blogs/bn` : "/blogs";
+        return `${path}${params.toString() ? `?${params.toString()}` : ""}`;
     };
+
 
     return (
         <div className="flex flex-wrap gap-2">

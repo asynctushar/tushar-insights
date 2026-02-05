@@ -9,6 +9,8 @@ import Image from 'next/image';
 import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
 import Link from 'next/link';
 import type { Metadata } from "next";
+import { getLangFromLocale } from '@/lib/i18n';
+import { notFound } from 'next/navigation';
 
 export const metadata: Metadata = {
     title: "About",
@@ -30,8 +32,6 @@ export const metadata: Metadata = {
     },
 };
 
-export const dynamic = "force-static";
-
 
 const socials = [
     { href: "https://facebook.com", label: "Facebook", icon: Facebook },
@@ -41,19 +41,18 @@ const socials = [
 ];
 
 interface AboutProps {
-    searchParams: Promise<{
-        lang?: string;
+    params: Promise<{
+        locale?: string[];
     }>;
 };
 
-const About = async ({ searchParams }: AboutProps) => {
-    const { lang } = await searchParams;
+const About = async ({ params }: AboutProps) => {
+    const { locale } = await params;
+    const lang = getLangFromLocale(locale);
 
-    // build time only
-    await Promise.all([
-        getAbout("en"),
-        getAbout("bn"),
-    ]);
+    if (!lang) {
+        return notFound();
+    }
 
     const result = await getAbout();
 

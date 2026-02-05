@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,16 +9,23 @@ import SearchInput from './SearchInput';
 import SearchSuggestions from './SearchSuggestions';
 import { searchBlogSuggestions } from '@/services/blog.service';
 import { BlogSuggestion } from '@/types/blog.type';
+import { getLangFromLocale } from '@/lib/i18n';
 
 
 interface SearchBarProps {
     isMobile?: boolean;
 }
 
+
+type LocaleParams = {
+    locale?: string[];
+};
+
+
 const SearchBar = ({ isMobile = false }: SearchBarProps) => {
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const lang = searchParams.get('lang') ?? 'en';
+    const { locale } = useParams() as LocaleParams;
+    const lang = getLangFromLocale(locale) || "en";
 
     const [value, setValue] = useState('');
     const [isExpanded, setIsExpanded] = useState(false);
@@ -69,6 +76,8 @@ const SearchBar = ({ isMobile = false }: SearchBarProps) => {
 
                 setSuggestions(result.data);
                 setShowSuggestions(true);
+
+
             } catch (error) {
                 setSuggestions([]);
             } finally {
@@ -78,6 +87,7 @@ const SearchBar = ({ isMobile = false }: SearchBarProps) => {
 
         return () => {
             clearTimeout(timer);
+            setShowSuggestions(false);
             setIsLoading(false);
             setSuggestions([]);
         };
@@ -89,10 +99,12 @@ const SearchBar = ({ isMobile = false }: SearchBarProps) => {
 
         const params = new URLSearchParams();
         params.set('q', value.trim());
-        if (lang !== 'en') params.set('lang', lang);
 
-        router.push(`/search?${params.toString()}`);
+        // If lang is "bn", put it in the path
+        const path = lang === "bn" ? `/search/bn` : "/search";
+
         setShowSuggestions(false);
+        return router.push(`${path}${params.toString() ? `?${params.toString()}` : ""}`);
     };
 
     const handleSuggestionClick = (suggestion: BlogSuggestion) => {
@@ -101,9 +113,12 @@ const SearchBar = ({ isMobile = false }: SearchBarProps) => {
 
         const params = new URLSearchParams();
         params.set('q', suggestion.title);
-        if (lang !== 'en') params.set('lang', lang);
 
-        router.push(`/search?${params.toString()}`);
+        // If lang is "bn", put it in the path
+        const path = lang === "bn" ? `/search/bn` : "/search";
+
+        setShowSuggestions(false);
+        return router.push(`${path}${params.toString() ? `?${params.toString()}` : ""}`);
     };
 
     const handleClear = () => {

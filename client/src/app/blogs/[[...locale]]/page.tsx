@@ -3,9 +3,11 @@ import CategoryFilter from "@/components/blog/CategoryFilter";
 import Pagination from "@/components/blog/Pagination";
 import SortBy from "@/components/blog/SortBy";
 import { Card, CardContent } from "@/components/ui/card";
+import { getLangFromLocale } from "@/lib/i18n";
 import { getBlogCategories, getBlogs } from "@/services/blog.service";
 import { Blog, Category, Pagination as IPagination } from "@/types/blog.type";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 
 export const metadata: Metadata = {
@@ -30,67 +32,26 @@ export const metadata: Metadata = {
     },
 };
 
-export const dynamic = "force-static";
-
 type BlogsProps = {
     searchParams: Promise<{
-        lang?: string;
         category?: string;
         sort?: string;
         page?: string;
     }>;
+    params: Promise<{
+        locale?: string[];
+    }>;
 };
 
-const Blogs = async ({ searchParams }: BlogsProps) => {
-    const { lang, category, sort, page } = await searchParams;
+const Blogs = async ({ searchParams, params }: BlogsProps) => {
+    const { locale } = await params;
+    const lang = getLangFromLocale(locale);
 
-    // build time only
-    await Promise.all([
-        getBlogCategories("en"),
-        getBlogCategories("bn"),
+    if (!lang) {
+        return notFound();
+    }
 
-        // sort by title: asc
-        getBlogs({
-            sort: "title:asc",
-            page: 1
-        }, "en"),
-        getBlogs({
-            sort: "title:asc",
-            page: 1
-        }, "bn"),
-
-        // sort by title: desc
-        getBlogs({
-            sort: "title:desc",
-            page: 1
-        }, "en"),
-        getBlogs({
-            sort: "title:desc",
-            page: 1
-        }, "bn"),
-
-        // sort by createdAt: desc
-        getBlogs({
-            sort: "createdAt:desc",
-            page: 1
-        }, "en"),
-        getBlogs({
-            sort: "createdAt:desc",
-            page: 1
-        }, "bn"),
-
-        // sort by createdAt: asc
-        getBlogs({
-            sort: "createdAt:asc",
-            page: 1
-        }, "en"),
-        getBlogs({
-            sort: "createdAt:asc",
-            page: 1
-        }, "bn"),
-
-    ]);
-
+    const { category, sort, page } = await searchParams;
     const result = await getBlogCategories(lang);
     if (!result.ok) {
         return (
@@ -141,7 +102,7 @@ const Blogs = async ({ searchParams }: BlogsProps) => {
                 <CardContent className="space-y-4 px-6 sm:px-12">
                     <CategoryFilter categories={categories} lang={lang} currentCategory={category} />
                     <hr />
-                    <SortBy />
+                    <SortBy lang={lang} />
                 </CardContent>
             </Card>
 
@@ -161,7 +122,7 @@ const Blogs = async ({ searchParams }: BlogsProps) => {
             </div>
 
             {/* Pagination */}
-            <Pagination pagination={pagination} />
+            <Pagination lang={lang} pagination={pagination} />
         </div>
     );
 };

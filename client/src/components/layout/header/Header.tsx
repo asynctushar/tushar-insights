@@ -3,12 +3,8 @@ import DesktopNav from './DesktopNav';
 import MobileNav from './MobileNav';
 import HeaderActions from './HeaderActions';
 import Logo from './Logo';
-import { getMe } from '@/services/auth.service';
-import { User } from '@/types/user.type';
 
 const Header = async () => {
-    // const result = await getMe();
-    // const user: User | null = result.ok ? result.data : null;
 
     return (
         <header className="sticky top-0 z-50 w-full shadow-md bg-primary text-primary-foreground">
