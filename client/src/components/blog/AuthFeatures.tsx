@@ -1,4 +1,5 @@
-import { getMe } from '@/services/auth.service';
+"use client";
+
 import { User } from '@/types/user.type';
 import BlogMeta from "@/components/blog/BlogMeta";
 import ReactBar from "@/components/blog/ReactBar";
@@ -10,21 +11,69 @@ import { Card, CardContent } from "@/components/ui/card";
 import Link from 'next/link';
 import Image from 'next/image';
 import { Blog } from '@/types/blog.type';
+import { useEffect, useState } from 'react';
 
 interface AuthFeatureProps {
     blog: Blog;
 }
 
-const AuthFeatures = async ({ blog }: AuthFeatureProps) => {
-    // 1️⃣ Auth is NON-BLOCKING
-    const meResult = await getMe();
-    const user: User | null = meResult.ok ? meResult.data : null;
-    
+const AuthFeatures = ({ blog }: AuthFeatureProps) => {
+    const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(typeof window !== 'undefined');
+
+    useEffect(() => {
+        let isMounted = true;
+
+        const fetchUser = async () => {
+            try {
+                setIsLoading(true);
+                const res = await fetch("/api/auth/me");
+
+                if (!isMounted) return;
+
+                if (!res.ok) {
+                    setUser(null);
+                    return;
+                }
+
+                const data = await res.json();
+                setUser(data.data);
+            } catch (error) {
+                if (isMounted) {
+                    setUser(null);
+                }
+            } finally {
+                if (isMounted) {
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        fetchUser();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
+    if (isLoading) {
+        return (
+            <div className="space-y-6">
+                <Card className="shadow-sm">
+                    <CardContent className="p-6 space-y-4 animate-pulse">
+                        <div className="h-12 bg-muted rounded" />
+                        <div className="h-32 bg-muted rounded" />
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
+
     return (
-        <>
+        <div className="space-y-6">
             {/* Author Card */}
-            <Card className="shadow-sm py-4 sm:py-6">
-                <CardContent className="flex items-center justify-between px-4 sm:px-6">
+            <Card className="shadow-sm">
+                <CardContent className="p-4 sm:p-6 flex items-center justify-between">
                     <UserCard user={blog.user} />
                     <div className="flex items-center gap-2">
                         {user && <ReactBar blogId={blog.documentId} user={user} />}
@@ -32,10 +81,11 @@ const AuthFeatures = async ({ blog }: AuthFeatureProps) => {
                     </div>
                 </CardContent>
             </Card>
+
             {/* Comment Section */}
             {!user ? (
-                <Card className="shadow-sm py-4 sm:py-6">
-                    <CardContent className="text-center space-y-4 px-4 sm:px-6">
+                <Card className="shadow-sm">
+                    <CardContent className="p-6 text-center space-y-4">
                         <p className="text-muted-foreground text-lg">
                             👋 Join the conversation! Sign in to react and comment on this post.
                         </p>
@@ -51,12 +101,12 @@ const AuthFeatures = async ({ blog }: AuthFeatureProps) => {
                     </CardContent>
                 </Card>
             ) : (
-                <CommentBar user={user} blogId={blog.documentId} />
+                <CommentBar user={user} blogId={blog.documentId} setUser={setUser} />
             )}
 
             {/* Comments List */}
             <CommentList user={user} blog={blog} />
-        </>
+        </div>
     );
 };
 

@@ -48,6 +48,7 @@ export async function googleAuthCallback(params: GoogleCallbackParams) {
 export async function getMe() {
     try {
         const jwt = await getJwtFromCookies();
+        
         if (!jwt) return {
             ok: false,
             error: {

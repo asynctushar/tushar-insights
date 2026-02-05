@@ -16,19 +16,16 @@ import { addComment } from '@/redux/slices/blog.slice';
 type CommentBarProps = {
     user: User;
     blogId: string;
+    setUser: (user: User | null) => void;
 };
 
-const CommentBar = ({ user, blogId }: CommentBarProps) => {
+const CommentBar = ({ user, blogId, setUser }: CommentBarProps) => {
     const [comment, setComment] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const blog = useAppSelector((state) => state.blog.blogs[blogId]);
     const dispatch = useAppDispatch();
-
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const lang = searchParams.get('lang') || 'en';
 
     const handleSubmit = async () => {
         if (!comment.trim()) return;
@@ -76,7 +73,7 @@ const CommentBar = ({ user, blogId }: CommentBarProps) => {
 
             toast.success("You have been logged out successfully.");
 
-            router.refresh();
+            setUser(null);
         } catch (error: any) {
             console.error('Logout error:', error);
             toast.error(error.message || "Failed to logout. Please try again.",);
