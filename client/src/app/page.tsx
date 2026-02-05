@@ -5,6 +5,8 @@ import { getFeaturedBlogs } from "@/services/blog.service";
 import { Blog } from "@/types/blog.type";
 import Link from "next/link";
 
+export const dynamic = "force-static";
+
 type HomeProps = {
     searchParams: {
         lang?: string;
@@ -13,6 +15,12 @@ type HomeProps = {
 
 const Home = async ({ searchParams }: HomeProps) => {
     const { lang } = await searchParams;
+
+    // build time only
+    await Promise.all([
+        getFeaturedBlogs("en"),
+        getFeaturedBlogs("bn"),
+    ]);
 
     const result = await getFeaturedBlogs(lang);
     if (!result.ok) {

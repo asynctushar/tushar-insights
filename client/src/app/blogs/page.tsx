@@ -30,6 +30,7 @@ export const metadata: Metadata = {
     },
 };
 
+export const dynamic = "force-static";
 
 type BlogsProps = {
     searchParams: Promise<{
@@ -42,6 +43,53 @@ type BlogsProps = {
 
 const Blogs = async ({ searchParams }: BlogsProps) => {
     const { lang, category, sort, page } = await searchParams;
+
+    // build time only
+    await Promise.all([
+        getBlogCategories("en"),
+        getBlogCategories("bn"),
+
+        // sort by title: asc
+        getBlogs({
+            sort: "title:asc",
+            page: 1
+        }, "en"),
+        getBlogs({
+            sort: "title:asc",
+            page: 1
+        }, "bn"),
+
+        // sort by title: desc
+        getBlogs({
+            sort: "title:desc",
+            page: 1
+        }, "en"),
+        getBlogs({
+            sort: "title:desc",
+            page: 1
+        }, "bn"),
+
+        // sort by createdAt: desc
+        getBlogs({
+            sort: "createdAt:desc",
+            page: 1
+        }, "en"),
+        getBlogs({
+            sort: "createdAt:desc",
+            page: 1
+        }, "bn"),
+
+        // sort by createdAt: asc
+        getBlogs({
+            sort: "createdAt:asc",
+            page: 1
+        }, "en"),
+        getBlogs({
+            sort: "createdAt:asc",
+            page: 1
+        }, "bn"),
+
+    ]);
 
     const result = await getBlogCategories(lang);
     if (!result.ok) {

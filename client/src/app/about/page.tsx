@@ -30,6 +30,8 @@ export const metadata: Metadata = {
     },
 };
 
+export const dynamic = "force-static";
+
 
 const socials = [
     { href: "https://facebook.com", label: "Facebook", icon: Facebook },
@@ -46,6 +48,13 @@ interface AboutProps {
 
 const About = async ({ searchParams }: AboutProps) => {
     const { lang } = await searchParams;
+
+    // build time only
+    await Promise.all([
+        getAbout("en"),
+        getAbout("bn"),
+    ]);
+
     const result = await getAbout();
 
     if (!result.ok) {

@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     },
 };
 
+export const dynamic = "force-static";
 
 interface TermsProps {
     searchParams: Promise<{
@@ -27,6 +28,13 @@ interface TermsProps {
 
 const TermsAndConditions = async ({ searchParams }: TermsProps) => {
     const { lang } = await searchParams;
+
+    // build time only
+    await Promise.all([
+        getTerms("en"),
+        getTerms("bn"),
+    ]);
+
     const result = await getTerms();
 
     if (!result.ok) {

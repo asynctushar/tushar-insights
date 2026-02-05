@@ -6,7 +6,6 @@ import { Blog as IBlog } from "@/types/blog.type";
 import { User } from "@/types/user.type";
 import Image from "next/image";
 import Link from "next/link";
-import CommentItem from "@/components/comment/CommentItem";
 import UserCard from "@/components/user/UserCard";
 import CommentBar from "@/components/comment/CommentBar";
 import { getMe } from "@/services/auth.service";
@@ -73,6 +72,8 @@ export async function generateMetadata(
     };
 }
 
+export const dynamic = "force-static";
+
 
 const Blog = async ({ searchParams, params }: BlogProps) => {
     const { lang } = await searchParams;
@@ -129,8 +130,6 @@ const Blog = async ({ searchParams, params }: BlogProps) => {
     const coverSrc = blog.cover.formats?.medium.url?.startsWith("http")
         ? blog.cover.formats.medium.url
         : `${process.env.NEXT_PUBLIC_STRAPI_API_URL}${blog.cover.formats?.medium.url}`;
-
-    console.log(coverSrc, blog);
 
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 relative">

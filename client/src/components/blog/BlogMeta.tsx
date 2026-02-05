@@ -28,8 +28,6 @@ interface ReactionCounts {
     haha: number;
 }
 
-
-
 const BlogMeta = ({ blog: initialBlog, blogUrl }: BlogMetaProps) => {
     const [open, setOpen] = useState<boolean>(false);
 

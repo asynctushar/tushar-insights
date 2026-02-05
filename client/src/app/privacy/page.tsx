@@ -18,6 +18,8 @@ export const metadata: Metadata = {
     },
 };
 
+export const dynamic = "force-static";
+
 
 interface PolicyProps {
     searchParams: Promise<{
@@ -27,6 +29,12 @@ interface PolicyProps {
 
 const PrivacyPolicy = async ({ searchParams }: PolicyProps) => {
     const { lang } = await searchParams;
+
+    // build time only
+    await Promise.all([
+        getPolicies("en"),
+        getPolicies("bn"),
+    ]);
 
     const result = await getPolicies();
 
