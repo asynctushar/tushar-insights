@@ -27,6 +27,13 @@ interface PolicyProps {
     }>;
 };
 
+export async function generateStaticParams() {
+    const locales = ["en", "bn"];
+    return locales.map((locale) => ({
+        locale: locale === "en" ? [] : [locale], // [] for default language
+    }));
+}
+
 const PrivacyPolicy = async ({ params }: PolicyProps) => {
     const { locale } = await params;
     const lang = getLangFromLocale(locale);
@@ -37,7 +44,6 @@ const PrivacyPolicy = async ({ params }: PolicyProps) => {
 
 
     const result = await getPolicies();
-
     if (!result.ok) {
         return (
             <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 py-8">

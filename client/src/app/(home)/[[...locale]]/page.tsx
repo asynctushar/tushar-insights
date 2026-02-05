@@ -13,6 +13,13 @@ type HomeProps = {
     }>;
 };
 
+export async function generateStaticParams() {
+    const locales = ["en", "bn"];
+    return locales.map((locale) => ({
+        locale: locale === "en" ? [] : [locale], // [] for default language
+    }));
+}
+
 const Home = async ({ params }: HomeProps) => {
     const { locale } = await params;
     const lang = getLangFromLocale(locale);

@@ -38,6 +38,13 @@ type SearchProps = {
 
 };
 
+export async function generateStaticParams() {
+    const locales = ["en", "bn"];
+    return locales.map((locale) => ({
+        locale: locale === "en" ? [] : [locale], // [] for default language
+    }));
+}
+
 const Search = async ({ searchParams, params }: SearchProps) => {
     const { locale } = await params;
     const lang = getLangFromLocale(locale);

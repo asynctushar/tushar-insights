@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { getBlog, getBlogs } from "@/services/blog.service";
+import { getAllBlogs, getBlog, getBlogs } from "@/services/blog.service";
 import { Blog as IBlog } from "@/types/blog.type";
 import { User } from "@/types/user.type";
 import Image from "next/image";
@@ -29,6 +29,37 @@ type BlogProps = {
         locale?: string[];
     }>;
 };
+
+export async function generateStaticParams() {
+    const locales = ["en", "bn"];
+    const params: { slug: string; locale?: string[]; }[] = [];
+
+    // 1️⃣ Fetch all blogs separately for EN and BN if needed
+    const blogsResultEn = await getAllBlogs({}, "en");
+    const blogsResultBn = await getAllBlogs({}, "bn");
+
+    if (!blogsResultEn.ok || !blogsResultEn.data?.blogs) return [];
+    if (!blogsResultBn.ok || !blogsResultBn.data?.blogs) return [];
+
+    // Combine all slugs from both languages to ensure every blog is included
+    const slugSet = new Set<string>();
+    blogsResultEn.data.blogs.forEach((b: IBlog) => slugSet.add(b.slug));
+    blogsResultBn.data.blogs.forEach((b: IBlog) => slugSet.add(b.slug));
+
+    // 2️⃣ Generate all combinations of slug + locale
+    for (const slug of Array.from(slugSet)) {
+        for (const l of locales) {
+            params.push({
+                slug,
+                locale: l === "en" ? [] : [l], // optional catch-all
+            });
+        }
+    }
+
+    return params;
+}
+
+
 
 export async function generateMetadata(
     { params }: BlogProps

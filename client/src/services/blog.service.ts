@@ -125,6 +125,55 @@ export const getBlogCategories = async (lang?: string) => {
     };
 };
 
+export const getAllBlogs = async (
+    options: {
+        documentId?: string;
+    } = {},
+    lang?: string
+) => {
+    const { documentId} = options;
+
+    const params = new URLSearchParams();
+
+    if (documentId) {
+        params.append("filters[category][documentId]", documentId);
+    }
+
+    const res = await strapiClient(
+        `/api/blogs?${params.toString()}`,
+        {
+            lang: lang ?? "en",
+            cache: 'force-cache',
+            next: {
+                tags: [`blogs`],
+                revalidate: 60 * 10, // 10 minutes (optional)
+            },
+        }
+    );
+
+
+    if (!res.ok) {
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
+    }
+
+    return {
+        ok: true,
+        status: res.status,
+        data: {
+            blogs: res.data,
+            pagination: res.meta?.pagination || null,
+        }
+    };
+};
+
+
 export const getBlogs = async (
     options: {
         documentId?: string;
