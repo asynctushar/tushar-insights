@@ -5,10 +5,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface BlogState {
     blogs: Record<string, Blog>;
+    isLoading: boolean;
 }
 
 const initialState: BlogState = {
     blogs: {},
+    isLoading: true
 };
 
 
@@ -96,13 +98,6 @@ const blogSlice = createSlice({
             const blog = state.blogs[action.payload.blogId];
             if (blog) {
                 blog.comments.unshift(action.payload.comment as any);
-
-                // Update count
-                if (typeof blog.commentsCount === "number") {
-                    blog.commentsCount += 1;
-                } else {
-                    blog.commentsCount = 1;
-                }
             }
         },
         removeComment(
@@ -119,13 +114,6 @@ const blogSlice = createSlice({
                     blog.comments ?? [],
                     action.payload.commentId
                 );
-
-                // Update count
-                if (typeof blog.commentsCount === "number") {
-                    blog.commentsCount += 1;
-                } else {
-                    blog.commentsCount = 1;
-                }
             }
         },
         addReply(
@@ -200,14 +188,12 @@ const blogSlice = createSlice({
                 blog.comments,
                 action.payload.userId
             );
-
             blog.comments = cleanedComments;
-            blog.commentsCount = cleanedComments.length;
 
+        },
+        setIsMetaLoading: (state, action) => {
+            state.isLoading = action.payload;
         }
-
-
-
     },
 });
 
@@ -221,7 +207,8 @@ export const {
     addReply,
     removeReply,
     banUser,
-    removeUser
+    removeUser,
+    setIsMetaLoading
 } = blogSlice.actions;
 
 export default blogSlice.reducer;

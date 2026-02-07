@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import blogReducer from './slices/blog.slice';
+import authReducer from './slices/auth.slice';
 
 export const makeStore = () => {
     return configureStore({
         reducer: {
             blog: blogReducer,
+            auth: authReducer
         },
         middleware: (getDefaultMiddleware) =>
             getDefaultMiddleware({

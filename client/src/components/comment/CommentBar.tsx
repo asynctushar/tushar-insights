@@ -12,17 +12,18 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from "sonner";
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { addComment } from '@/redux/slices/blog.slice';
+import { logout, setIsLoading } from '@/redux/slices/auth.slice';
 
 type CommentBarProps = {
     user: User;
     blogId: string;
-    setUser: (user: User | null) => void;
 };
 
-const CommentBar = ({ user, blogId, setUser }: CommentBarProps) => {
+const CommentBar = ({ user, blogId }: CommentBarProps) => {
     const [comment, setComment] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const { isLoading } = useAppSelector(state => state.auth);
+
 
     const blog = useAppSelector((state) => state.blog.blogs[blogId]);
     const dispatch = useAppDispatch();
@@ -30,9 +31,8 @@ const CommentBar = ({ user, blogId, setUser }: CommentBarProps) => {
     const handleSubmit = async () => {
         if (!comment.trim()) return;
 
-        setIsSubmitting(true);
-
         try {
+            setIsSubmitting(true);
             const res = await fetch(`/api/blogs/${blog.slug}/comments`, {
                 method: 'POST',
                 headers: {
@@ -62,22 +62,21 @@ const CommentBar = ({ user, blogId, setUser }: CommentBarProps) => {
     };
 
     const handleLogout = async () => {
-        setIsLoggingOut(true);
 
         try {
+            dispatch(setIsLoading(true));
             const res = await fetch('/api/auth/logout');
-
             if (!res.ok) {
                 throw new Error('Failed to logout');
             }
 
             toast.success("You have been logged out successfully.");
-
-            setUser(null);
+            dispatch(logout());
         } catch (error: any) {
             console.error('Logout error:', error);
             toast.error(error.message || "Failed to logout. Please try again.",);
-            setIsLoggingOut(false);
+        } finally {
+            dispatch(setIsLoading(false));
         }
     };
 
@@ -96,16 +95,16 @@ const CommentBar = ({ user, blogId, setUser }: CommentBarProps) => {
                         variant="ghost"
                         size="sm"
                         onClick={handleLogout}
-                        disabled={isLoggingOut}
+                        disabled={isLoading}
                         className="gap-2"
                     >
-                        {isLoggingOut ? (
+                        {isLoading ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
                             <LogOut className="h-4 w-4" />
                         )}
                         <span className="hidden sm:inline">
-                            {isLoggingOut ? 'Logging out...' : 'Logout'}
+                            {isLoading ? 'Logging out...' : 'Logout'}
                         </span>
                     </Button>
                 </div>

@@ -16,8 +16,7 @@ import { linkGenerator } from "@/lib/blog";
 import type { Metadata } from "next";
 import { getLangFromLocale } from "@/lib/i18n";
 import { notFound } from "next/navigation";
-import AuthFeatures from "@/components/blog/AuthFeatures";
-import { Suspense } from "react";
+import ClientFeatures from "@/components/blog/ClientFeatures";
 
 type BlogProps = {
     params: Promise<{
@@ -231,7 +230,7 @@ const Blog = async ({ params }: BlogProps) => {
                             </div>
                         </article>
 
-                            <AuthFeatures blog={blog} />
+                        <ClientFeatures blog={blog} />
                     </CardContent>
                 </Card>
 

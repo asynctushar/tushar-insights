@@ -260,6 +260,37 @@ export const getBlog = async (slug: string, lang?: string) => {
     };
 };
 
+// get blog comment
+export const getBlogComments = async (
+    slug: string,
+) => {
+    const res = await strapiClient(`/api/blogs/${slug}/comments`, {
+        method: 'GET',
+        cache: 'force-cache',
+        next: {
+            tags: [`blog:${slug}:comments`],
+            revalidate: 60 * 60, // 60 minutes (optional)
+        },
+    });
+
+    if (!res.ok) {
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
+    }
+
+    return {
+        ok: true,
+        status: res.status,
+        data: res.data
+    };
+};
+
 // Create comment
 export const createComment = async (
     jwt: string,
@@ -362,6 +393,37 @@ export const deleteCommentByAuthor = async (jwt: string, commentId: string) => {
         method: 'DELETE',
         jwt,
         cache: 'no-store',
+    });
+
+    if (!res.ok) {
+        return {
+            ok: false,
+            error: {
+                message: res.error.message,
+                status: res.status,
+            },
+
+        };
+    }
+
+    return {
+        ok: true,
+        status: res.status,
+        data: res.data
+    };
+};
+
+// get blog reactions
+export const getBlogReactions = async (
+    slug: string,
+) => {
+    const res = await strapiClient(`/api/blogs/${slug}/reactions`, {
+        method: 'GET',
+        cache: 'force-cache',
+        next: {
+            tags: [`blog:${slug}:reactions`],
+            revalidate: 60 * 60, // 60 minutes (optional)
+        },
     });
 
     if (!res.ok) {

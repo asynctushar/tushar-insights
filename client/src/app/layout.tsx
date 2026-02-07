@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import StoreProvider from "@/redux/StoreProvider";
 import { Suspense } from "react";
 import { Spinner } from "@/components/ui/spinner";
+import AuthProvider from "@/components/providers/AuthProvider";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -89,17 +90,19 @@ export default function RootLayout({
                         enableSystem
                         disableTransitionOnChange
                     >
-                        <div className="relative flex min-h-screen flex-col">
-                            <Suspense fallback={
-                                <div className="container mx-auto flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-8 min-h-[calc(100vh-64px)]">
-                                    <Spinner className='w-8 h-8' />
-                                </div>}>
-                                <Header />
-                                <main className="flex-1">{children}</main>
-                                <Footer />
-                            </Suspense>
-                        </div>
-                        <Toaster richColors position="bottom-left" />
+                        <AuthProvider>
+                            <div className="relative flex min-h-screen flex-col">
+                                <Suspense fallback={
+                                    <div className="container mx-auto flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-8 min-h-[calc(100vh-64px)]">
+                                        <Spinner className='w-8 h-8' />
+                                    </div>}>
+                                    <Header />
+                                    <main className="flex-1">{children}</main>
+                                    <Footer />
+                                </Suspense>
+                            </div>
+                            <Toaster richColors position="bottom-left" />
+                        </AuthProvider>
                     </ThemeProvider>
                 </StoreProvider>
             </body>

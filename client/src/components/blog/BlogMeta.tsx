@@ -10,13 +10,13 @@ import {
 } from "@/components/ui/dialog";
 import Link from "next/link";
 import { MessageSquare } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { reactionIcons } from "@/lib/blog";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { updateBlog } from "@/redux/slices/blog.slice";
+import { useAppSelector } from "@/redux/hooks";
+import { Skeleton } from "../ui/skeleton";
 
 interface BlogMetaProps {
-    blog: Blog;
+    documentId: string;
     blogUrl?: string;
 }
 
@@ -28,20 +28,11 @@ interface ReactionCounts {
     haha: number;
 }
 
-const BlogMeta = ({ blog: initialBlog, blogUrl }: BlogMetaProps) => {
+const BlogMeta = ({ documentId, blogUrl }: BlogMetaProps) => {
     const [open, setOpen] = useState<boolean>(false);
+    const isLoading = useAppSelector(state => state.blog.isLoading);
+    const blog = useAppSelector((state) => state.blog.blogs[documentId]);
 
-    const dispatch = useAppDispatch();
-    const blog = useAppSelector((state) => state.blog.blogs[initialBlog.documentId]);
-
-    useEffect(() => {
-        dispatch(updateBlog({
-            commentsCount: initialBlog.commentsCount,
-            reactions: initialBlog.reactions,
-            documentId: initialBlog.documentId,
-            slug: initialBlog.slug
-        }));
-    }, [initialBlog]);
 
     // Calculate reaction counts
     const reactionCounts: ReactionCounts = blog?.reactions?.reduce(
@@ -65,45 +56,58 @@ const BlogMeta = ({ blog: initialBlog, blogUrl }: BlogMetaProps) => {
     return (
         <>
             <div className="flex items-center gap-2">
-                {blogUrl && (
-                    <Button
-                        asChild
-                        variant="outline"
-                        size="sm"
-                        className="gap-2"
-                    >
-                        <Link href={blogUrl}>
-                            <MessageSquare className="h-4 w-4" />
-                            <span className="text-sm">{blog?.commentsCount || 0}</span>
-                        </Link>
-                    </Button>
+                {blogUrl &&
+                    <>
+                        {isLoading ? (
+                            <Skeleton />
+                        ) : (
+                            <Button
+                                asChild
+                                variant="outline"
+                                size="sm"
+                                className="gap-2"
+                            >
+                                <Link href={blogUrl}>
+                                    <MessageSquare className="h-4 w-4" />
+                                    <span className="text-sm">{blog?.comments.length || 0}</span>
+                                </Link>
+                            </Button>
+                        )}
+                    </>
+                }
+
+
+                {isLoading ? (
+                    <Skeleton />
+                ) : (
+                    <>
+                        {totalReactions > 0 && (
+                            <Button
+                                onClick={() => setOpen(true)}
+                                variant="outline"
+                                size="sm"
+                                className="gap-2"
+                            >
+                                <div className="flex items-center -space-x-1">
+                                    {topReactions.map(([type]) => {
+                                        const ReactionIcon = reactionIcons[type as keyof typeof reactionIcons].icon;
+                                        const color = reactionIcons[type as keyof typeof reactionIcons].color;
+                                        return (
+                                            <div
+                                                key={type}
+                                                className={`w-5 h-5 rounded-full bg-background flex items-center justify-center ${color}`}
+                                            >
+                                                <ReactionIcon className="h-3 w-3" />
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                                <span className="text-sm">{totalReactions}</span>
+                            </Button>
+                        )}
+                    </>
                 )}
 
-                {/* Reactions Button */}
-                {totalReactions > 0 && (
-                    <Button
-                        onClick={() => setOpen(true)}
-                        variant="outline"
-                        size="sm"
-                        className="gap-2"
-                    >
-                        <div className="flex items-center -space-x-1">
-                            {topReactions.map(([type]) => {
-                                const ReactionIcon = reactionIcons[type as keyof typeof reactionIcons].icon;
-                                const color = reactionIcons[type as keyof typeof reactionIcons].color;
-                                return (
-                                    <div
-                                        key={type}
-                                        className={`w-5 h-5 rounded-full bg-background flex items-center justify-center ${color}`}
-                                    >
-                                        <ReactionIcon className="h-3 w-3" />
-                                    </div>
-                                );
-                            })}
-                        </div>
-                        <span className="text-sm">{totalReactions}</span>
-                    </Button>
-                )}
             </div>
 
             {/* Reactions Dialog */}
@@ -138,4 +142,4 @@ const BlogMeta = ({ blog: initialBlog, blogUrl }: BlogMetaProps) => {
     );
 };
 
-export default BlogMeta;
+export default BlogMeta;;;

@@ -20,36 +20,7 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
 
         const { data, meta } = await super.find(ctx);
 
-        const withExtras = await Promise.all(
-            data.map(async (blog) => {
-                const blogId = blog.documentId;
-
-                const commentsCount = await strapi.db.query('api::comment.comment').count({
-                    where: {
-                        blog: {
-                            documentId: blogId
-                        },
-                        type: "normal"
-                    },
-                });
-
-                const reactions = await strapi.db.query('api::reaction.reaction').findMany({
-                    where: {
-                        blog: {
-                            documentId: blogId
-                        }
-                    },
-                });
-
-                return {
-                    ...blog,
-                    commentsCount,
-                    reactions,
-                };
-            })
-        );
-
-        return { data: withExtras, meta };
+        return { data, meta };
     },
 
     async search(ctx) {
@@ -107,9 +78,80 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
             return ctx.notFound('Blog not found');
         }
 
-        const blogId = blog.documentId;
+        // 5️⃣ Return final response
+        return {
+            data: blog
+        };
+    },
 
-        // 2️⃣ Fetch comments
+    async findBlogReactions(ctx) {
+        const { slug } = ctx.params;
+        const { locale } = ctx.query; // 👈 important
+
+        if (!slug) {
+            return ctx.badRequest('Slug is required');
+        }
+
+        // Default locale if not provided
+        const requestedLocale = locale || 'en';
+
+        // Fetch blog by slug + locale (NO FALLBACK)
+        const blog = await strapi.db.query('api::blog.blog').findOne({
+            where: {
+                slug,
+                locale: requestedLocale,        // 👈 THIS IS THE FIX
+                publishedAt: { $notNull: true },
+            },
+        });
+
+        if (!blog) {
+            return ctx.notFound('Blog not found');
+        }
+
+        const blogId = blog.documentId;
+        const reactions = await strapi.db.query('api::reaction.reaction').findMany({
+            where: {
+                blog: {
+                    documentId: blogId
+                },
+                publishedAt: { $notNull: true },
+            },
+            populate: {
+                user: true
+            }
+        });
+
+        return {
+            data:
+                reactions
+        };
+    },
+
+    async findBlogComments(ctx) {
+        const { slug } = ctx.params;
+        const { locale } = ctx.query; // 👈 important
+
+        if (!slug) {
+            return ctx.badRequest('Slug is required');
+        }
+
+        // Default locale if not provided
+        const requestedLocale = locale || 'en';
+
+        // Fetch blog by slug + locale (NO FALLBACK)
+        const blog = await strapi.db.query('api::blog.blog').findOne({
+            where: {
+                slug,
+                locale: requestedLocale,        // 👈 THIS IS THE FIX
+                publishedAt: { $notNull: true },
+            },
+        });
+
+        if (!blog) {
+            return ctx.notFound('Blog not found');
+        }
+
+        const blogId = blog.documentId;
         const comments = await strapi.documents('api::comment.comment').findMany({
             where: {
                 blog: {
@@ -129,9 +171,7 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
             orderBy: { createdAt: 'desc' },
         });
 
-        // 3️⃣ Arrange comments → replies
         const commentMap = new Map();
-
         comments.forEach((comment) => {
             commentMap.set(comment.documentId, {
                 ...comment,
@@ -153,27 +193,9 @@ export default factories.createCoreController('api::blog.blog', ({ strapi }) => 
             (comment) => comment.type === 'normal'
         );
 
-        // 4️⃣ Fetch reactions
-        const reactions = await strapi.db.query('api::reaction.reaction').findMany({
-            where: {
-                blog: {
-                    documentId: blogId
-                },
-                publishedAt: { $notNull: true },
-            },
-            populate: {
-                user: true
-            }
-        });
-
-
         // 5️⃣ Return final response
         return {
-            data: {
-                ...blog,
-                comments: arrangedComments,
-                reactions,
-            },
+            data: arrangedComments
         };
     },
 

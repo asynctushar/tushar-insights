@@ -3,23 +3,16 @@
 import { User } from '@/types/user.type';
 import { Card, CardContent } from '../ui/card';
 import CommentItem from './CommentItem';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { useEffect } from 'react';
-import { Blog } from '@/types/blog.type';
-import { updateBlog } from '@/redux/slices/blog.slice';
+import { useAppSelector } from '@/redux/hooks';
+
 
 interface CommentListProps {
     user?: User | null;
-    blog: Blog;
+    documentId: string;
 }
 
-const CommentList = ({ user, blog: initialBlog }: CommentListProps) => {
-    const blog = useAppSelector((state) => state.blog.blogs[initialBlog.documentId]);
-    const dispatch = useAppDispatch();
-
-    useEffect(() => {
-        dispatch(updateBlog({ comments: initialBlog.comments, documentId: initialBlog.documentId }));
-    }, [initialBlog]);
+const CommentList = ({ user, documentId }: CommentListProps) => {
+    const blog = useAppSelector((state) => state.blog.blogs[documentId]);
 
     return (
         <Card className="shadow-sm py-4 sm:py-6">

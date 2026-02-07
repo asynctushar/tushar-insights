@@ -21,6 +21,14 @@ export default {
             },
         },
         {
+            method: 'GET',
+            path: '/blogs/:slug/comments',
+            handler: 'blog.findBlogComments',
+            config: {
+                auth: false
+            },
+        },
+        {
             method: 'PATCH',
             path: '/blogs/:slug/reactions/:documentId',
             handler: 'blog.updateBlogReaction',
@@ -48,6 +56,14 @@ export default {
                 auth: {
                     strategies: ['users-permissions'] // authenticated users only
                 },
+            },
+        },
+        {
+            method: 'GET',
+            path: '/blogs/:slug/reactions',
+            handler: 'blog.findBlogReactions',
+            config: {
+                auth: false
             },
         },
         {

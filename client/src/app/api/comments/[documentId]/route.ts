@@ -35,7 +35,7 @@ export async function POST(
         }
 
         // revalidate caching
-        revalidateTags(["blogs", "featured:blogs", "search:blogs", `blog:${body.slug}`]);
+        revalidateTags([`blog:${body.slug}:reactions`, `blog:${body.slug}:comments`]);
         return NextResponse.json(result, { status: result.status });
     } catch (error: any) {
         return NextResponse.json(
