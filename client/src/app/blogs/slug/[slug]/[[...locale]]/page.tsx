@@ -78,6 +78,20 @@ export async function generateMetadata(
 
     const blogResult = await getBlog(slug, lang);
     const blog = blogResult.data;
+
+    if (!blog) {
+        return {
+            title: "Blog Not Found",
+            description:
+                "The blog you are looking for does not exist or may have been removed.",
+            robots: {
+                index: false,
+                follow: false,
+            },
+        };
+    }
+
+
     return {
         title: blog.title,
         description:
