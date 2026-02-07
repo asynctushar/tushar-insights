@@ -1,6 +1,5 @@
 "use client";
 
-import { Blog } from "@/types/blog.type";
 import { Button } from "../ui/button";
 import {
     Dialog,
@@ -30,9 +29,8 @@ interface ReactionCounts {
 
 const BlogMeta = ({ documentId, blogUrl }: BlogMetaProps) => {
     const [open, setOpen] = useState<boolean>(false);
-    const isLoading = useAppSelector(state => state.blog.isLoading);
     const blog = useAppSelector((state) => state.blog.blogs[documentId]);
-
+    const isLoading = !blog;
 
     // Calculate reaction counts
     const reactionCounts: ReactionCounts = blog?.reactions?.reduce(
@@ -53,70 +51,67 @@ const BlogMeta = ({ documentId, blogUrl }: BlogMetaProps) => {
 
     const totalReactions = Object.values(reactionCounts).reduce((sum, count) => sum + count, 0);
 
+    if (isLoading) {
+        return (
+            <div className="flex items-center gap-2">
+                {blogUrl && <Skeleton className="h-9 w-20" />}
+                <Skeleton className="h-9 w-24" />
+            </div>
+        );
+    }
+
     return (
         <>
             <div className="flex items-center gap-2">
-                {blogUrl &&
-                    <>
-                        {isLoading ? (
-                            <Skeleton />
-                        ) : (
-                            <Button
-                                asChild
-                                variant="outline"
-                                size="sm"
-                                className="gap-2"
-                            >
-                                <Link href={blogUrl}>
-                                    <MessageSquare className="h-4 w-4" />
-                                    <span className="text-sm">{blog?.comments.length || 0}</span>
-                                </Link>
-                            </Button>
-                        )}
-                    </>
-                }
-
-
-                {isLoading ? (
-                    <Skeleton />
-                ) : (
-                    <>
-                        {totalReactions > 0 && (
-                            <Button
-                                onClick={() => setOpen(true)}
-                                variant="outline"
-                                size="sm"
-                                className="gap-2"
-                            >
-                                <div className="flex items-center -space-x-1">
-                                    {topReactions.map(([type]) => {
-                                        const ReactionIcon = reactionIcons[type as keyof typeof reactionIcons].icon;
-                                        const color = reactionIcons[type as keyof typeof reactionIcons].color;
-                                        return (
-                                            <div
-                                                key={type}
-                                                className={`w-5 h-5 rounded-full bg-background flex items-center justify-center ${color}`}
-                                            >
-                                                <ReactionIcon className="h-3 w-3" />
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                                <span className="text-sm">{totalReactions}</span>
-                            </Button>
-                        )}
-                    </>
+                {/* Comments Button */}
+                {blogUrl && (
+                    <Button
+                        asChild
+                        variant="outline"
+                        size="sm"
+                        className="gap-2"
+                    >
+                        <Link href={blogUrl}>
+                            <MessageSquare className="h-4 w-4" />
+                            <span className="text-sm">{blog.comments?.length || 0}</span>
+                        </Link>
+                    </Button>
                 )}
 
+                {/* Reactions Button */}
+                {totalReactions > 0 && (
+                    <Button
+                        onClick={() => setOpen(true)}
+                        variant="outline"
+                        size="sm"
+                        className="gap-2"
+                    >
+                        <div className="flex items-center -space-x-1">
+                            {topReactions.map(([type]) => {
+                                const ReactionIcon = reactionIcons[type as keyof typeof reactionIcons].icon;
+                                const color = reactionIcons[type as keyof typeof reactionIcons].color;
+                                return (
+                                    <div
+                                        key={type}
+                                        className={`w-5 h-5 rounded-full bg-background flex items-center justify-center ${color}`}
+                                    >
+                                        <ReactionIcon className="h-3 w-3" />
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        <span className="text-sm">{totalReactions}</span>
+                    </Button>
+                )}
             </div>
 
             {/* Reactions Dialog */}
             <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent className="sm:max-w-md" showCloseButton={false}>
+                <DialogContent className="sm:max-w-md">
                     <DialogHeader>
-                        <DialogTitle
-                            className='text-center'
-                        >Reactions</DialogTitle>
+                        <DialogTitle className="text-center">
+                            Reactions
+                        </DialogTitle>
                     </DialogHeader>
 
                     <div className="space-y-4 py-4">
@@ -142,4 +137,4 @@ const BlogMeta = ({ documentId, blogUrl }: BlogMetaProps) => {
     );
 };
 
-export default BlogMeta;;;
+export default BlogMeta;

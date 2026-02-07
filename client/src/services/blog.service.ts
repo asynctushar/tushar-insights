@@ -266,7 +266,7 @@ export const getBlogComments = async (
 ) => {
     const res = await strapiClient(`/api/blogs/${slug}/comments`, {
         method: 'GET',
-        cache: 'force-cache',
+        cache: 'no-store',
         next: {
             tags: [`blog:${slug}:comments`],
             revalidate: 60 * 60, // 60 minutes (optional)
@@ -419,7 +419,7 @@ export const getBlogReactions = async (
 ) => {
     const res = await strapiClient(`/api/blogs/${slug}/reactions`, {
         method: 'GET',
-        cache: 'force-cache',
+        cache: 'no-store',
         next: {
             tags: [`blog:${slug}:reactions`],
             revalidate: 60 * 60, // 60 minutes (optional)
