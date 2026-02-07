@@ -17,6 +17,7 @@ import type { Metadata } from "next";
 import { getLangFromLocale } from "@/lib/i18n";
 import { notFound } from "next/navigation";
 import ClientFeatures from "@/components/blog/ClientFeatures";
+import { AlertCircle } from "lucide-react";
 
 type BlogProps = {
     params: Promise<{
@@ -131,22 +132,48 @@ const Blog = async ({ params }: BlogProps) => {
         // if your service returns status
         if (blogResult.error?.status === 404) {
             return (
-                <div className="container mx-auto px-4 py-48 text-center space-y-4">
-                    <h2 className="text-2xl font-semibold">Blog not found</h2>
-                    <Button asChild>
-                        <Link href={linkGenerator("/blogs", lang)}>
-                            Browse all Blogs
-                        </Link>
-                    </Button>
+                <div className="container mx-auto px-4 min-h-[calc(100vh-64px)] flex items-center justify-center">
+                    <Card className="max-w-md w-full shadow-lg mb-24">
+                        <CardContent className="p-8 text-center space-y-4">
+                            <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto">
+                                <AlertCircle className="h-8 w-8 text-destructive" />
+                            </div>
+                            <div className="space-y-2">
+                                <h2 className="text-xl font-semibold">
+                                    No Blog Found
+                                </h2>
+                                <p className="text-sm text-muted-foreground">
+                                    {blogResult.error?.message || "Something went wrong while loading blog."}
+                                </p>
+                            </div>
+                            <Button asChild className="mt-4">
+                                <Link href={linkGenerator("/blogs", lang)}>
+                                    Browse All Blogs
+                                </Link>
+                            </Button>
+                        </CardContent>
+                    </Card>
                 </div>
             );
         }
 
         return (
-            <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 py-8">
-                <p className="text-destructive text-center">
-                    Failed to load blog: {blogResult.error?.message}
-                </p>
+            <div className="container mx-auto px-4 min-h-[calc(100vh-64px)] flex items-center justify-center">
+                <Card className="max-w-md w-full shadow-lg mb-24">
+                    <CardContent className="p-8 text-center space-y-4">
+                        <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto">
+                            <AlertCircle className="h-8 w-8 text-destructive" />
+                        </div>
+                        <div className="space-y-2">
+                            <h2 className="text-xl font-semibold">
+                                Failed to Load Blog
+                            </h2>
+                            <p className="text-sm text-muted-foreground">
+                                {blogResult.error?.message || "Something went wrong while loading featured blogs."}
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         );
     }

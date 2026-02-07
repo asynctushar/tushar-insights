@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { getLangFromLocale } from "@/lib/i18n";
 import { getBlogCategories, getBlogs } from "@/services/blog.service";
 import { Blog, Category, Pagination as IPagination } from "@/types/blog.type";
+import { AlertCircle } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -62,10 +63,22 @@ const Blogs = async ({ searchParams, params }: BlogsProps) => {
     const result = await getBlogCategories(lang);
     if (!result.ok) {
         return (
-            <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 py-8">
-                <p className="text-red-500">
-                    Failed to load categories: {result.error?.message}
-                </p>
+            <div className="container mx-auto px-4 min-h-[calc(100vh-64px)] flex items-center justify-center">
+                <Card className="max-w-md w-full shadow-lg mb-24">
+                    <CardContent className="p-8 text-center space-y-4">
+                        <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto">
+                            <AlertCircle className="h-8 w-8 text-destructive" />
+                        </div>
+                        <div className="space-y-2">
+                            <h2 className="text-xl font-semibold">
+                                Failed to Load Categories
+                            </h2>
+                            <p className="text-sm text-muted-foreground">
+                                {result.error?.message || "Something went wrong while loading categories."}
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         );
     }
@@ -79,20 +92,35 @@ const Blogs = async ({ searchParams, params }: BlogsProps) => {
 
     if (!res.ok) {
         return (
-            <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 py-8">
-                <p className="text-red-500">
-                    Failed to load blogs page: {res.error?.message}
-                </p>
+            <div className="container mx-auto px-4 min-h-[calc(100vh-64px)] flex items-center justify-center">
+                <Card className="max-w-md w-full shadow-lg mb-24">
+                    <CardContent className="p-8 text-center space-y-4">
+                        <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto">
+                            <AlertCircle className="h-8 w-8 text-destructive" />
+                        </div>
+                        <div className="space-y-2">
+                            <h2 className="text-xl font-semibold">
+                                Failed to Load Blogs
+                            </h2>
+                            <p className="text-sm text-muted-foreground">
+                                {res.error?.message || "Something went wrong while loading blogs."}
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         );
     }
+
+
+
 
     const blogs: Blog[] = res.data?.blogs;
     const pagination: IPagination = res.data?.pagination;
 
 
     return (
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-4 sm:space-y-6">
+        <div className="container mx-auto min-h-[calc(100vh-64px)] px-4 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-4 sm:space-y-6">
             {/* Hero Section */}
             <Card className="bg-muted/50 border-muted shadow-sm">
                 <CardContent className="p-6 sm:p-12 space-y-2 text-left">
@@ -122,8 +150,22 @@ const Blogs = async ({ searchParams, params }: BlogsProps) => {
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-12">
-                        <p className="text-muted-foreground">No blogs found.</p>
+                    <div className="flex items-center justify-center px-4 mt-12">
+                        <Card className="max-w-md w-full shadow-lg">
+                            <CardContent className="p-8 sm:p-12 text-center space-y-4">
+                                <div className="text-6xl mb-4">📝</div>
+                                <div className="space-y-2">
+                                    <h2 className="text-2xl font-semibold">
+                                        {lang === "bn" ? "কোনো ব্লগ পাওয়া যায়নি" : "No Blogs Found"}
+                                    </h2>
+                                    <p className="text-muted-foreground">
+                                        {lang === "bn"
+                                            ? "ব্লগ শীঘ্রই যোগ করা হবে।"
+                                            : "Blogs will be added soon."}
+                                    </p>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
                 )}
             </div>

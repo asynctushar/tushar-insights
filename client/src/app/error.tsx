@@ -18,35 +18,31 @@ export default function Error({
     }, [error]);
 
     return (
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 min-h-[calc(100vh-64px)] flex items-center justify-center">
-            <Card className="max-w-2xl w-full shadow-lg">
+        <div className="container mx-auto px-4 min-h-[calc(100vh-65px)] flex items-center justify-center">
+            <Card className="max-w-md w-full shadow-lg">
                 <CardContent className="p-8 sm:p-12 text-center space-y-6">
-                    <div className="flex justify-center">
-                        <div className="w-20 h-20 rounded-full bg-destructive/10 flex items-center justify-center">
-                            <AlertCircle className="h-10 w-10 text-destructive" />
-                        </div>
+                    <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto">
+                        <AlertCircle className="h-8 w-8 text-destructive" />
                     </div>
 
                     <div className="space-y-2">
-                        <h1 className="text-3xl sm:text-4xl font-bold">
-                            Something went wrong!
+                        <h1 className="text-2xl font-bold">
+                            Something Went Wrong
                         </h1>
-                        <p className="text-muted-foreground max-w-md mx-auto">
-                            We encountered an unexpected error. Don't worry, our team has been notified and we're working on it.
+                        <p className="text-sm text-muted-foreground">
+                            An unexpected error occurred. Please try again.
                         </p>
                     </div>
 
-                    {process.env.NODE_ENV === 'development' && (
-                        <Card className="bg-muted/50">
-                            <CardContent className="p-4 text-left">
-                                <p className="text-xs font-mono text-destructive break-all">
-                                    {error.message}
-                                </p>
-                            </CardContent>
-                        </Card>
+                    {process.env.NODE_ENV === 'development' && error.message && (
+                        <div className="bg-muted/50 rounded-md p-3 text-left">
+                            <p className="text-xs font-mono text-destructive break-all">
+                                {error.message}
+                            </p>
+                        </div>
                     )}
 
-                    <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
+                    <div className="flex flex-col gap-3 pt-2">
                         <Button onClick={reset} className="gap-2">
                             <RefreshCcw className="h-4 w-4" />
                             Try Again

@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { AlertTriangle, RefreshCcw } from 'lucide-react';
 import { useEffect } from 'react';
 
@@ -19,27 +20,27 @@ export default function GlobalError({
         <html>
             <body>
                 <div className="min-h-screen flex items-center justify-center bg-background p-4">
-                    <div className="max-w-md w-full text-center space-y-6">
-                        <div className="flex justify-center">
-                            <div className="w-20 h-20 rounded-full bg-destructive/10 flex items-center justify-center">
-                                <AlertTriangle className="h-10 w-10 text-destructive" />
+                    <Card className="max-w-md w-full shadow-lg">
+                        <CardContent className="p-8 sm:p-12 text-center space-y-6">
+                            <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto">
+                                <AlertTriangle className="h-8 w-8 text-destructive" />
                             </div>
-                        </div>
 
-                        <div className="space-y-2">
-                            <h1 className="text-3xl font-bold">
-                                Critical Error
-                            </h1>
-                            <p className="text-muted-foreground">
-                                Something went critically wrong. Please try refreshing the page.
-                            </p>
-                        </div>
+                            <div className="space-y-2">
+                                <h1 className="text-2xl font-bold">
+                                    Critical Error
+                                </h1>
+                                <p className="text-sm text-muted-foreground">
+                                    Something went critically wrong. Please try refreshing the page.
+                                </p>
+                            </div>
 
-                        <Button onClick={reset} className="gap-2">
-                            <RefreshCcw className="h-4 w-4" />
-                            Refresh Page
-                        </Button>
-                    </div>
+                            <Button onClick={reset} className="gap-2">
+                                <RefreshCcw className="h-4 w-4" />
+                                Refresh Page
+                            </Button>
+                        </CardContent>
+                    </Card>
                 </div>
             </body>
         </html>
