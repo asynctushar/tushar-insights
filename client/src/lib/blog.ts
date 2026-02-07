@@ -6,6 +6,7 @@ export const linkGenerator = (link: string, lang?: string) => {
     if (!lang || lang !== "bn") {
         return link;
     } else {
+        if (link === "/") return `${link}${lang}`;
         return `${link}/${lang}`;
     }
 };

@@ -59,28 +59,18 @@ const ClientFeatures = ({ blog }: ClientFeaturesProps) => {
                 ) : (
                     <>
                         {!user ? (
-                            <Card className="shadow-sm border-primary/20">
-                                <CardContent className="p-8 text-center space-y-4">
-                                    <div className="text-5xl mb-2">👋</div>
-                                    <div className="space-y-2">
-                                        <h3 className="text-xl font-semibold">
-                                            Join the Conversation
-                                        </h3>
-                                        <p className="text-muted-foreground">
-                                            Sign in to react and comment on this post.
-                                        </p>
-                                    </div>
-                                    <Button size="lg" className="gap-2 mt-4" asChild>
+                            <Card className="shadow-sm">
+                                <CardContent className="p-6 text-center space-y-4">
+                                    <p className="text-muted-foreground text-lg">
+                                        👋 Join the conversation! Sign in to react and comment on this post.
+                                    </p>
+                                    <Button size="lg" variant="outline" asChild>
                                         <Link
-                                            href={`/api/auth/google?redirect=/blogs/${blog.slug}${blog.locale === "bn" ? `/${blog.locale}` : ""}`}
+                                            href={`/api/auth/google?redirect=/blogs/slug/${blog.slug}${blog.locale === "bn" ? `/${blog.locale}` : ""}`}
+                                            className="gap-2"
                                         >
-                                            <Image
-                                                src="/images/google.png"
-                                                alt="Google"
-                                                width={20}
-                                                height={20}
-                                            />
-                                            Continue with Google
+                                            <Image src="/images/google.png" alt="Google" width={20} height={20} />
+                                            Login with Google
                                         </Link>
                                     </Button>
                                 </CardContent>
