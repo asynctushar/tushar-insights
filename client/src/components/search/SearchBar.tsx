@@ -35,6 +35,8 @@ const SearchBar = ({ isMobile = false }: SearchBarProps) => {
 
     const inputRef = useRef<HTMLInputElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    const skipNextSearchRef = useRef(false);
+
 
     // Auto-focus input when expanded on mobile
     useEffect(() => {
@@ -55,8 +57,12 @@ const SearchBar = ({ isMobile = false }: SearchBarProps) => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [isMobile]);
 
-    // Debounced search suggestions (300ms)
     useEffect(() => {
+        if (skipNextSearchRef.current) {
+            skipNextSearchRef.current = false;
+            return;
+        }
+
         if (!value.trim()) {
             setSuggestions([]);
             setShowSuggestions(false);
@@ -66,32 +72,26 @@ const SearchBar = ({ isMobile = false }: SearchBarProps) => {
         setIsLoading(true);
         const timer = setTimeout(async () => {
             try {
-                // TODO: Replace with actual API call
                 const result = await searchBlogSuggestions(value, lang);
 
                 if (!result.ok) {
                     setSuggestions([]);
                     setShowSuggestions(false);
+                    return;
                 }
 
                 setSuggestions(result.data);
                 setShowSuggestions(true);
-
-
-            } catch (error) {
+            } catch {
                 setSuggestions([]);
             } finally {
                 setIsLoading(false);
             }
-        }, 300); // 300ms debounce
+        }, 300);
 
-        return () => {
-            clearTimeout(timer);
-            setShowSuggestions(false);
-            setIsLoading(false);
-            setSuggestions([]);
-        };
+        return () => clearTimeout(timer);
     }, [value, lang]);
+    ;
 
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -108,17 +108,18 @@ const SearchBar = ({ isMobile = false }: SearchBarProps) => {
     };
 
     const handleSuggestionClick = (suggestion: BlogSuggestion) => {
+        skipNextSearchRef.current = true;
+
         setValue(suggestion.title);
         setShowSuggestions(false);
 
         const params = new URLSearchParams();
         params.set('q', suggestion.title);
 
-        // If lang is "bn", put it in the path
         const path = lang === "bn" ? `/search/bn` : "/search";
-
-        return router.push(`${path}${params.toString() ? `?${params.toString()}` : ""}`);
+        router.push(`${path}?${params.toString()}`);
     };
+
 
     const handleClear = () => {
         setValue('');
@@ -146,7 +147,7 @@ const SearchBar = ({ isMobile = false }: SearchBarProps) => {
     // Mobile expanded state - full screen overlay
     if (isMobile && isExpanded) {
         return (
-            <div className="fixed inset-0 z-50">
+            <div className="absolute inset-0 z-50">
                 <div className="flex items-center p-3.5 gap-2 bg-primary">
                     <Button
                         variant="default"

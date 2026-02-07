@@ -7,6 +7,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getLangFromLocale } from "@/lib/i18n";
 import { notFound } from "next/navigation";
+import { Card, CardContent } from "@/components/ui/card";
+import { AlertCircle } from "lucide-react";
 
 export const metadata: Metadata = {
     title: "Search Blogs",
@@ -55,20 +57,56 @@ const Search = async ({ searchParams, params }: SearchProps) => {
 
     const { q: query } = await searchParams;
     if (!query) {
-        return <h4>
-            Please Input search query
-
-            <Button asChild><Link href="/">Browse all Blogs</Link></Button>
-        </h4>;
+        return (
+            <div className="container mx-auto px-4 min-h-[calc(100vh-64px)] flex items-center justify-center">
+                <Card className="max-w-md w-full shadow-lg mb-24">
+                    <CardContent className="p-8 text-center space-y-4">
+                        <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto">
+                            <AlertCircle className="h-8 w-8 text-destructive" />
+                        </div>
+                        <div className="space-y-2">
+                            <h2 className="text-xl font-semibold">
+                                Please input search query
+                            </h2>
+                            <p className="text-sm text-muted-foreground">
+                                We filter blogs based on search query.
+                            </p>
+                        </div>
+                        <Button asChild className="mt-4">
+                            <Link href={linkGenerator("/blogs", lang)}>
+                                Browse All Blogs
+                            </Link>
+                        </Button>
+                    </CardContent>
+                </Card>
+            </div>
+        );
     }
 
     const result = await searchBlogs(query, lang);
     if (!result.ok) {
         return (
-            <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 py-8">
-                <p className="text-red-500">
-                    Failed to load search page: {result.error?.message}
-                </p>
+            <div className="container mx-auto px-4 min-h-[calc(100vh-64px)] flex items-center justify-center">
+                <Card className="max-w-md w-full shadow-lg mb-24">
+                    <CardContent className="p-8 text-center space-y-4">
+                        <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto">
+                            <AlertCircle className="h-8 w-8 text-destructive" />
+                        </div>
+                        <div className="space-y-2">
+                            <h2 className="text-xl font-semibold">
+                                Failed to search blogs
+                            </h2>
+                            <p className="text-sm text-muted-foreground">
+                                {result.error?.message || "Something went wrong while searching blogs."}
+                            </p>
+                        </div>
+                        <Button asChild className="mt-4">
+                            <Link href={linkGenerator("/blogs", lang)}>
+                                Browse All Blogs
+                            </Link>
+                        </Button>
+                    </CardContent>
+                </Card>
             </div>
         );
     }
@@ -77,22 +115,38 @@ const Search = async ({ searchParams, params }: SearchProps) => {
 
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h1 className="text-2xl font-bold mb-6">
-                {`Search results for ${query}`}
-            </h1>
 
             {blogs.length > 0 ? (
-                <div className="flex flex-col gap-6">
-                    {blogs.map((blog) => (
-                        <BlogCard key={blog.id} blog={blog} />
-                    ))}
-                </div>
+                <>
+                    <h1 className="text-2xl font-bold mb-6">
+                        {`Search results for ${query}`}
+                    </h1>
+                    <div className="flex flex-col gap-6">
+                        {blogs.map((blog) => (
+                            <BlogCard key={blog.id} blog={blog} />
+                        ))}
+                    </div>
+                </>
             ) : (
-                <div className="container mx-auto px-4 py-48 text-center space-y-4">
-                    <h2 className="text-2xl font-semibold">No blogs found.</h2>
-                    <Button asChild>
-                        <Link href={linkGenerator("/blogs", lang)}>Browse all Blogs</Link>
-                    </Button>
+                <div className="min-h-[calc(100vh-120px)] flex items-center justify-center px-4">
+                    <Card className="max-w-md w-full shadow-lg mb-24">
+                        <CardContent className="p-8 sm:p-12 text-center space-y-4">
+                            <div className="text-6xl mb-4">📝</div>
+                            <div className="space-y-2">
+                                <h2 className="text-2xl font-semibold">
+                                    No Blogs Found
+                                </h2>
+                                <p className="text-muted-foreground">
+                                    Browse all blogs in the meantime."
+                                </p>
+                            </div>
+                            <Button asChild className="mt-4">
+                                <Link href={linkGenerator("/blogs", lang)}>
+                                    Browse All Blogs
+                                </Link>
+                            </Button>
+                        </CardContent>
+                    </Card>
                 </div>
             )}
         </div>

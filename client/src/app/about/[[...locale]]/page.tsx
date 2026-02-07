@@ -6,7 +6,7 @@ import remarkBreaks from "remark-breaks";
 import { getAbout } from '@/services/company.service';
 import { About as IAbout } from '@/types/company.type';
 import Image from 'next/image';
-import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
+import { AlertCircle, Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
 import Link from 'next/link';
 import type { Metadata } from "next";
 import { getLangFromLocale } from '@/lib/i18n';
@@ -65,10 +65,22 @@ const About = async ({ params }: AboutProps) => {
 
     if (!result.ok) {
         return (
-            <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 py-8">
-                <p className="text-red-500">
-                    Failed to load about page: {result.error?.message}
-                </p>
+            <div className="container mx-auto px-4 min-h-[calc(100vh-64px)] flex items-center justify-center">
+                <Card className="max-w-md w-full shadow-lg mb-24">
+                    <CardContent className="p-8 text-center space-y-4">
+                        <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto">
+                            <AlertCircle className="h-8 w-8 text-destructive" />
+                        </div>
+                        <div className="space-y-2">
+                            <h2 className="text-xl font-semibold">
+                                Failed to Load About Page
+                            </h2>
+                            <p className="text-sm text-muted-foreground">
+                                {result.error?.message || "Something went wrong while loading about."}
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         );
     }
