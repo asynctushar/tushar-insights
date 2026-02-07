@@ -10,7 +10,7 @@ interface SearchSuggestionsProps {
     isMobile?: boolean;
 }
 
-const SearchSuggestions = ({ suggestions, show, onSelect, isMobile = false }: SearchSuggestionsProps) => {
+const SearchSuggestions = ({ suggestions, show, onSelect }: SearchSuggestionsProps) => {
     if (!show || suggestions.length === 0) return null;
 
     return (
