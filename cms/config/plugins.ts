@@ -10,9 +10,11 @@ export default ({ env }) => ({
             actionOptions: {
                 upload: {
                     folder: 'tushar-insights',
+                    resource_type: 'auto',
                 },
                 uploadStream: {
                     folder: 'tushar-insights',
+                    resource_type: 'auto',
                 },
             },
         },
