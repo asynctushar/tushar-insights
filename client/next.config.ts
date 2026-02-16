@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
         pathname: "/uploads/**",
       },
     ],
-    domains: ["remarkable-actor-aa9b49d4b5.strapiapp.com"],
+    domains: ["tushar-insights.up.railway.app"],
     unoptimized: true,
   }
 };
