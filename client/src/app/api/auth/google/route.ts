@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { setRedirectCookie } from "@/services/auth.service";
 
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL!;
+
 
 export async function GET(req: NextRequest) {
     try {
+        const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL;
         const redirectUrl =
             req.nextUrl.searchParams.get("redirect") || "/";
 
