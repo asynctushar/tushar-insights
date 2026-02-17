@@ -72,37 +72,45 @@ const PrivacyPolicy = async ({ params }: PolicyProps) => {
 
     return (
 
-        <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
 
             {/* Hero Section */}
-            <Card className="bg-muted/50 border-muted shadow-sm">
-                <CardContent className="p-6 sm:p-12 space-y-2 text-left">
-                    <h1 className="text-3xl sm:text-4xl font-bold text-foreground">Privacy Policy</h1>
-                    <p className="max-w-2xl text-muted-foreground">
-                        See how we collect, use, and protect your personal information.
-                    </p>
-                </CardContent>
-            </Card>
+            <div className="relative space-y-3 pb-8 border-b border-border">
+                <div className="flex items-center gap-2 text-xs font-medium text-primary uppercase tracking-widest">
+                    <span className="inline-block w-6 h-px bg-primary" />
+                    Legal
+                </div>
+                <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground">
+                    Privacy Policy
+                </h1>
+                <p className="max-w-xl text-base text-muted-foreground leading-relaxed">
+                    See how we collect, use, and protect your personal information.
+                </p>
+            </div>
 
-            <Card className="shadow-md border-0">
-                <CardContent className='space-y-4'>
-                    {
-                        policies.map((policy) => (
-                            <div key={policy.documentId} className='space-y-2'>
-                                <h4 className='text-xl font-semibold'>{`${policy.sort}. ${policy.title}`}</h4>
-                                <div className="rich-text privacy-desc prose prose-slate dark:prose-invert max-w-none pl-11">
-                                    <ReactMarkdown
-                                        remarkPlugins={[remarkGfm, remarkBreaks]}
-                                        rehypePlugins={[rehypeRaw]}
-                                    >
-                                        {policy.desc}
-                                    </ReactMarkdown>
-                                </div>
+            {/* Policies */}
+            <div className="bg-muted/30 rounded-xl border border-border divide-y divide-border">
+                {
+                    policies.map((policy) => (
+                        <div key={policy.documentId} className="px-6 sm:px-8 py-6 space-y-3">
+                            <h4 className="text-base font-semibold text-foreground flex items-start gap-3">
+                                <span className="shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-md bg-primary/10 text-primary text-xs font-bold mt-0.5">
+                                    {policy.sort}
+                                </span>
+                                {policy.title}
+                            </h4>
+                            <div className="rich-text privacy-desc prose prose-slate dark:prose-invert max-w-none pl-9 text-sm text-muted-foreground">
+                                <ReactMarkdown
+                                    remarkPlugins={[remarkGfm, remarkBreaks]}
+                                    rehypePlugins={[rehypeRaw]}
+                                >
+                                    {policy.desc}
+                                </ReactMarkdown>
                             </div>
-                        ))
-                    }
-                </CardContent>
-            </Card>
+                        </div>
+                    ))
+                }
+            </div>
         </div>
     );
 };

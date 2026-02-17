@@ -11,6 +11,15 @@ export const linkGenerator = (link: string, lang?: string) => {
     }
 };
 
+export const createUrl = (lang: string, categoryId?: string) => {
+    const params = new URLSearchParams();
+    if (categoryId) params.set("category", categoryId);
+
+    // If lang is "bn", put it in the path
+    const path = lang === "bn" ? `/blogs/bn` : "/blogs";
+    return `${path}${params.toString() ? `?${params.toString()}` : ""}`;
+};
+
 type reactionTypesProps = {
     type: Reaction["type"];
     label: string;

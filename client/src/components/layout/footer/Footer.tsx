@@ -57,10 +57,10 @@ const Footer = () => {
                                     href={item.href}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/90 hover:bg-primary text-primary-foreground transition-all duration-300 hover:scale-110 shadow-md"
+                                    className="group w-9 h-9 rounded-full border border-border bg-background hover:bg-muted hover:border-primary/50 flex items-center justify-center transition-all duration-200"
                                     aria-label={item.label}
                                 >
-                                    <Icon className="h-5 w-5" />
+                                    <Icon className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors duration-200" />
                                 </Link>
                             );
                         })}

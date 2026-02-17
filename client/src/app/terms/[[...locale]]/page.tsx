@@ -70,38 +70,45 @@ const TermsAndConditions = async ({ params }: TermsProps) => {
     const terms: Term[] = result.data;
 
     return (
-        <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
 
             {/* Hero Section */}
-            <Card className="bg-muted/50 border-muted shadow-sm">
-                <CardContent className="p-6 sm:p-12 space-y-2 text-left">
-                    <h1 className="text-3xl sm:text-4xl font-bold text-foreground">Terms & Conditions</h1>
-                    <p className="max-w-2xl text-muted-foreground">
-                        Understand the rules and guidelines for using Tushar Insights.
-                    </p>
-                </CardContent>
-            </Card>
+            <div className="relative space-y-3 pb-8 border-b border-border">
+                <div className="flex items-center gap-2 text-xs font-medium text-primary uppercase tracking-widest">
+                    <span className="inline-block w-6 h-px bg-primary" />
+                    Legal
+                </div>
+                <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground">
+                    Terms & Conditions
+                </h1>
+                <p className="max-w-xl text-base text-muted-foreground leading-relaxed">
+                    Understand the rules and guidelines for using Tushar Insights.
+                </p>
+            </div>
 
-            <Card className="shadow-md border-0">
-                <CardContent className='space-y-4'>
-                    {
-                        terms.map((term) => (
-                            <div key={term.documentId} className='space-y-2'>
-                                <h4 className='text-xl font-semibold'>{`${term.sort}. ${term.title}`}</h4>
-
-                                <div className="rich-text prose prose-slate dark:prose-invert max-w-none pl-11 term-desc">
-                                    <ReactMarkdown
-                                        remarkPlugins={[remarkGfm, remarkBreaks]}
-                                        rehypePlugins={[rehypeRaw]}
-                                    >
-                                        {term.desc}
-                                    </ReactMarkdown>
-                                </div>
+            {/* Terms */}
+            <div className="bg-muted/30 rounded-xl border border-border divide-y divide-border">
+                {
+                    terms.map((term) => (
+                        <div key={term.documentId} className="px-6 sm:px-8 py-6 space-y-3">
+                            <h4 className="text-base font-semibold text-foreground flex items-start gap-3">
+                                <span className="shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-md bg-primary/10 text-primary text-xs font-bold mt-0.5">
+                                    {term.sort}
+                                </span>
+                                {term.title}
+                            </h4>
+                            <div className="rich-text prose prose-slate dark:prose-invert max-w-none pl-9 text-sm text-muted-foreground term-desc">
+                                <ReactMarkdown
+                                    remarkPlugins={[remarkGfm, remarkBreaks]}
+                                    rehypePlugins={[rehypeRaw]}
+                                >
+                                    {term.desc}
+                                </ReactMarkdown>
                             </div>
-                        ))
-                    }
-                </CardContent>
-            </Card>
+                        </div>
+                    ))
+                }
+            </div>
         </div>
     );
 };

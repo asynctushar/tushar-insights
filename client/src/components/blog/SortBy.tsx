@@ -37,21 +37,18 @@ const SortBy = ({ lang }: SortByProps) => {
     };
 
     return (
-        <div className="flex items-center justify-end gap-2">
-            <span className="text-sm text-muted-foreground">Sort by</span>
-            <Select value={currentSort} onValueChange={handleSortChange}>
-                <SelectTrigger className="w-45">
-                    <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                    {sortOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
-        </div>
+        <Select value={currentSort} onValueChange={handleSortChange}>
+            <SelectTrigger className="w-full bg-background">
+                <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+                {sortOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                    </SelectItem>
+                ))}
+            </SelectContent>
+        </Select>
     );
 };
 
