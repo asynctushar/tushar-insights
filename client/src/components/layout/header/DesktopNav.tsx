@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { linkGenerator } from '@/lib/blog';
+import { linkGenerator, normalizePathname } from '@/lib/blog';
 import { getLangFromLocale } from '@/lib/i18n';
 
 type LocaleParams = {
@@ -22,10 +22,15 @@ const DesktopNav = () => {
     const { locale } = useParams() as LocaleParams;
     const lang = getLangFromLocale(locale) || "en";
 
+    const normalizedPath = normalizePathname(pathname, lang);
+
     return (
         <nav className="flex items-center gap-1">
             {navItems.map((item) => {
-                const isActive = pathname === item.href;
+                const isActive =
+                    item.href === "/"
+                        ? normalizedPath === "/"
+                        : normalizedPath.startsWith(item.href);
 
                 return (
                     <Link
