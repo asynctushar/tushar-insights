@@ -7,6 +7,7 @@ export const linkGenerator = (link: string, lang?: string) => {
         return link;
     } else {
         if (link === "/") return `${link}${lang}`;
+
         return `${link}/${lang}`;
     }
 };
@@ -19,6 +20,26 @@ export const createUrl = (lang: string, categoryId?: string) => {
     const path = lang === "bn" ? `/blogs/bn` : "/blogs";
     return `${path}${params.toString() ? `?${params.toString()}` : ""}`;
 };
+
+export function normalizePathname(
+    pathname: string,
+    lang?: string
+): string {
+    if (!lang || lang === "en") {
+        // default language → no suffix
+        return pathname;
+    }
+
+    // Remove trailing locale segment
+    const segments = pathname.split("/").filter(Boolean);
+
+    if (segments[segments.length - 1] === lang) {
+        segments.pop();
+    }
+
+    return "/" + segments.join("/");
+}
+
 
 type reactionTypesProps = {
     type: Reaction["type"];

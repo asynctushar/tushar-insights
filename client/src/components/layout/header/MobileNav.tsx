@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { getLangFromLocale } from '@/lib/i18n';
-import { linkGenerator } from '@/lib/blog';
+import { linkGenerator, normalizePathname } from '@/lib/blog';
 
 const navItems = [
     { href: "/", label: "Home" },
@@ -26,6 +26,8 @@ const MobileNav = () => {
     const pathname = usePathname();
     const { locale } = useParams() as LocaleParams;
     const lang = getLangFromLocale(locale) || "en";
+    const normalizedPath = normalizePathname(pathname, lang);
+
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
@@ -38,7 +40,9 @@ const MobileNav = () => {
             <SheetContent side="right" className="w-64 p-4">
                 <nav className="flex flex-col gap-4 mt-12">
                     {navItems.map((item) => {
-                        const isActive = pathname === item.href;
+                        const isActive = item.href === "/"
+                            ? normalizedPath === "/"
+                            : normalizedPath.startsWith(item.href);
 
                         return (
                             <Link
