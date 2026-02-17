@@ -95,76 +95,64 @@ const About = async ({ params }: AboutProps) => {
 
 
     return (
-        <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-            {/* Hero Section */}
-            <Card className="bg-muted/50 border-muted shadow-sm">
-                <CardContent className="p-6 sm:p-12 space-y-2 text-left">
-                    <h1 className="text-3xl sm:text-4xl font-bold text-foreground">About</h1>
-                    <p className="max-w-2xl text-muted-foreground">
-                        Learn more about Tushar Biswas and the journey behind Tushar Insights.
-                    </p>
-                </CardContent>
-            </Card>
+        <div className="container min-h-[calc(100vh-64px)] mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
 
-            {/* Profile Card */}
-            <Card className="shadow-sm border-0 bg-secondary dark:bg-muted/50">
-                <CardContent className="">
-                    <div className="flex flex-col items-center text-center space-y-6">
+            {/* Hero Section */}
+            <div className="relative space-y-3 pb-8 border-b border-border">
+                <div className="flex items-center gap-2 text-xs font-medium text-primary uppercase tracking-widest">
+                    <span className="inline-block w-6 h-px bg-primary" />
+                    About
+                </div>
+                <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground">
+                    About
+                </h1>
+                <p className="max-w-xl text-base text-muted-foreground leading-relaxed">
+                    Learn more about Tushar Biswas and the journey behind Tushar Insights.
+                </p>
+            </div>
+
+            {/* Profile + Content Combined */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+
+                {/* Sticky Profile Sidebar */}
+                <div className="lg:col-span-1 lg:sticky lg:top-24">
+                    <div className="rounded-xl border border-border bg-muted/30 p-6 flex flex-col items-center text-center space-y-5">
+
                         {/* Profile Picture */}
                         {profilePic && (
-                            <div className="relative w-48 h-48 sm:w-56 sm:h-56 lg:w-64 lg:h-64">
+                            <div className="relative w-36 h-36 sm:w-40 sm:h-40">
                                 <Image
                                     src={profilePic}
                                     fill
                                     alt={about.name}
-                                    className="rounded-full object-cover shadow-sm ring-2 ring-primary/10"
+                                    className="rounded-full object-cover ring-4 ring-primary/15 shadow-md"
                                     priority
                                 />
                             </div>
                         )}
 
                         {/* Name */}
-                        <h2 className="text-2xl lg:text-3xl font-bold">
-                            {about.name}
-                        </h2>
-
-                        {/* Roles */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 text-base sm:text-lg font-normal text-foreground">
-                            {about.roles.map((role, index) => {
-                                const total = about.roles.length;
-                                const isOddTotal = total % 2 !== 0;
-                                const isLastItem = index === total - 1;
-
-                                const shouldSpanFull =
-                                    isOddTotal && isLastItem;
-
-                                const showSeparator =
-                                    index % 2 === 0 && !(isOddTotal && isLastItem);
-
-                                return (
-                                    <div
-                                        key={index}
-                                        className={[
-                                            'flex items-center justify-center',
-                                            showSeparator ? 'sm:justify-end' : 'sm:justify-center',
-                                            shouldSpanFull ? 'sm:col-span-2' : '',
-                                        ].join(' ')}
-                                    >
-                                        <span className="px-2">{role}</span>
-
-                                        {/* Separator — desktop only */}
-                                        {showSeparator && (
-                                            <span className="hidden sm:inline text-foreground font-semibold">
-                                                |
-                                            </span>
-                                        )}
-                                    </div>
-                                );
-                            })}
+                        <div className="space-y-1">
+                            <h2 className="text-xl font-bold text-foreground">{about.name}</h2>
                         </div>
 
+                        {/* Roles */}
+                        <div className="flex flex-wrap justify-center gap-2">
+                            {about.roles.map((role, index) => (
+                                <span
+                                    key={index}
+                                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-foreground border border-border"
+                                >
+                                    {role}
+                                </span>
+                            ))}
+                        </div>
+
+                        {/* Divider */}
+                        <div className="w-full h-px bg-border" />
+
                         {/* Social Links */}
-                        <div className="flex items-center gap-3 pt-4">
+                        <div className="flex items-center gap-2 flex-wrap justify-center">
                             {socials.map((item) => {
                                 const Icon = item.icon;
                                 return (
@@ -173,90 +161,75 @@ const About = async ({ params }: AboutProps) => {
                                         href={item.href}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/90 hover:bg-primary text-primary-foreground transition-all duration-300 hover:scale-110 shadow-md"
+                                        className="group w-9 h-9 rounded-full border border-border bg-background hover:bg-muted hover:border-primary/50 flex items-center justify-center transition-all duration-200"
                                         aria-label={item.label}
                                     >
-                                        <Icon className="h-5 w-5" />
+                                        <Icon className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors duration-200" />
                                     </Link>
                                 );
                             })}
                         </div>
                     </div>
-                </CardContent>
-            </Card>
-            <Card className="shadow-sm border-0 bg-orange-50 dark:bg-muted/50  py-6 md:py-8 lg:py-12">
-                <CardContent className='px-6 md:px-8 lg:px-12 space-y-8'>
-                    <div className='rich-text about-card'>
-                        <h2 className='text-2xl md:3xl mb-6'>
-                            📖 Biography
-                        </h2>
-                        <ReactMarkdown
-                            remarkPlugins={[remarkGfm, remarkBreaks]}
-                            rehypePlugins={[rehypeRaw]}
-                        >
-                            {about.biography}
-                        </ReactMarkdown>
-                        <hr />
-                    </div>
-                    <div className='rich-text about-card'>
-                        <h2 className='text-2xl md:3xl mb-6'>
-                            🌿 Beyond Code
-                        </h2>
-                        <ReactMarkdown
-                            remarkPlugins={[remarkGfm, remarkBreaks]}
-                            rehypePlugins={[rehypeRaw]}
-                        >
-                            {about.beyondCode}
-                        </ReactMarkdown>
-                        <hr />
-                    </div>
-                    <div className='rich-text about-card'>
-                        <h2 className='text-2xl md:3xl mb-6'>
-                            💡 The Idea Behind Tushar Insights
-                        </h2>
-                        <ReactMarkdown
-                            remarkPlugins={[remarkGfm, remarkBreaks]}
-                            rehypePlugins={[rehypeRaw]}
-                        >
-                            {about.idea}
-                        </ReactMarkdown>
-                        <hr />
-                    </div>
-                    <div className='rich-text about-card'>
-                        <h2 className='text-2xl md:3xl mb-6'>
-                            🎯 Goals and Vision
-                        </h2>
-                        <ReactMarkdown
-                            remarkPlugins={[remarkGfm, remarkBreaks]}
-                            rehypePlugins={[rehypeRaw]}
-                        >
-                            {about.goals}
-                        </ReactMarkdown>
-                        <hr />
-                    </div>
-                    <div className='rich-text about-card'>
-                        <ReactMarkdown
-                            remarkPlugins={[remarkGfm, remarkBreaks]}
-                            rehypePlugins={[rehypeRaw]}
-                        >
-                            {about.thankingMessage}
-                        </ReactMarkdown>
-                        <hr />
-                    </div>
-                    <div className='rich-text about-card'>
-                        <h2 className='text-2xl md:3xl mb-6'>
-                            📖 Biography
-                        </h2>
-                        <ReactMarkdown
-                            remarkPlugins={[remarkGfm, remarkBreaks]}
-                            rehypePlugins={[rehypeRaw]}
-                        >
-                            {about.footer}
-                        </ReactMarkdown>
-                    </div>
-                </CardContent>
-            </Card>
-        </div >
+                </div>
+
+                {/* Content Sections */}
+                <div className="lg:col-span-2 space-y-6">
+
+                    {[
+                        { emoji: "📖", title: "Biography", content: about.biography },
+                        { emoji: "🌿", title: "Beyond Code", content: about.beyondCode },
+                        { emoji: "💡", title: "The Idea Behind Tushar Insights", content: about.idea },
+                        { emoji: "🎯", title: "Goals and Vision", content: about.goals },
+                    ].map(({ emoji, title, content }) => (
+                        <div key={title} className="rounded-xl border border-border overflow-hidden">
+                            <div className="px-5 py-3.5 border-b border-border bg-muted/40 flex items-center gap-2.5">
+                                <span className="text-base">{emoji}</span>
+                                <h2 className="text-sm font-semibold text-foreground">{title}</h2>
+                            </div>
+                            <div className="px-6 py-5 bg-background">
+                                <div className="rich-text about-card prose prose-slate dark:prose-invert max-w-none text-sm text-muted-foreground">
+                                    <ReactMarkdown
+                                        remarkPlugins={[remarkGfm, remarkBreaks]}
+                                        rehypePlugins={[rehypeRaw]}
+                                    >
+                                        {content}
+                                    </ReactMarkdown>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+
+                    {/* Thanking Message */}
+                    {about.thankingMessage && (
+                        <div className="rounded-xl border border-primary/20 bg-primary/5 px-6 py-5">
+                            <div className="rich-text about-card prose prose-slate dark:prose-invert max-w-none text-sm text-muted-foreground">
+                                <ReactMarkdown
+                                    remarkPlugins={[remarkGfm, remarkBreaks]}
+                                    rehypePlugins={[rehypeRaw]}
+                                >
+                                    {about.thankingMessage}
+                                </ReactMarkdown>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Footer Note */}
+                    {about.footer && (
+                        <div className="rounded-xl border border-border bg-muted/30 px-6 py-5">
+                            <div className="rich-text about-card prose prose-slate dark:prose-invert max-w-none text-sm text-muted-foreground">
+                                <ReactMarkdown
+                                    remarkPlugins={[remarkGfm, remarkBreaks]}
+                                    rehypePlugins={[rehypeRaw]}
+                                >
+                                    {about.footer}
+                                </ReactMarkdown>
+                            </div>
+                        </div>
+                    )}
+
+                </div>
+            </div>
+        </div>
     );
 };
 

@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { createUrl } from "@/lib/blog";
 import { Category } from "@/types/blog.type";
 import Link from "next/link";
 
@@ -8,40 +8,30 @@ interface CategoryFilterProps {
     currentCategory?: string;
 }
 
-const CategoryFilter = ({ categories, lang, currentCategory }: CategoryFilterProps) => {
-
-    const createUrl = (categoryId?: string) => {
-        const params = new URLSearchParams();
-        if (categoryId) params.set("category", categoryId);
-
-        // If lang is "bn", put it in the path
-        const path = lang === "bn" ? `/blogs/bn` : "/blogs";
-        return `${path}${params.toString() ? `?${params.toString()}` : ""}`;
-    };
-
+const CategoryFilter = ({ categories, lang = "en", currentCategory }: CategoryFilterProps) => {
 
     return (
-        <div className="flex flex-wrap gap-2">
-            <Button
-                asChild
-                variant={!currentCategory ? "default" : "outline"}
-                className="border"
+        <div className="flex flex-wrap gap-3 p-1">
+            <Link
+                href={createUrl(lang)}
+                className={`inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium transition-colors duration-150 border border-primary/20 ${!currentCategory
+                    ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    }`}
             >
-                <Link href={createUrl()}>
-                    {lang === "bn" ? "সব" : "All"}
-                </Link>
-            </Button>
+                {lang === "bn" ? "সব" : "All"}
+            </Link>
             {categories.map((category) => (
-                <Button
+                <Link
                     key={category.documentId}
-                    asChild
-                    variant={currentCategory === category.documentId ? "default" : "outline"}
-                    className="border"
+                    href={createUrl(lang, category.documentId)}
+                    className={`inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium transition-colors duration-150 border border-primary/20 ${currentCategory === category.documentId
+                        ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                        }`}
                 >
-                    <Link href={createUrl(category.documentId)}>
-                        {category.title}
-                    </Link>
-                </Button>
+                    {category.title}
+                </Link>
             ))}
         </div>
     );

@@ -57,67 +57,60 @@ const Pagination = ({ pagination, lang }: PaginationProps) => {
     if (pageCount <= 1) return null;
 
     return (
-        <Card className="shadow-md">
-            <CardContent className="">
-                <div className="flex items-center justify-end gap-2 flex-wrap">
-                    <Button
-                        variant="default"
-                        size="icon"
-                        asChild={page > 1}
-                        disabled={page <= 1}
-                        className="disabled:opacity-70 px-7 cursor-pointer"
-                    >
-                        {page > 1 ? (
-                            <Link href={createUrl(page - 1)}>
-                                Prev
-                            </Link>
-                        ) : (
-                            <>Prev</>
-                        )}
-                    </Button>
-
-                    {getPageNumbers().map((pageNum, index) =>
-                        typeof pageNum === "number" ? (
-                            <Button
-                                key={index}
-                                variant={page === pageNum ? "secondary" : "outline"}
-                                size="icon"
-                                asChild={page !== pageNum}
-                                disabled={page === pageNum}
-                                className="disabled:opacity-80 border cursor-pointer"
-
-                            >
-                                {page !== pageNum ? (
-                                    <Link href={createUrl(pageNum)}>{pageNum}</Link>
-                                ) : (
-                                    <span>{pageNum}</span>
-                                )}
-                            </Button>
-                        ) : (
-                            <span key={index} className="px-2 text-muted-foreground">
-                                {pageNum}
-                            </span>
-                        )
+        <div className="rounded-xl border border-border bg-muted/30 px-4 py-3">
+            <div className="flex items-center justify-end gap-2 flex-wrap">
+                <Button
+                    variant="default"
+                    size="icon"
+                    asChild={page > 1}
+                    disabled={page <= 1}
+                    className="disabled:opacity-70 px-7 cursor-pointer"
+                >
+                    {page > 1 ? (
+                        <Link href={createUrl(page - 1)}>Prev</Link>
+                    ) : (
+                        <>Prev</>
                     )}
+                </Button>
 
-                    <Button
-                        variant="default"
-                        size="icon"
-                        asChild={page < pageCount}
-                        disabled={page >= pageCount}
-                        className="disabled:opacity-70 px-7 cursor-pointer"
-                    >
-                        {page < pageCount ? (
-                            <Link href={createUrl(page + 1)}>
-                                Next
-                            </Link>
-                        ) : (
-                            <>Next</>
-                        )}
-                    </Button>
-                </div>
-            </CardContent>
-        </Card>
+                {getPageNumbers().map((pageNum, index) =>
+                    typeof pageNum === "number" ? (
+                        <Button
+                            key={index}
+                            variant={page === pageNum ? "secondary" : "outline"}
+                            size="icon"
+                            asChild={page !== pageNum}
+                            disabled={page === pageNum}
+                            className="disabled:opacity-80 border cursor-pointer"
+                        >
+                            {page !== pageNum ? (
+                                <Link href={createUrl(pageNum)}>{pageNum}</Link>
+                            ) : (
+                                <span>{pageNum}</span>
+                            )}
+                        </Button>
+                    ) : (
+                        <span key={index} className="px-2 text-muted-foreground">
+                            {pageNum}
+                        </span>
+                    )
+                )}
+
+                <Button
+                    variant="default"
+                    size="icon"
+                    asChild={page < pageCount}
+                    disabled={page >= pageCount}
+                    className="disabled:opacity-70 px-7 cursor-pointer"
+                >
+                    {page < pageCount ? (
+                        <Link href={createUrl(page + 1)}>Next</Link>
+                    ) : (
+                        <>Next</>
+                    )}
+                </Button>
+            </div>
+        </div>
     );
 };
 
