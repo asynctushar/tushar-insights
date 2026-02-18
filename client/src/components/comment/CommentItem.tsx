@@ -188,8 +188,8 @@ const CommentItem = ({ comment, user, blogSlug, blogId }: CommentItemProps) => {
 
     return (
         <>
-            <Card className="shadow-sm py-4 sm:py-6">
-                <CardContent className="space-y-3 px-4 sm:px-6">
+            <div className="p-4 rounded-lg bg-muted/30 border border-border">
+                <div className="space-y-3">
                     <div className="flex justify-between items-start gap-2">
                         <UserCard user={comment.user} time={comment.createdAt} />
 
@@ -253,30 +253,28 @@ const CommentItem = ({ comment, user, blogSlug, blogId }: CommentItemProps) => {
                         )}
                     </div>
 
-                    <p className="text-sm leading-relaxed">{comment.desc}</p>
+                    <p className="text-sm leading-relaxed text-foreground/90">{comment.desc}</p>
 
                     {user && canReply && comment.type === 'normal' && !showReplyInput && (
-                        <div className="flex justify-end">
+                        <div className="flex justify-end pt-1">
                             <Button
-                                variant="default"
+                                variant="ghost"
                                 size="sm"
                                 onClick={() => setShowReplyInput(true)}
-                                className="gap-2"
+                                className="gap-2 h-8 text-xs"
                             >
-
-                                <Reply className="h-4 w-4" />
+                                <Reply className="h-3.5 w-3.5" />
                                 Reply
-
                             </Button>
                         </div>
                     )}
-                </CardContent>
-            </Card>
+                </div>
+            </div>
 
             {showReplyInput && (
-                <div className="ml-8 mt-3">
-                    <Card className="shadow-sm bg-muted/30 py-4 sm:py-6">
-                        <CardContent className="space-y-3 px-4 sm:px-6">
+                <div className="ml-6 sm:ml-12 mt-3">
+                    <div className="p-4 rounded-lg bg-background border border-border">
+                        <div className="space-y-3">
                             <Textarea
                                 value={replyText}
                                 onChange={(e) => setReplyText(e.target.value)}
@@ -311,13 +309,13 @@ const CommentItem = ({ comment, user, blogSlug, blogId }: CommentItemProps) => {
                                     )}
                                 </Button>
                             </div>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 </div>
             )}
 
             {comment.replies && comment.replies.length > 0 && (
-                <div className="ml-8 mt-3 space-y-3">
+                <div className="ml-6 sm:ml-12 mt-3 space-y-3">
                     {comment.replies.map((reply) => (
                         <CommentItem
                             blogId={blogId}
