@@ -86,7 +86,7 @@ const CommentBar = ({ user, blogId }: CommentBarProps) => {
         <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
             <div className="px-4 sm:px-6 py-4 space-y-4">
                 {/* Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-border">
+                <div className="flex items-center justify-between gap-2 pb-3 border-b border-border">
                     <div className="flex items-center gap-2">
                         <span className="text-xs text-muted-foreground">Comment as</span>
                         <span className="text-xs font-semibold text-foreground">{displayName}</span>
