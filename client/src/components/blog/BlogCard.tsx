@@ -26,11 +26,11 @@ const BlogCard = ({ blog }: BlogCardProps) => {
     return (
         <>
             <MetaFetcher blog={blog} />
-            <Card className="shadow-sm">
+            <Card className="shadow-sm @container">
                 <CardContent >
-                    <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex flex-col @sm:flex-row gap-4">
                         {/* Image */}
-                        <div className="relative w-full sm:w-1/3 aspect-video shrink-0 rounded-md overflow-hidden">
+                        <div className="relative w-full @sm:w-1/3 aspect-video shrink-0 rounded-md overflow-hidden">
                             <Image
                                 src={`${coverSrc}`}
                                 alt={blog.cover.alternativeText || blog.slug}

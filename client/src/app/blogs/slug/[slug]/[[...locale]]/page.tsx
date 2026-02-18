@@ -201,9 +201,9 @@ const Blog = async ({ params }: BlogProps) => {
 
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 relative">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 {/* Main Content */}
-                <Card className="lg:col-span-2 py-4 sm:py-6">
+                <Card className="lg:col-span-3 py-4 sm:py-6">
                     {/* Blog Article */}
                     <CardContent className="space-y-8 px-4 sm:px-6">
                         <article className="space-y-6">
