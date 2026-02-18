@@ -26,25 +26,24 @@ const ClientFeatures = ({ blog }: ClientFeaturesProps) => {
             <MetaFetcher blog={blog} />
             <div className="space-y-6">
                 {/* Author Card */}
-                <Card className="shadow-sm">
-                    <CardContent className="p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+                    <div className="px-4 sm:px-6 py-4 flex items-center justify-between ">
                         <UserCard user={blog.user} />
                         <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
                             {user && <ReactBar blogId={blog.documentId} user={user} />}
                             <BlogMeta documentId={blog.documentId} />
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
 
                 {/* Comment Section - Auth Only */}
                 {isLoading ? (
-                    <Card className="shadow-sm">
-                        <CardContent className="p-6 space-y-4">
+                    <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+                        <div className="p-4 sm:p-6 space-y-4">
                             <div className="flex items-center justify-between">
                                 <Skeleton className="h-5 w-32" />
                                 <Skeleton className="h-9 w-20" />
                             </div>
-
                             <div className="flex items-start gap-3">
                                 <Skeleton className="h-10 w-10 rounded-full shrink-0" />
                                 <div className="flex-1 space-y-3">
@@ -54,17 +53,17 @@ const ClientFeatures = ({ blog }: ClientFeaturesProps) => {
                                     </div>
                                 </div>
                             </div>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 ) : (
                     <>
                         {!user ? (
-                            <Card className="shadow-sm">
-                                <CardContent className="p-6 text-center space-y-4">
-                                    <p className="text-muted-foreground text-lg">
+                            <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+                                <div className="p-6 text-center space-y-4">
+                                    <p className="text-muted-foreground text-base">
                                         👋 Join the conversation! Sign in to react and comment on this post.
                                     </p>
-                                    <Button size="lg" variant="outline" asChild>
+                                    <Button size="default" variant="outline" asChild>
                                         <Link
                                             href={`/api/auth/google?redirect=/blogs/slug/${blog.slug}${blog.locale === "bn" ? `/${blog.locale}` : ""}`}
                                             className="gap-2"
@@ -73,15 +72,15 @@ const ClientFeatures = ({ blog }: ClientFeaturesProps) => {
                                             Login with Google
                                         </Link>
                                     </Button>
-                                </CardContent>
-                            </Card>
+                                </div>
+                            </div>
                         ) : (
                             <CommentBar user={user} blogId={blog.documentId} />
                         )}
                     </>
                 )}
 
-                {/* Comments List - Has its own skeleton */}
+                {/* Comments List */}
                 <CommentList user={user} documentId={blog.documentId} />
             </div>
         </>

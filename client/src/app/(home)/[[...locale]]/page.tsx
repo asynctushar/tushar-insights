@@ -90,14 +90,19 @@ const Home = async ({ params }: HomeProps) => {
                 <div className="space-y-10">
 
                     {/* Section Header */}
-                    <div className="flex items-center gap-3 pb-6 border-b border-border">
-                        <span className="inline-block w-6 h-px bg-primary" />
-                        <span className="text-xs font-medium text-primary uppercase tracking-widest">
+                    <div className="relative space-y-3 pb-8 border-b border-border">
+                        <div className="flex items-center gap-2 text-xs font-medium text-primary uppercase tracking-widest">
+                            <span className="inline-block w-6 h-px bg-primary" />
                             {lang === "bn" ? "বৈশিষ্ট্যযুক্ত" : "Featured"}
-                        </span>
-                        <h1 className="text-xl font-bold text-foreground">
+                        </div>
+                        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground">
                             {lang === "bn" ? "বৈশিষ্ট্যযুক্ত ব্লগ" : "Featured Blogs"}
                         </h1>
+                        <p className="max-w-xl text-base text-muted-foreground leading-relaxed">
+                            {lang === "bn"
+                                ? "সাম্প্রতিক এবং জনপ্রিয় ব্লগ পোস্ট দেখুন"
+                                : "Discover our latest and most popular blog posts"}
+                        </p>
                     </div>
 
                     {/* Grid */}
