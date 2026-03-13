@@ -1,15 +1,20 @@
-FROM node:20
+# ---------- Production ----------
+FROM node:20-slim
 
 WORKDIR /app
 
-# Enable corepack (for Yarn)
 RUN corepack enable
 
 COPY package.json yarn.lock ./
 
-RUN yarn install --frozen-lockfile
+RUN yarn install --production --frozen-lockfile
 
-COPY . .
+COPY --from=builder /app/build ./build
+COPY --from=builder /app/config ./config
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/database ./database
+COPY --from=builder /app/.tmp ./.tmp
 
 RUN yarn build
 
