@@ -1,0 +1,13 @@
+node_modules
+.tmp
+.cache
+build
+dist
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
+.env
+.env.*
+npm-debug.log
+yarn-error.log
