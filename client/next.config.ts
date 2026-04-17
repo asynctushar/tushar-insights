@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
         pathname: "/uploads/**",
       },
     ],
-    domains: ["tushar-insights.up.railway.app", "tushar-insights-production-ecd1.up.railway.app"],
+    domains: ["tushar-insights.up.railway.app", "tushar-insights-production-ecd1.up.railway.app", "tushar-insights-api.up.railway.app"],
     unoptimized: true,
   }
 };
